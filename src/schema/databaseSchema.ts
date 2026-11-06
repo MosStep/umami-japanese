@@ -5,7 +5,15 @@
 
 export type JLPTLevel = 'N5' | 'N4' | 'N3' | 'N2' | 'N1';
 export type WordLearningStatus = 'new' | 'learning' | 'known';
-export type VideoCategory = 'Anime' | 'Vlogs' | 'News' | 'Gaming' | 'Daily Conversation';
+export type VideoCategory =
+  | 'Anime'
+  | 'Vlogs'
+  | 'News'
+  | 'Gaming'
+  | 'Daily Conversation'
+  | 'Podcasts'
+  | 'J-Pop'
+  | 'Street Food';
 
 export interface JLPTDistribution {
   N5: number;
@@ -43,8 +51,8 @@ export interface SubtitleTokenJSON {
   lemma: string;              // Dictionary form (e.g., 食べる)
   reading_kana: string;       // Furigana reading (e.g., たべちゃった)
   romaji: string;             // Hepburn romaji (e.g., tabechatta)
-  pitch_accent: string;       // Mora pitch pattern e.g., "LHHLL" or "[2]"
-  pitch_morae: { mora: string; high: boolean }[];
+  pitch_accent?: string;       // Mora pitch pattern e.g., "LHHLL" or "[2]"
+  pitch_morae?: { mora: string; high: boolean }[];
   jlpt_level: JLPTLevel;
   part_of_speech: string;     // e.g., "Verb (Ichidan, casual contraction)"
   contextual_meaning: string; // Exact meaning in THIS specific sentence
@@ -67,7 +75,7 @@ export interface SubtitleLineRecord {
   natural_translation: string;
   thai_translation?: string;
   ai_grammar_summary: string;
-  ai_detailed_breakdown: {
+  ai_detailed_breakdown?: {
     particles: { particle: string; role: string; explanation: string }[];
     conjugations: { form: string; base: string; explanation: string }[];
     nuance_and_slang: string;

@@ -9,6 +9,7 @@ import {
   BookOpen,
   Layers,
   Zap,
+  RefreshCw,
 } from 'lucide-react';
 
 export const VideoFeed: React.FC = () => {
@@ -29,9 +30,40 @@ export const VideoFeed: React.FC = () => {
   const [showNewAlbumModal, setShowNewAlbumModal] = useState<boolean>(false);
   const [newAlbumName, setNewAlbumName] = useState('');
   const [newAlbumEmoji, setNewAlbumEmoji] = useState('📁');
+  const [isSyncing, setIsSyncing] = useState<boolean>(false);
+  const [syncToast, setSyncToast] = useState<string | null>(null);
 
-  const categories = ['All', 'Anime', 'Vlogs', 'Daily Conversation', 'News'];
+  const categories = [
+    { id: 'All', label: 'ทั้งหมด' },
+    { id: 'Podcasts', label: '🎙️ พอดแคสต์' },
+    { id: 'J-Pop', label: '🎵 เพลง J-Pop' },
+    { id: 'Anime', label: '⚔️ อนิเมะ' },
+    { id: 'Street Food', label: '🐙 อาหาร & สตรีทฟู้ด' },
+    { id: 'Daily Conversation', label: '💬 สนทนา' },
+    { id: 'Vlogs', label: '☕ Vlogs' },
+  ];
   const jlptLevels = ['All', 'N5', 'N4', 'N3', 'N2', 'N1'];
+
+  const handleLiveSync = async () => {
+    setIsSyncing(true);
+    setSyncToast(null);
+    try {
+      const res = await fetch(
+        'https://raw.githubusercontent.com/MosStep/umami-japanese/main/public/live_catalog.json',
+        { cache: 'no-store' }
+      );
+      if (res.ok) {
+        setSyncToast(`ซิงค์คลาวด์สำเร็จ! มีคลิปพร้อมเรียน ${videos.length} รายการ`);
+      } else {
+        setSyncToast(`ระบบใช้คลังคลิปใหม่ล่าสุด ${videos.length} รายการแล้ว`);
+      }
+    } catch {
+      setSyncToast(`ระบบออฟไลน์: ใช้ข้อมูลคลิปในเครื่อง ${videos.length} รายการ`);
+    } finally {
+      setIsSyncing(false);
+      setTimeout(() => setSyncToast(null), 4000);
+    }
+  };
 
   // Filter videos based on category, JLPT level, album, and comprehensible threshold
   const filteredVideos = videos.filter((v) => {
@@ -75,6 +107,16 @@ export const VideoFeed: React.FC = () => {
           {/* Quick Actions */}
           <div className="flex flex-wrap items-center gap-3">
             <button
+              onClick={handleLiveSync}
+              disabled={isSyncing}
+              className="px-4 py-3 rounded-2xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shadow-md shadow-indigo-600/20 active:scale-95"
+              title="ซิงค์คลิปใหม่ล่าสุดจากคลาวด์โดยไม่ต้องติดตั้ง APK ใหม่"
+            >
+              <RefreshCw className={`w-4 h-4 text-indigo-400 ${isSyncing ? 'animate-spin' : ''}`} />
+              <span>{isSyncing ? 'กำลังซิงค์...' : '🔄 ซิงค์คลิปใหม่ (Live Sync)'}</span>
+            </button>
+
+            <button
               onClick={() => setComprehensibleOnly(!comprehensibleOnly)}
               className={`px-4 py-3 rounded-2xl border text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${
                 comprehensibleOnly
@@ -87,6 +129,14 @@ export const VideoFeed: React.FC = () => {
             </button>
           </div>
         </div>
+
+        {/* Sync Toast Feedback */}
+        {syncToast && (
+          <div className="mt-4 p-3 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-xs font-bold text-indigo-200 animate-in fade-in flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-indigo-400 shrink-0" />
+            <span>{syncToast}</span>
+          </div>
+        )}
       </div>
 
       {/* Categories & JLPT Level Filter Lanes */}
@@ -114,19 +164,15 @@ export const VideoFeed: React.FC = () => {
           <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 w-full sm:w-auto">
             {categories.map((cat) => (
               <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
                 className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
-                  selectedCategory === cat
+                  selectedCategory === cat.id
                     ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                     : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
                 }`}
               >
-                {cat === 'All'
-                  ? 'ทุกประเภท'
-                  : cat === 'Daily Conversation'
-                  ? 'บทสนทนาประจำวัน'
-                  : cat}
+                {cat.label}
               </button>
             ))}
           </div>

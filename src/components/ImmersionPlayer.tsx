@@ -33,6 +33,8 @@ export const ImmersionPlayer: React.FC = () => {
     setSelectedToken,
     furiganaMode,
     setFuriganaMode,
+    readingGuideMode,
+    setReadingGuideMode,
     showPitchAccent,
     setShowPitchAccent,
     showMicroGloss,
@@ -54,6 +56,31 @@ export const ImmersionPlayer: React.FC = () => {
   const activeLineElementRef = useRef<HTMLDivElement | null>(null);
   const transcriptContainerRef = useRef<HTMLDivElement | null>(null);
   const activeLine = activeSubtitleLines[currentLineIndex] || activeSubtitleLines[0];
+
+  // Dynamic real-time spoken token calculation
+  const getActiveTokenIndex = () => {
+    if (!activeLine || !activeLine.tokens_json || activeLine.tokens_json.length === 0) return -1;
+    const curMs = currentTimeSec * 1000;
+    if (curMs < activeLine.start_time_ms) return 0;
+    if (curMs >= activeLine.end_time_ms) return activeLine.tokens_json.length - 1;
+    const duration = activeLine.end_time_ms - activeLine.start_time_ms;
+    if (duration <= 0) return 0;
+    const elapsed = curMs - activeLine.start_time_ms;
+    const ratio = Math.max(0, Math.min(1, elapsed / duration));
+    const totalChars = activeLine.tokens_json.reduce((sum, t) => sum + Math.max(1, t.surface.length), 0);
+    let acc = 0;
+    for (let i = 0; i < activeLine.tokens_json.length; i++) {
+      const weight = Math.max(1, activeLine.tokens_json[i].surface.length) / totalChars;
+      if (ratio <= acc + weight || i === activeLine.tokens_json.length - 1) {
+        return i;
+      }
+      acc += weight;
+    }
+    return 0;
+  };
+
+  const activeTokenIndex = getActiveTokenIndex();
+  const activeToken = activeTokenIndex >= 0 && activeLine ? activeLine.tokens_json[activeTokenIndex] : null;
 
   // Guaranteed audio playback on all mobile devices
   const playNativeAudio = (text: string) => {
@@ -324,53 +351,111 @@ export const ImmersionPlayer: React.FC = () => {
             </div>
           </div>
 
-          {/* Interactive Japanese Subtitle Dock (Sleek HayaiLearn Glassmorphic Floating Panel) */}
-          <div className="relative rounded-3xl bg-slate-900/95 border-2 border-slate-800 p-5 sm:p-6 space-y-3 shadow-2xl backdrop-blur-md text-center">
+          {/* Interactive Japanese Subtitle Dock (Sleek Glassmorphic Panel) */}
+          <div className="relative rounded-3xl bg-slate-900/95 border-2 border-slate-800 p-4 sm:p-6 space-y-3.5 shadow-2xl backdrop-blur-md text-center">
             {activeLine ? (
               <>
-                {/* Real-Time Sync Indicator */}
-                <div className="flex items-center justify-between text-[11px] text-slate-500 border-b border-slate-800/80 pb-2">
-                  <span className="flex items-center gap-1.5 text-indigo-400 font-semibold">
+                {/* Real-Time Sync Indicator & Reading Guide Toggles */}
+                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-2.5 text-xs">
+                  {/* Live Speech Indicator */}
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <Radio className="w-3.5 h-3.5 animate-pulse text-rose-500" />
-                    กำลังพูด: บรรทัดที่ {currentLineIndex + 1} ({Math.round(activeLine.start_time_ms / 1000)}s - {Math.round(activeLine.end_time_ms / 1000)}s)
-                  </span>
-                  <button
-                    onClick={() => playNativeAudio(activeLine.raw_text)}
-                    className="text-slate-400 hover:text-indigo-300 flex items-center gap-1 font-medium"
-                    title="อ่านออกเสียงประโยคนี้"
-                  >
-                    <Volume2 className="w-3.5 h-3.5 text-amber-400" />
-                    <span>ฟังประโยค</span>
-                  </button>
+                    <span className="text-slate-400 font-semibold text-[11px]">
+                      บรรทัดที่ {currentLineIndex + 1}
+                    </span>
+                    {activeToken && isPlaying && (
+                      <span className="px-2 py-0.5 rounded-lg bg-indigo-500/20 text-amber-300 font-bold border border-indigo-500/30 text-[11px] flex items-center gap-1 animate-in fade-in">
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
+                        「{activeToken.surface}」{activeToken.thai_meaning ? `(${activeToken.thai_meaning})` : ''}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Reading Guide Toggle Pills: [ 読 ฮิรากานะ ] [ Abc โรมันจิ ] [ ✕ ปิด ] */}
+                  <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+                    <button
+                      onClick={() => setReadingGuideMode('hiragana')}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                        readingGuideMode === 'hiragana'
+                          ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                      title="แสดงฟูริงะนะ / ฮิรากานะกำกับคันจิ"
+                    >
+                      読 ฮิรากานะ
+                    </button>
+                    <button
+                      onClick={() => setReadingGuideMode('romaji')}
+                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                        readingGuideMode === 'romaji'
+                          ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                      title="แสดงโรมันจิกำกับคันจิ"
+                    >
+                      Abc โรมันจิ
+                    </button>
+                    <button
+                      onClick={() => setReadingGuideMode('off')}
+                      className={`px-2 py-1 rounded-lg text-xs font-bold transition-all ${
+                        readingGuideMode === 'off'
+                          ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                          : 'text-slate-400 hover:text-slate-200'
+                      }`}
+                      title="ปิดตัวช่วยอ่าน (คันจิล้วน)"
+                    >
+                      ✕ ปิด
+                    </button>
+                  </div>
                 </div>
 
-                {/* Tokenized Japanese Subtitle (Tappable with instant auto-speak) */}
-                <div className="inline-flex flex-wrap items-end justify-center gap-x-2.5 gap-y-3 leading-relaxed pt-1">
+                {/* Tokenized Japanese Subtitle (Tappable with real-time active speech highlight) */}
+                <div className="inline-flex flex-wrap items-end justify-center gap-x-2 gap-y-3 leading-relaxed pt-1">
                   {activeLine.tokens_json.map((token, idx) => {
                     const status = getWordStatus(token.word_id);
-                    const shouldShowFurigana =
-                      furiganaMode === 'all' ||
-                      (furiganaMode === 'learning_only' && status !== 'known');
+                    const isSpokenNow = isPlaying && idx === activeTokenIndex;
 
                     return (
                       <div
                         key={idx}
                         onClick={() => handleTokenClick(token, activeLine)}
-                        className="group/token cursor-pointer select-none inline-flex flex-col items-center hover:scale-110 active:scale-95 transition-all"
+                        className={`group/token cursor-pointer select-none inline-flex flex-col items-center transition-all ${
+                          isSpokenNow
+                            ? 'bg-indigo-500/30 ring-2 ring-indigo-400 shadow-lg shadow-indigo-500/40 rounded-2xl px-2.5 py-1 scale-105'
+                            : 'hover:scale-105 active:scale-95 px-1 py-0.5'
+                        }`}
                         title="แตะเพื่อฟังเสียงและดูคำแปลทันที"
                       >
-                        {/* Token with Furigana Ruby */}
-                        <ruby className="text-2xl sm:text-3xl font-jp font-extrabold text-white tracking-wide">
+                        {/* Token with Furigana Ruby or Romaji */}
+                        <ruby
+                          className={`text-2xl sm:text-3xl font-jp font-extrabold tracking-wide ${
+                            isSpokenNow
+                              ? 'text-amber-200 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]'
+                              : 'text-white'
+                          }`}
+                        >
                           {token.surface}
-                          {shouldShowFurigana && token.reading_kana !== token.surface && (
-                            <rt className="text-xs sm:text-sm font-jp font-bold text-indigo-300 pb-0.5">
-                              {token.reading_kana}
+                          {readingGuideMode === 'hiragana' &&
+                            token.reading_kana &&
+                            token.reading_kana !== token.surface && (
+                              <rt className="text-xs sm:text-sm font-jp font-bold text-indigo-300 pb-0.5">
+                                {token.reading_kana}
+                              </rt>
+                            )}
+                          {readingGuideMode === 'romaji' && token.romaji && (
+                            <rt className="text-[11px] font-sans font-semibold text-cyan-300 pb-0.5">
+                              {token.romaji}
                             </rt>
                           )}
                         </ruby>
 
+                        {/* Active Speech Dot Indicator */}
+                        {isSpokenNow && (
+                          <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-bounce mt-0.5 shadow-sm shadow-amber-400" />
+                        )}
+
                         {/* Pitch Accent Contour Bar */}
-                        {showPitchAccent && token.pitch_morae && (
+                        {showPitchAccent && token.pitch_morae && !isSpokenNow && (
                           <div className="w-full flex items-center justify-center gap-0.5 h-1 mt-0.5">
                             {token.pitch_morae.map((m, mIdx) => (
                               <div
@@ -395,7 +480,7 @@ export const ImmersionPlayer: React.FC = () => {
                         />
 
                         {/* Micro-gloss Preview */}
-                        {showMicroGloss && status !== 'known' && (
+                        {showMicroGloss && status !== 'known' && !isSpokenNow && (
                           <span className="text-[10px] text-amber-300 font-sans tracking-tight max-w-[90px] truncate text-center mt-0.5 font-medium">
                             {token.thai_meaning || token.contextual_meaning}
                           </span>
@@ -405,8 +490,85 @@ export const ImmersionPlayer: React.FC = () => {
                   })}
                 </div>
 
+                {/* Sleek Floating Compact Definition Card (แตะคำศัพท์แล้วขึ้นแถบกะทัดรัด ไม่บังจอ) */}
+                {selectedToken && (
+                  <div className="relative rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/70 to-slate-900 border-2 border-indigo-500/40 p-3 sm:p-4 shadow-xl backdrop-blur-xl animate-in slide-in-from-bottom-2 duration-150 text-left">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                          onClick={() => playNativeAudio(selectedToken.token.surface)}
+                          className="p-1.5 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 active:scale-95 transition-all flex items-center gap-1 border border-amber-500/40"
+                          title="ฟังเสียงคำนี้"
+                        >
+                          <Volume2 className="w-4 h-4" />
+                          <span className="text-xs font-bold">ฟัง</span>
+                        </button>
+                        <span className="text-xl sm:text-2xl font-jp font-extrabold text-white tracking-wide">
+                          {selectedToken.token.surface}
+                        </span>
+                        <span className="text-sm font-jp text-indigo-300 font-bold">
+                          ({selectedToken.token.reading_kana})
+                        </span>
+                        {selectedToken.token.romaji && (
+                          <span className="text-xs font-mono text-cyan-300">
+                            [{selectedToken.token.romaji}]
+                          </span>
+                        )}
+                        <span className="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-indigo-600 text-white">
+                          {selectedToken.token.jlpt_level}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => setSelectedToken(null)}
+                        className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
+                        title="ปิดการ์ดคำแปล"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    {/* Meaning row & 1-tap Status */}
+                    <div className="mt-2 flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-slate-800/80">
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs">🇹🇭</span>
+                        <span className="text-sm font-bold text-emerald-300">
+                          {selectedToken.token.thai_meaning || selectedToken.token.contextual_meaning}
+                        </span>
+                        {selectedToken.token.part_of_speech && (
+                          <span className="text-xs text-slate-400">
+                            ({selectedToken.token.part_of_speech})
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="flex items-center gap-1.5 text-xs">
+                        <button
+                          onClick={() => setWordStatus(selectedToken.token.word_id, 'known')}
+                          className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                            getWordStatus(selectedToken.token.word_id) === 'known'
+                              ? 'bg-emerald-600 text-white shadow'
+                              : 'bg-slate-800 text-slate-400 hover:text-emerald-300'
+                          }`}
+                        >
+                          ✓ จำได้แล้ว
+                        </button>
+                        <button
+                          onClick={() => setWordStatus(selectedToken.token.word_id, 'learning')}
+                          className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
+                            getWordStatus(selectedToken.token.word_id) === 'learning'
+                              ? 'bg-amber-600 text-white shadow'
+                              : 'bg-slate-800 text-slate-400 hover:text-amber-300'
+                          }`}
+                        >
+                          ⚡ กำลังเรียน
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Natural & Thai Translation & Grammar Summary */}
-                <div className="space-y-1.5 pt-2.5 border-t border-slate-800/80">
+                <div className="space-y-1.5 pt-2 border-t border-slate-800/80">
                   <p className="text-base sm:text-lg text-emerald-300 font-bold flex items-center justify-center gap-2">
                     <span className="text-base">🇹🇭</span>
                     <span>{activeLine.thai_translation || activeLine.natural_translation}</span>
@@ -655,13 +817,7 @@ export const ImmersionPlayer: React.FC = () => {
         </div>
       )}
 
-      {/* Contextual Popup Modal */}
-      {selectedToken && (
-        <ContextualDictionaryModal
-          data={selectedToken}
-          onClose={() => setSelectedToken(null)}
-        />
-      )}
+      {/* Settings Menu Modal */}
     </div>
   );
 };

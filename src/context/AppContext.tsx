@@ -30,6 +30,7 @@ export interface Album {
 }
 
 export type FuriganaMode = 'all' | 'learning_only' | 'off';
+export type ReadingGuideMode = 'hiragana' | 'romaji' | 'off';
 export type AIProvider = 'local' | 'tenixe' | 'kob-ai';
 export type KobAIModel = 'nemotron-3-ultra' | 'minimax-m3.1-flash' | 'deepseek-v4.1-flash';
 
@@ -56,6 +57,8 @@ interface AppContextType {
   // Subtitles & Player UI Preferences
   furiganaMode: FuriganaMode;
   setFuriganaMode: (mode: FuriganaMode) => void;
+  readingGuideMode: ReadingGuideMode;
+  setReadingGuideMode: (mode: ReadingGuideMode) => void;
   showPitchAccent: boolean;
   setShowPitchAccent: (show: boolean) => void;
   showMicroGloss: boolean;
@@ -258,6 +261,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // Subtitle Preferences
   const [furiganaMode, setFuriganaMode] = useState<FuriganaMode>('all');
+  const [readingGuideMode, setReadingGuideModeState] = useState<ReadingGuideMode>(() => {
+    return (localStorage.getItem('umami_reading_guide_mode') as ReadingGuideMode) || 'hiragana';
+  });
+  const setReadingGuideMode = (mode: ReadingGuideMode) => {
+    setReadingGuideModeState(mode);
+    localStorage.setItem('umami_reading_guide_mode', mode);
+  };
   const [showPitchAccent, setShowPitchAccent] = useState<boolean>(true);
   const [showMicroGloss, setShowMicroGloss] = useState<boolean>(true);
 
@@ -476,6 +486,35 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return 'Local Engine: Processed with zero-cost offline Japanese morphological analyzer.';
   };
 
+  // Automatically derive full dictionary from DICTIONARY_WORDS + all video subtitle tokens
+  const dictionaryWords = React.useMemo(() => {
+    const map = new Map<string, DictionaryWordRecord>();
+    DICTIONARY_WORDS.forEach((w) => map.set(w.id, w));
+
+    Object.values(allLines).forEach((lines) => {
+      lines.forEach((line) => {
+        line.tokens_json.forEach((t) => {
+          if (!map.has(t.word_id) && t.surface) {
+            map.set(t.word_id, {
+              id: t.word_id,
+              lemma: t.lemma || t.surface,
+              reading_kana: t.reading_kana || t.surface,
+              romaji: t.romaji || '',
+              pitch_accent: t.pitch_accent || 'LHH',
+              pitch_morae: t.pitch_morae || [],
+              jlpt_level: t.jlpt_level || 'N5',
+              frequency_rank: 50,
+              part_of_speech: t.part_of_speech || 'Word',
+              core_meanings: [t.thai_meaning || t.contextual_meaning || ''],
+            });
+          }
+        });
+      });
+    });
+
+    return Array.from(map.values());
+  }, [allLines]);
+
   return (
     <AppContext.Provider
       value={{
@@ -491,9 +530,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setWordStatus,
         getWordStatus,
         getKnownWordPercentage,
-        dictionaryWords: DICTIONARY_WORDS,
+        dictionaryWords,
         furiganaMode,
         setFuriganaMode,
+        readingGuideMode,
+        setReadingGuideMode,
         showPitchAccent,
         setShowPitchAccent,
         showMicroGloss,

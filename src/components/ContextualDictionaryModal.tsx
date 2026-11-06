@@ -274,7 +274,7 @@ export const ContextualDictionaryModal: React.FC<Props> = ({ data, onClose }) =>
                 <p className="text-slate-200 leading-relaxed">{line.ai_grammar_summary}</p>
               </div>
 
-              {line.ai_detailed_breakdown?.particles?.length > 0 && (
+              {line.ai_detailed_breakdown?.particles && line.ai_detailed_breakdown.particles.length > 0 && (
                 <div className="space-y-2">
                   <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                     Particles:
