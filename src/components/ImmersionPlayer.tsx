@@ -1,0 +1,712 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { useApp, FuriganaMode } from '../context/AppContext';
+import { SubtitleLineRecord, SubtitleTokenJSON } from '../schema/databaseSchema';
+import { ContextualDictionaryModal } from './ContextualDictionaryModal';
+import { audioService } from '../utils/audioService';
+import {
+  Play,
+  Pause,
+  RotateCcw,
+  SkipBack,
+  SkipForward,
+  Bookmark,
+  Volume2,
+  Settings,
+  Sparkles,
+  BookOpen,
+  Link2,
+  CheckCircle2,
+  Sliders,
+  Maximize2,
+  Youtube,
+  Radio,
+} from 'lucide-react';
+
+export const ImmersionPlayer: React.FC = () => {
+  const {
+    activeVideo,
+    activeSubtitleLines,
+    getWordStatus,
+    setWordStatus,
+    mineSentence,
+    minedSentences,
+    selectedToken,
+    setSelectedToken,
+    furiganaMode,
+    setFuriganaMode,
+    showPitchAccent,
+    setShowPitchAccent,
+    showMicroGloss,
+    setShowMicroGloss,
+    addXP,
+    addCustomVideo,
+  } = useApp();
+
+  const [currentLineIndex, setCurrentLineIndex] = useState<number>(0);
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
+  const [playbackSpeed, setPlaybackSpeed] = useState<number>(1.0);
+  const [autoPauseAtEnd, setAutoPauseAtEnd] = useState<boolean>(false);
+  const [loopCurrentLine, setLoopCurrentLine] = useState<boolean>(false);
+  const [showSettingsMenu, setShowSettingsMenu] = useState<boolean>(false);
+  const [customUrlInput, setCustomUrlInput] = useState<string>('');
+  const [showUrlBar, setShowUrlBar] = useState<boolean>(false);
+  const [currentTimeSec, setCurrentTimeSec] = useState<number>(0);
+  const [isPlayerReady, setIsPlayerReady] = useState<boolean>(false);
+
+  const playerRef = useRef<any>(null);
+  const iframeFallbackRef = useRef<HTMLIFrameElement>(null);
+  const activeLineElementRef = useRef<HTMLDivElement | null>(null);
+  const activeLine = activeSubtitleLines[currentLineIndex] || activeSubtitleLines[0];
+
+  // Guaranteed audio playback on all mobile devices
+  const playNativeAudio = (text: string) => {
+    audioService.playJapanese(text, playbackSpeed);
+  };
+
+  // 1. Load YouTube IFrame API script
+  useEffect(() => {
+    if (!(window as any).YT) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag?.parentNode?.insertBefore(tag, firstScriptTag);
+    }
+  }, []);
+
+  // 2. Initialize or Update YouTube Player
+  useEffect(() => {
+    let playerInstance: any = null;
+
+    const initPlayer = () => {
+      const YT = (window as any).YT;
+      if (!YT || !YT.Player) {
+        setTimeout(initPlayer, 200);
+        return;
+      }
+
+      try {
+        // Destroy previous player instance if exists
+        if (playerRef.current && typeof playerRef.current.destroy === 'function') {
+          playerRef.current.destroy();
+        }
+
+        playerInstance = new YT.Player('yt-player-container', {
+          videoId: activeVideo.youtube_id,
+          playerVars: {
+            playsinline: 1,
+            rel: 0,
+            modestbranding: 1,
+            controls: 1,
+            origin: window.location.origin,
+          },
+          events: {
+            onReady: (event: any) => {
+              playerRef.current = event.target;
+              setIsPlayerReady(true);
+            },
+            onStateChange: (event: any) => {
+              // 1 = playing, 2 = paused, 0 = ended
+              if (event.data === 1) {
+                setIsPlaying(true);
+              } else if (event.data === 2 || event.data === 0) {
+                setIsPlaying(false);
+              }
+            },
+          },
+        });
+        playerRef.current = playerInstance;
+      } catch (err) {
+        console.warn('YT.Player init error, using iframe fallback:', err);
+      }
+    };
+
+    initPlayer();
+
+    return () => {
+      if (playerInstance && typeof playerInstance.destroy === 'function') {
+        try {
+          playerInstance.destroy();
+        } catch {}
+      }
+    };
+  }, [activeVideo.youtube_id]);
+
+  // 3. Real-Time Timestamp Synchronization (HayaiLearn Real-time Sync Engine)
+  useEffect(() => {
+    const syncInterval = setInterval(() => {
+      if (playerRef.current && typeof playerRef.current.getCurrentTime === 'function') {
+        try {
+          const sec = playerRef.current.getCurrentTime();
+          if (typeof sec === 'number' && !isNaN(sec)) {
+            setCurrentTimeSec(sec);
+
+            // Match active subtitle line with smooth continuity (HayaiLearn Real-time Flow)
+            const matchedIndex = activeSubtitleLines.findIndex((line, idx) => {
+              const nextLine = activeSubtitleLines[idx + 1];
+              const lineEnd = nextLine
+                ? Math.min(line.end_time_ms / 1000 + 0.5, nextLine.start_time_ms / 1000)
+                : line.end_time_ms / 1000 + 0.8;
+              return sec >= (line.start_time_ms / 1000 - 0.2) && sec <= lineEnd;
+            });
+
+            if (matchedIndex !== -1 && matchedIndex !== currentLineIndex) {
+              setCurrentLineIndex(matchedIndex);
+              addXP('viewing', 2);
+            }
+
+            // Loop sentence logic
+            if (activeLine && loopCurrentLine && sec >= activeLine.end_time_ms / 1000) {
+              playerRef.current.seekTo(activeLine.start_time_ms / 1000, true);
+            }
+
+            // Auto-pause logic
+            if (activeLine && autoPauseAtEnd && sec >= activeLine.end_time_ms / 1000) {
+              playerRef.current.pauseVideo();
+              setIsPlaying(false);
+            }
+          }
+        } catch {}
+      }
+    }, 150);
+
+    return () => clearInterval(syncInterval);
+  }, [activeSubtitleLines, currentLineIndex, activeLine, loopCurrentLine, autoPauseAtEnd]);
+
+  // Auto-scroll the transcript list smoothly to the active line
+  useEffect(() => {
+    if (activeLineElementRef.current) {
+      activeLineElementRef.current.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+    }
+  }, [currentLineIndex]);
+
+  // Jump to specific subtitle line and sync video timestamp
+  const seekToLine = (index: number) => {
+    if (index < 0 || index >= activeSubtitleLines.length) return;
+    setCurrentLineIndex(index);
+    const line = activeSubtitleLines[index];
+    if (line) {
+      const targetSec = line.start_time_ms / 1000;
+      if (playerRef.current && typeof playerRef.current.seekTo === 'function') {
+        playerRef.current.seekTo(targetSec, true);
+        playerRef.current.playVideo();
+      } else if (iframeFallbackRef.current?.contentWindow) {
+        // Fallback postMessage
+        iframeFallbackRef.current.contentWindow.postMessage(
+          JSON.stringify({ event: 'command', func: 'seekTo', args: [targetSec, true] }),
+          '*'
+        );
+      }
+    }
+  };
+
+  // Toggle video play / pause
+  const togglePlayPause = () => {
+    if (playerRef.current) {
+      if (isPlaying) {
+        playerRef.current.pauseVideo();
+        setIsPlaying(false);
+      } else {
+        if (activeLine) {
+          playerRef.current.seekTo(activeLine.start_time_ms / 1000, true);
+        }
+        playerRef.current.playVideo();
+        setIsPlaying(true);
+      }
+    } else {
+      setIsPlaying(!isPlaying);
+    }
+  };
+
+  // Replay current line audio and seek video
+  const replayCurrentLine = () => {
+    if (!activeLine) return;
+    seekToLine(currentLineIndex);
+    playNativeAudio(activeLine.raw_text);
+  };
+
+  // When clicking a token: pause video, auto-speak word, and open dictionary
+  const handleTokenClick = (token: SubtitleTokenJSON, line: SubtitleLineRecord) => {
+    if (playerRef.current && typeof playerRef.current.pauseVideo === 'function') {
+      playerRef.current.pauseVideo();
+      setIsPlaying(false);
+    }
+    // Auto-speak token immediately!
+    playNativeAudio(token.surface);
+    setSelectedToken({ token, line });
+  };
+
+  // Global Keyboard Shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement)?.tagName)) return;
+
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePlayPause();
+      } else if (e.code === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+        e.preventDefault();
+        seekToLine(Math.max(0, currentLineIndex - 1));
+      } else if (e.code === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+        e.preventDefault();
+        seekToLine(Math.min(activeSubtitleLines.length - 1, currentLineIndex + 1));
+      } else if (e.key === 'r' || e.key === 'R') {
+        e.preventDefault();
+        replayCurrentLine();
+      } else if (e.key === 'm' || e.key === 'M') {
+        e.preventDefault();
+        if (activeLine) {
+          mineSentence(activeLine);
+        }
+      } else if (['1', '2', '3'].includes(e.key) && selectedToken) {
+        e.preventDefault();
+        const statusMap = { '1': 'new', '2': 'learning', '3': 'known' } as const;
+        setWordStatus(selectedToken.token.word_id, statusMap[e.key as '1' | '2' | '3']);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeSubtitleLines, currentLineIndex, activeLine, selectedToken, isPlaying]);
+
+  // Custom YouTube URL importer
+  const handleImportCustomYoutube = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!customUrlInput.trim()) return;
+
+    let extractedId = customUrlInput.trim();
+    if (extractedId.includes('v=')) {
+      extractedId = extractedId.split('v=')[1].split('&')[0];
+    } else if (extractedId.includes('youtu.be/')) {
+      extractedId = extractedId.split('youtu.be/')[1].split('?')[0];
+    }
+
+    if (extractedId) {
+      addCustomVideo(
+        {
+          id: `vid-custom-${Date.now()}`,
+          youtube_id: extractedId,
+          title: `Custom Immersion Video (${extractedId})`,
+          japanese_title: 'カスタム没入動画',
+          channel: 'User Imported',
+          category: 'Daily Conversation',
+          difficulty_rating: 3,
+          primary_jlpt: 'N4',
+          jlpt_distribution: { N5: 40, N4: 40, N3: 20, N2: 0, N1: 0 },
+          duration: 180,
+          thumbnail_gradient: 'from-rose-600 via-amber-700 to-slate-900',
+          scene_emoji: '📺',
+          description: 'User-provided Japanese video for custom immersion and sentence mining.',
+        },
+        activeSubtitleLines
+      );
+      setCustomUrlInput('');
+      setShowUrlBar(false);
+    }
+  };
+
+  const isCurrentLineMined = minedSentences.some(
+    (m) => m.subtitle_line_id === activeLine?.id
+  );
+
+  return (
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6 animate-in fade-in duration-200">
+      {/* Quick Custom YouTube Link Bar */}
+      {showUrlBar && (
+        <form
+          onSubmit={handleImportCustomYoutube}
+          className="p-4 rounded-2xl bg-slate-900 border border-indigo-500/40 shadow-xl flex flex-col sm:flex-row items-center gap-3 animate-in fade-in"
+        >
+          <div className="flex items-center gap-2 text-indigo-400 text-xs font-semibold">
+            <Youtube className="w-5 h-5 text-red-500" />
+            <span>วางลิงก์ YouTube ที่ต้องการเรียน:</span>
+          </div>
+          <input
+            type="text"
+            placeholder="e.g. https://www.youtube.com/watch?v=OIBODIPC_8Y"
+            value={customUrlInput}
+            onChange={(e) => setCustomUrlInput(e.target.value)}
+            className="flex-1 w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono"
+          />
+          <button
+            type="submit"
+            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-600/30"
+          >
+            โหลดคลิป
+          </button>
+        </form>
+      )}
+
+      {/* Main Split-Screen Player (HayaiLearn Architecture: Left Video & Subtitles, Right Transcript) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        {/* Left Column (Video & Subtitle Deck) */}
+        <div className="lg:col-span-8 space-y-4">
+          {/* Main Visual Player Frame */}
+          <div className="relative rounded-3xl overflow-hidden bg-black border-2 border-slate-800 shadow-2xl aspect-video flex flex-col justify-between group">
+            {/* Real YouTube API Player Container */}
+            <div id="yt-player-container" className="absolute inset-0 w-full h-full pointer-events-auto" />
+
+            {/* Fallback iframe if API container takes time to mount */}
+            {!isPlayerReady && (
+              <iframe
+                ref={iframeFallbackRef}
+                className="absolute inset-0 w-full h-full border-0 pointer-events-auto"
+                src={`https://www.youtube-nocookie.com/embed/${activeVideo.youtube_id}?enablejsapi=1&origin=${encodeURIComponent(
+                  typeof window !== 'undefined' ? window.location.origin : '*'
+                )}&playsinline=1&rel=0&modestbranding=1&controls=1`}
+                title={activeVideo.title}
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowFullScreen
+              />
+            )}
+
+            {/* Top Video Header Overlay */}
+            <div className="relative z-10 p-3 sm:p-4 flex items-center justify-between bg-gradient-to-b from-black/85 via-black/40 to-transparent pointer-events-none">
+              <div className="flex items-center gap-2 pointer-events-auto">
+                <span className="px-2.5 py-1 rounded-xl text-xs font-extrabold bg-indigo-600/90 text-white border border-indigo-400/40 backdrop-blur-md">
+                  {activeVideo.primary_jlpt}
+                </span>
+                <span className="text-xs sm:text-sm text-slate-100 font-bold truncate max-w-[200px] sm:max-w-md drop-shadow">
+                  {activeVideo.title}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 pointer-events-auto">
+                <button
+                  onClick={() => setShowUrlBar(!showUrlBar)}
+                  className="p-2 rounded-xl bg-slate-900/80 text-slate-300 hover:text-white border border-slate-800 backdrop-blur-md"
+                  title="Load Custom YouTube Video"
+                >
+                  <Link2 className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setShowSettingsMenu(!showSettingsMenu)}
+                  className="p-2 rounded-xl bg-slate-900/80 text-slate-300 hover:text-white border border-slate-800 backdrop-blur-md"
+                  title="Subtitle Preferences"
+                >
+                  <Settings className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            {/* Subtitle Preferences Flyout */}
+            {showSettingsMenu && (
+              <div className="absolute top-14 right-4 z-20 w-64 rounded-2xl bg-slate-900/95 border border-slate-800 p-4 shadow-2xl text-xs space-y-3 backdrop-blur-md animate-in fade-in">
+                <div className="font-bold text-slate-200 border-b border-slate-800 pb-2">
+                  ตัวเลือกการแสดงซับไตเติล
+                </div>
+                <div className="space-y-1.5">
+                  <span className="text-slate-400 block font-medium">คำอ่านฟูริงะนะ (Furigana):</span>
+                  <div className="grid grid-cols-3 gap-1">
+                    {(['all', 'learning_only', 'off'] as FuriganaMode[]).map((mode) => (
+                      <button
+                        key={mode}
+                        onClick={() => setFuriganaMode(mode)}
+                        className={`py-1.5 rounded-lg text-[11px] capitalize font-medium ${
+                          furiganaMode === mode
+                            ? 'bg-indigo-600 text-white font-bold'
+                            : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                        }`}
+                      >
+                        {mode.replace('_', ' ')}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-1">
+                  <span className="text-slate-300 font-medium">กราฟเสียง Pitch Accent:</span>
+                  <input
+                    type="checkbox"
+                    checked={showPitchAccent}
+                    onChange={(e) => setShowPitchAccent(e.target.checked)}
+                    className="accent-indigo-500 rounded"
+                  />
+                </div>
+
+                <div className="flex items-center justify-between">
+                  <span className="text-slate-300 font-medium">ความหมายใต้คำ (Microgloss):</span>
+                  <input
+                    type="checkbox"
+                    checked={showMicroGloss}
+                    onChange={(e) => setShowMicroGloss(e.target.checked)}
+                    className="accent-indigo-500 rounded"
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Interactive Japanese Subtitle Dock (Sleek HayaiLearn Glassmorphic Floating Panel) */}
+          <div className="relative rounded-3xl bg-slate-900/95 border-2 border-slate-800 p-5 sm:p-6 space-y-3 shadow-2xl backdrop-blur-md text-center">
+            {activeLine ? (
+              <>
+                {/* Real-Time Sync Indicator */}
+                <div className="flex items-center justify-between text-[11px] text-slate-500 border-b border-slate-800/80 pb-2">
+                  <span className="flex items-center gap-1.5 text-indigo-400 font-semibold">
+                    <Radio className="w-3.5 h-3.5 animate-pulse text-rose-500" />
+                    กำลังพูด: บรรทัดที่ {currentLineIndex + 1} ({Math.round(activeLine.start_time_ms / 1000)}s - {Math.round(activeLine.end_time_ms / 1000)}s)
+                  </span>
+                  <button
+                    onClick={() => playNativeAudio(activeLine.raw_text)}
+                    className="text-slate-400 hover:text-indigo-300 flex items-center gap-1 font-medium"
+                    title="อ่านออกเสียงประโยคนี้"
+                  >
+                    <Volume2 className="w-3.5 h-3.5 text-amber-400" />
+                    <span>ฟังประโยค</span>
+                  </button>
+                </div>
+
+                {/* Tokenized Japanese Subtitle (Tappable with instant auto-speak) */}
+                <div className="inline-flex flex-wrap items-end justify-center gap-x-2.5 gap-y-3 leading-relaxed pt-1">
+                  {activeLine.tokens_json.map((token, idx) => {
+                    const status = getWordStatus(token.word_id);
+                    const shouldShowFurigana =
+                      furiganaMode === 'all' ||
+                      (furiganaMode === 'learning_only' && status !== 'known');
+
+                    return (
+                      <div
+                        key={idx}
+                        onClick={() => handleTokenClick(token, activeLine)}
+                        className="group/token cursor-pointer select-none inline-flex flex-col items-center hover:scale-110 active:scale-95 transition-all"
+                        title="แตะเพื่อฟังเสียงและดูคำแปลทันที"
+                      >
+                        {/* Token with Furigana Ruby */}
+                        <ruby className="text-2xl sm:text-3xl font-jp font-extrabold text-white tracking-wide">
+                          {token.surface}
+                          {shouldShowFurigana && token.reading_kana !== token.surface && (
+                            <rt className="text-xs sm:text-sm font-jp font-bold text-indigo-300 pb-0.5">
+                              {token.reading_kana}
+                            </rt>
+                          )}
+                        </ruby>
+
+                        {/* Pitch Accent Contour Bar */}
+                        {showPitchAccent && token.pitch_morae && (
+                          <div className="w-full flex items-center justify-center gap-0.5 h-1 mt-0.5">
+                            {token.pitch_morae.map((m, mIdx) => (
+                              <div
+                                key={mIdx}
+                                className={`flex-1 h-0.5 rounded-full ${
+                                  m.high ? 'bg-amber-400' : 'bg-slate-700'
+                                }`}
+                              />
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Status Color-Coded Underline */}
+                        <div
+                          className={`w-full h-1 rounded-full mt-1 transition-colors ${
+                            status === 'known'
+                              ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50'
+                              : status === 'learning'
+                              ? 'bg-amber-500 shadow-sm shadow-amber-500/50'
+                              : 'border-b-2 border-dotted border-slate-600'
+                          }`}
+                        />
+
+                        {/* Micro-gloss Preview */}
+                        {showMicroGloss && status !== 'known' && (
+                          <span className="text-[10px] text-amber-300 font-sans tracking-tight max-w-[90px] truncate text-center mt-0.5 font-medium">
+                            {token.thai_meaning || token.contextual_meaning}
+                          </span>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Natural & Thai Translation & Grammar Summary */}
+                <div className="space-y-1.5 pt-2.5 border-t border-slate-800/80">
+                  <p className="text-base sm:text-lg text-emerald-300 font-bold flex items-center justify-center gap-2">
+                    <span className="text-base">🇹🇭</span>
+                    <span>{activeLine.thai_translation || activeLine.natural_translation}</span>
+                  </p>
+                  {activeLine.thai_translation && activeLine.natural_translation && (
+                    <p className="text-xs text-slate-400 font-medium">
+                      {activeLine.natural_translation}
+                    </p>
+                  )}
+                  {activeLine.ai_grammar_summary && (
+                    <p className="text-xs text-amber-300/90 italic line-clamp-1">
+                      💡 {activeLine.ai_grammar_summary}
+                    </p>
+                  )}
+                </div>
+              </>
+            ) : (
+              <p className="text-sm text-slate-400">กำลังโหลดข้อมูลซับไตเติล...</p>
+            )}
+          </div>
+
+          {/* Control Dock (Playback & Keyboard Shortcuts) */}
+          <div className="rounded-3xl bg-slate-900/90 border border-slate-800 p-4 flex flex-wrap items-center justify-between gap-3 shadow-xl">
+            {/* Playback Transport Buttons */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => seekToLine(Math.max(0, currentLineIndex - 1))}
+                className="p-2.5 rounded-2xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+                title="ย้อนกลับ 1 ประโยค (A หรือ ลูกศรซ้าย)"
+              >
+                <SkipBack className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={togglePlayPause}
+                className="px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition-all"
+                title="เล่น / หยุดชั่วคราว (Space)"
+              >
+                {isPlaying ? <Pause className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 fill-white" />}
+                <span className="text-xs sm:text-sm">{isPlaying ? 'พัก' : 'เล่น'}</span>
+              </button>
+
+              <button
+                onClick={() => seekToLine(Math.min(activeSubtitleLines.length - 1, currentLineIndex + 1))}
+                className="p-2.5 rounded-2xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+                title="ประโยคถัดไป (D หรือ ลูกศรขวา)"
+              >
+                <SkipForward className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={replayCurrentLine}
+                className="p-2.5 rounded-2xl bg-slate-800 text-slate-200 hover:text-white hover:bg-slate-700 transition-colors ml-1"
+                title="เล่นเสียงประโยคนี้ซ้ำ (R)"
+              >
+                <Volume2 className="w-4 h-4 text-amber-400" />
+              </button>
+            </div>
+
+            {/* Loop & Auto-Pause Toggles */}
+            <div className="flex items-center gap-2 text-xs">
+              <button
+                onClick={() => setLoopCurrentLine(!loopCurrentLine)}
+                className={`px-3 py-2 rounded-xl border flex items-center gap-1.5 font-semibold transition-all ${
+                  loopCurrentLine
+                    ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300'
+                    : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'
+                }`}
+                title="วนลูปประโยคนี้ซ้ำๆ (R)"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>วนซ้ำ (R)</span>
+              </button>
+
+              <button
+                onClick={() => setAutoPauseAtEnd(!autoPauseAtEnd)}
+                className={`px-3 py-2 rounded-xl border flex items-center gap-1.5 font-semibold transition-all ${
+                  autoPauseAtEnd
+                    ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
+                    : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'
+                }`}
+                title="หยุดอัตโนมัติเมื่อจบบรรทัด"
+              >
+                <span>หยุดท้ายประโยค</span>
+              </button>
+
+              {/* Speed Dropdown */}
+              <select
+                value={playbackSpeed}
+                onChange={(e) => {
+                  const spd = parseFloat(e.target.value);
+                  setPlaybackSpeed(spd);
+                  if (playerRef.current && typeof playerRef.current.setPlaybackRate === 'function') {
+                    playerRef.current.setPlaybackRate(spd);
+                  }
+                }}
+                className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold focus:outline-none"
+              >
+                <option value={0.75}>0.75x</option>
+                <option value={1.0}>1.0x</option>
+                <option value={1.25}>1.25x</option>
+              </select>
+            </div>
+
+            {/* Mine Sentence Button */}
+            <div>
+              <button
+                onClick={() => mineSentence(activeLine)}
+                disabled={isCurrentLineMined}
+                className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold shadow-md transition-all active:scale-95 ${
+                  isCurrentLineMined
+                    ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30'
+                    : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/30'
+                }`}
+                title="ขุดประโยคนี้เข้า The Dojo (M)"
+              >
+                <Bookmark className="w-3.5 h-3.5" />
+                <span>{isCurrentLineMined ? 'ขุดแล้ว (Mined)' : 'ขุดประโยค (M)'}</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Column (Synchronized Transcript & Line Navigator) */}
+        <div className="lg:col-span-4 rounded-3xl bg-slate-900/90 border border-slate-800 p-5 space-y-3 max-h-[640px] flex flex-col shadow-2xl">
+          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+            <span className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+              <BookOpen className="w-4 h-4 text-indigo-400" />
+              บทบรรยายแบบซิงค์สด (Transcript)
+            </span>
+            <span className="text-xs text-indigo-400 font-mono font-bold">
+              {currentLineIndex + 1} / {activeSubtitleLines.length}
+            </span>
+          </div>
+
+            {/* Lines List */}
+            <div className="overflow-y-auto space-y-2.5 flex-1 pr-1">
+              {activeSubtitleLines.map((line, idx) => {
+                const isActive = idx === currentLineIndex;
+                const isMined = minedSentences.some(
+                  (m) => m.subtitle_line_id === line.id
+                );
+
+                return (
+                  <div
+                    key={line.id}
+                    ref={isActive ? activeLineElementRef : null}
+                    onClick={() => seekToLine(idx)}
+                    className={`p-3.5 rounded-2xl cursor-pointer transition-all border ${
+                      isActive
+                        ? 'bg-indigo-600/25 border-indigo-500 text-slate-100 shadow-lg shadow-indigo-600/20 scale-[1.01] ring-1 ring-indigo-400/40'
+                        : 'bg-slate-950/40 border-slate-800/80 text-slate-400 hover:bg-slate-800/60 hover:text-slate-200'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between text-[11px] font-mono text-slate-500 mb-1">
+                      <span className={`font-semibold flex items-center gap-1.5 ${isActive ? 'text-indigo-300' : 'text-slate-400'}`}>
+                        {isActive && <Radio className="w-3 h-3 text-rose-500 animate-pulse" />}
+                        ประโยคที่ {idx + 1} ({Math.round(line.start_time_ms / 1000)}s)
+                      </span>
+                      {isMined && (
+                        <span className="text-emerald-400 flex items-center gap-0.5 font-bold">
+                          <Bookmark className="w-3 h-3 fill-emerald-400" />
+                          ขุดแล้ว
+                        </span>
+                      )}
+                    </div>
+                    <p className="font-jp text-sm font-semibold line-clamp-2 text-white">
+                      {line.raw_text}
+                    </p>
+                    <p className="text-xs text-emerald-400/90 mt-1 line-clamp-2 font-medium">
+                      🇹🇭 {line.thai_translation || line.natural_translation}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+        </div>
+      </div>
+
+      {/* Contextual Popup Modal */}
+      {selectedToken && (
+        <ContextualDictionaryModal
+          data={selectedToken}
+          onClose={() => setSelectedToken(null)}
+        />
+      )}
+    </div>
+  );
+};
