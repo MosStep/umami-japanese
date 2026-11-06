@@ -1,19 +1,13 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { VideoRecord, VideoCategory } from '../schema/databaseSchema';
-import { analyzeJapaneseLineLocally } from '../schema/llmSubtitlePrompt';
 import {
   Play,
   Sparkles,
-  Plus,
   FolderHeart,
-  Filter,
   CheckCircle2,
   Clock,
   BookOpen,
-  X,
   Layers,
-  Youtube,
   Zap,
 } from 'lucide-react';
 
@@ -26,30 +20,23 @@ export const VideoFeed: React.FC = () => {
     albums,
     createAlbum,
     addVideoToAlbum,
-    addCustomVideo,
   } = useApp();
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
+  const [selectedJLPT, setSelectedJLPT] = useState<string>('All');
   const [selectedAlbum, setSelectedAlbum] = useState<string>('All');
   const [comprehensibleOnly, setComprehensibleOnly] = useState<boolean>(false);
-  const [showImportModal, setShowImportModal] = useState<boolean>(false);
   const [showNewAlbumModal, setShowNewAlbumModal] = useState<boolean>(false);
   const [newAlbumName, setNewAlbumName] = useState('');
   const [newAlbumEmoji, setNewAlbumEmoji] = useState('📁');
 
-  // Custom Video Import Form
-  const [importTitle, setImportTitle] = useState('');
-  const [importUrl, setImportUrl] = useState('');
-  const [importCategory, setImportCategory] = useState<VideoCategory>('Daily Conversation');
-  const [importTranscript, setImportTranscript] = useState(
-    '今日は友達と一緒に秋葉原に行きました。\n美味しいラーメンを食べて、ゲームを買ったよ！'
-  );
-
   const categories = ['All', 'Anime', 'Vlogs', 'Daily Conversation', 'News'];
+  const jlptLevels = ['All', 'N5', 'N4', 'N3', 'N2', 'N1'];
 
-  // Filter videos based on category, album, and comprehensible threshold
+  // Filter videos based on category, JLPT level, album, and comprehensible threshold
   const filteredVideos = videos.filter((v) => {
     if (selectedCategory !== 'All' && v.category !== selectedCategory) return false;
+    if (selectedJLPT !== 'All' && v.primary_jlpt !== selectedJLPT) return false;
     if (selectedAlbum !== 'All') {
       const alb = albums.find((a) => a.id === selectedAlbum);
       if (alb && !alb.video_ids.includes(v.id)) return false;
@@ -64,57 +51,6 @@ export const VideoFeed: React.FC = () => {
   const handleSelectVideo = (videoId: string) => {
     setActiveVideoId(videoId);
     setActiveTab('player');
-  };
-
-  const handleImportSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!importTitle.trim() || !importTranscript.trim()) return;
-
-    let youtubeId = 'fCweUa12bPE'; // fallback
-    if (importUrl.includes('v=')) {
-      youtubeId = importUrl.split('v=')[1].split('&')[0];
-    } else if (importUrl.includes('youtu.be/')) {
-      youtubeId = importUrl.split('youtu.be/')[1].split('?')[0];
-    } else if (importUrl.trim()) {
-      youtubeId = importUrl.trim();
-    }
-
-    const videoId = `custom-vid-${Date.now()}`;
-    const linesRaw = importTranscript.split('\n').filter((l) => l.trim().length > 0);
-
-    const generatedLines = linesRaw.map((lineText, idx) => {
-      const start = idx * 4500;
-      const end = (idx + 1) * 4500;
-      return analyzeJapaneseLineLocally(
-        lineText,
-        `คำแปลบรรทัดที่ ${idx + 1}`,
-        videoId,
-        idx,
-        start,
-        end
-      );
-    });
-
-    const newVideo: VideoRecord = {
-      id: videoId,
-      youtube_id: youtubeId,
-      title: importTitle,
-      japanese_title: importTitle,
-      channel: 'User Imported',
-      category: importCategory,
-      difficulty_rating: 3,
-      primary_jlpt: 'N4',
-      jlpt_distribution: { N5: 50, N4: 30, N3: 20, N2: 0, N1: 0 },
-      duration: linesRaw.length * 5,
-      thumbnail_gradient: 'from-purple-600 via-indigo-700 to-slate-900',
-      scene_emoji: '🎬',
-      description: 'นำเข้าวิดีโอโดยผู้ใช้ พร้อมซับไตเติลและการวิเคราะห์รูปคำภาษาญี่ปุ่น',
-    };
-
-    addCustomVideo(newVideo, generatedLines);
-    setShowImportModal(false);
-    setImportTitle('');
-    setImportUrl('');
   };
 
   return (
@@ -132,19 +68,12 @@ export const VideoFeed: React.FC = () => {
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
               แตะคำศัพท์ในซับไตเติลเพื่อดูความหมายทันที ขุดประโยค (Mine Sentence) เข้าสู่ Spaced Repetition (SRS)
-              และฝึก Shadowing วัดสำเนียงแบบเรียลไทม์
+              และฝึก Shadowing วัดสำเนียงแบบเรียลไทม์ ครอบคลุมตั้งแต่ N5 จนถึง N1
             </p>
           </div>
 
           {/* Quick Actions */}
           <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={() => setShowImportModal(true)}
-              className="px-5 py-3 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs sm:text-sm font-bold shadow-lg shadow-indigo-600/30 transition-all flex items-center gap-2"
-            >
-              <Youtube className="w-4 h-4 text-red-300" />
-              <span>+ นำเข้า YouTube URL</span>
-            </button>
             <button
               onClick={() => setComprehensibleOnly(!comprehensibleOnly)}
               className={`px-4 py-3 rounded-2xl border text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${
@@ -160,59 +89,78 @@ export const VideoFeed: React.FC = () => {
         </div>
       </div>
 
-      {/* Categories & Filter Lanes */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800/80 pb-4">
-        {/* Category Tabs */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 w-full sm:w-auto">
-          {categories.map((cat) => (
+      {/* Categories & JLPT Level Filter Lanes */}
+      <div className="space-y-3 border-b border-slate-800/80 pb-4">
+        {/* JLPT Level Quick Filter */}
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+          <span className="text-xs font-bold text-slate-400 mr-2 shrink-0">ระดับ JLPT:</span>
+          {jlptLevels.map((lvl) => (
             <button
-              key={cat}
-              onClick={() => setSelectedCategory(cat)}
-              className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
-                selectedCategory === cat
-                  ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                  : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+              key={lvl}
+              onClick={() => setSelectedJLPT(lvl)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
+                selectedJLPT === lvl
+                  ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
+                  : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200'
               }`}
             >
-              {cat === 'All'
-                ? 'ทั้งหมด'
-                : cat === 'Daily Conversation'
-                ? 'บทสนทนาประจำวัน'
-                : cat}
+              {lvl === 'All' ? 'ทุกระดับ (All)' : lvl}
             </button>
           ))}
         </div>
 
-        {/* Albums Filter */}
-        <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto text-xs">
-          <span className="text-slate-500 flex items-center gap-1 font-medium">
-            <FolderHeart className="w-3.5 h-3.5 text-rose-400" />
-            อัลบั้ม:
-          </span>
-          <button
-            onClick={() => setSelectedAlbum('All')}
-            className={`px-3 py-1.5 rounded-lg font-semibold transition-colors ${
-              selectedAlbum === 'All'
-                ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/40'
-                : 'text-slate-400 hover:bg-slate-800'
-            }`}
-          >
-            ทั้งหมด
-          </button>
-          {albums.map((alb) => (
+        {/* Category Tabs & Albums */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-1">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 w-full sm:w-auto">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
+                  selectedCategory === cat
+                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                    : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
+                }`}
+              >
+                {cat === 'All'
+                  ? 'ทุกประเภท'
+                  : cat === 'Daily Conversation'
+                  ? 'บทสนทนาประจำวัน'
+                  : cat}
+              </button>
+            ))}
+          </div>
+
+          {/* Albums Filter */}
+          <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto text-xs">
+            <span className="text-slate-500 flex items-center gap-1 font-medium">
+              <FolderHeart className="w-3.5 h-3.5 text-rose-400" />
+              อัลบั้ม:
+            </span>
             <button
-              key={alb.id}
-              onClick={() => setSelectedAlbum(alb.id)}
-              className={`px-3 py-1.5 rounded-lg font-semibold flex items-center gap-1 transition-colors ${
-                selectedAlbum === alb.id
+              onClick={() => setSelectedAlbum('All')}
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-colors ${
+                selectedAlbum === 'All'
                   ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/40'
                   : 'text-slate-400 hover:bg-slate-800'
               }`}
             >
-              <span>{alb.emoji}</span>
-              <span>{alb.name}</span>
+              ทั้งหมด
             </button>
-          ))}
+            {albums.map((alb) => (
+              <button
+                key={alb.id}
+                onClick={() => setSelectedAlbum(alb.id)}
+                className={`px-3 py-1.5 rounded-lg font-semibold transition-colors ${
+                  selectedAlbum === alb.id
+                    ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/40'
+                    : 'text-slate-400 hover:bg-slate-800'
+                }`}
+              >
+                {alb.emoji} {alb.name}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -319,79 +267,6 @@ export const VideoFeed: React.FC = () => {
         })}
       </div>
 
-      {/* Import Modal */}
-      {showImportModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in">
-          <div className="w-full max-w-lg rounded-3xl bg-slate-900 border-2 border-indigo-500/30 p-6 space-y-4 shadow-2xl">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-              <h3 className="font-bold text-lg text-white flex items-center gap-2">
-                <Youtube className="w-5 h-5 text-red-500" />
-                นำเข้าวิดีโอ YouTube ของคุณ
-              </h3>
-              <button
-                onClick={() => setShowImportModal(false)}
-                className="text-slate-400 hover:text-white"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <form onSubmit={handleImportSubmit} className="space-y-3">
-              <div>
-                <label className="text-xs text-slate-400 font-semibold block mb-1">
-                  ชื่อวิดีโอ (Title):
-                </label>
-                <input
-                  type="text"
-                  required
-                  placeholder="เช่น ฝึกพูดภาษาญี่ปุ่นในชีวิตประจำวัน"
-                  value={importTitle}
-                  onChange={(e) => setImportTitle(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-slate-400 font-semibold block mb-1">
-                  ลิงก์ YouTube หรือ Video ID:
-                </label>
-                <input
-                  type="text"
-                  placeholder="เช่น https://www.youtube.com/watch?v=fCweUa12bPE"
-                  value={importUrl}
-                  onChange={(e) => setImportUrl(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono"
-                />
-              </div>
-              <div>
-                <label className="text-xs text-slate-400 font-semibold block mb-1">
-                  บทพูดภาษาญี่ปุ่น (ประโยคละ 1 บรรทัด):
-                </label>
-                <textarea
-                  rows={4}
-                  required
-                  value={importTranscript}
-                  onChange={(e) => setImportTranscript(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs font-jp text-white focus:outline-none focus:border-indigo-500"
-                />
-              </div>
-              <div className="pt-2 flex justify-end gap-2">
-                <button
-                  type="button"
-                  onClick={() => setShowImportModal(false)}
-                  className="px-4 py-2.5 rounded-xl bg-slate-800 text-xs text-slate-300 font-semibold"
-                >
-                  ยกเลิก
-                </button>
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-lg shadow-indigo-600/30"
-                >
-                  นำเข้าและเริ่มเรียน
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

@@ -14,12 +14,11 @@ import {
   Settings,
   Sparkles,
   BookOpen,
-  Link2,
   CheckCircle2,
   Sliders,
   Maximize2,
-  Youtube,
   Radio,
+  X,
 } from 'lucide-react';
 
 export const ImmersionPlayer: React.FC = () => {
@@ -39,7 +38,6 @@ export const ImmersionPlayer: React.FC = () => {
     showMicroGloss,
     setShowMicroGloss,
     addXP,
-    addCustomVideo,
   } = useApp();
 
   const [currentLineIndex, setCurrentLineIndex] = useState<number>(0);
@@ -48,14 +46,13 @@ export const ImmersionPlayer: React.FC = () => {
   const [autoPauseAtEnd, setAutoPauseAtEnd] = useState<boolean>(false);
   const [loopCurrentLine, setLoopCurrentLine] = useState<boolean>(false);
   const [showSettingsMenu, setShowSettingsMenu] = useState<boolean>(false);
-  const [customUrlInput, setCustomUrlInput] = useState<string>('');
-  const [showUrlBar, setShowUrlBar] = useState<boolean>(false);
   const [currentTimeSec, setCurrentTimeSec] = useState<number>(0);
   const [isPlayerReady, setIsPlayerReady] = useState<boolean>(false);
 
   const playerRef = useRef<any>(null);
   const iframeFallbackRef = useRef<HTMLIFrameElement>(null);
   const activeLineElementRef = useRef<HTMLDivElement | null>(null);
+  const transcriptContainerRef = useRef<HTMLDivElement | null>(null);
   const activeLine = activeSubtitleLines[currentLineIndex] || activeSubtitleLines[0];
 
   // Guaranteed audio playback on all mobile devices
@@ -172,12 +169,17 @@ export const ImmersionPlayer: React.FC = () => {
     return () => clearInterval(syncInterval);
   }, [activeSubtitleLines, currentLineIndex, activeLine, loopCurrentLine, autoPauseAtEnd]);
 
-  // Auto-scroll the transcript list smoothly to the active line
+  // Auto-scroll inside transcript container ONLY (NEVER pull or scroll the entire window down!)
   useEffect(() => {
-    if (activeLineElementRef.current) {
-      activeLineElementRef.current.scrollIntoView({
+    const container = transcriptContainerRef.current;
+    const element = activeLineElementRef.current;
+    if (container && element) {
+      const elementTop = element.offsetTop;
+      const elementHeight = element.offsetHeight;
+      const containerHeight = container.clientHeight;
+      container.scrollTo({
+        top: Math.max(0, elementTop - containerHeight / 2 + elementHeight / 2),
         behavior: 'smooth',
-        block: 'nearest',
       });
     }
   }, [currentLineIndex]);
@@ -271,74 +273,12 @@ export const ImmersionPlayer: React.FC = () => {
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [activeSubtitleLines, currentLineIndex, activeLine, selectedToken, isPlaying]);
 
-  // Custom YouTube URL importer
-  const handleImportCustomYoutube = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!customUrlInput.trim()) return;
-
-    let extractedId = customUrlInput.trim();
-    if (extractedId.includes('v=')) {
-      extractedId = extractedId.split('v=')[1].split('&')[0];
-    } else if (extractedId.includes('youtu.be/')) {
-      extractedId = extractedId.split('youtu.be/')[1].split('?')[0];
-    }
-
-    if (extractedId) {
-      addCustomVideo(
-        {
-          id: `vid-custom-${Date.now()}`,
-          youtube_id: extractedId,
-          title: `Custom Immersion Video (${extractedId})`,
-          japanese_title: 'カスタム没入動画',
-          channel: 'User Imported',
-          category: 'Daily Conversation',
-          difficulty_rating: 3,
-          primary_jlpt: 'N4',
-          jlpt_distribution: { N5: 40, N4: 40, N3: 20, N2: 0, N1: 0 },
-          duration: 180,
-          thumbnail_gradient: 'from-rose-600 via-amber-700 to-slate-900',
-          scene_emoji: '📺',
-          description: 'User-provided Japanese video for custom immersion and sentence mining.',
-        },
-        activeSubtitleLines
-      );
-      setCustomUrlInput('');
-      setShowUrlBar(false);
-    }
-  };
-
   const isCurrentLineMined = minedSentences.some(
     (m) => m.subtitle_line_id === activeLine?.id
   );
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6 animate-in fade-in duration-200">
-      {/* Quick Custom YouTube Link Bar */}
-      {showUrlBar && (
-        <form
-          onSubmit={handleImportCustomYoutube}
-          className="p-4 rounded-2xl bg-slate-900 border border-indigo-500/40 shadow-xl flex flex-col sm:flex-row items-center gap-3 animate-in fade-in"
-        >
-          <div className="flex items-center gap-2 text-indigo-400 text-xs font-semibold">
-            <Youtube className="w-5 h-5 text-red-500" />
-            <span>วางลิงก์ YouTube ที่ต้องการเรียน:</span>
-          </div>
-          <input
-            type="text"
-            placeholder="e.g. https://www.youtube.com/watch?v=OIBODIPC_8Y"
-            value={customUrlInput}
-            onChange={(e) => setCustomUrlInput(e.target.value)}
-            className="flex-1 w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-white focus:outline-none focus:border-indigo-500 font-mono"
-          />
-          <button
-            type="submit"
-            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold shadow-md shadow-indigo-600/30"
-          >
-            โหลดคลิป
-          </button>
-        </form>
-      )}
-
       {/* Main Split-Screen Player (HayaiLearn Architecture: Left Video & Subtitles, Right Transcript) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
         {/* Left Column (Video & Subtitle Deck) */}
@@ -374,68 +314,14 @@ export const ImmersionPlayer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2 pointer-events-auto">
                 <button
-                  onClick={() => setShowUrlBar(!showUrlBar)}
-                  className="p-2 rounded-xl bg-slate-900/80 text-slate-300 hover:text-white border border-slate-800 backdrop-blur-md"
-                  title="Load Custom YouTube Video"
-                >
-                  <Link2 className="w-4 h-4" />
-                </button>
-                <button
-                  onClick={() => setShowSettingsMenu(!showSettingsMenu)}
-                  className="p-2 rounded-xl bg-slate-900/80 text-slate-300 hover:text-white border border-slate-800 backdrop-blur-md"
-                  title="Subtitle Preferences"
+                  onClick={() => setShowSettingsMenu(true)}
+                  className="p-2 rounded-xl bg-slate-900/80 text-slate-300 hover:text-white border border-slate-800 backdrop-blur-md transition-colors"
+                  title="ตั้งค่าการแสดงซับไตเติล"
                 >
                   <Settings className="w-4 h-4" />
                 </button>
               </div>
             </div>
-
-            {/* Subtitle Preferences Flyout */}
-            {showSettingsMenu && (
-              <div className="absolute top-14 right-4 z-20 w-64 rounded-2xl bg-slate-900/95 border border-slate-800 p-4 shadow-2xl text-xs space-y-3 backdrop-blur-md animate-in fade-in">
-                <div className="font-bold text-slate-200 border-b border-slate-800 pb-2">
-                  ตัวเลือกการแสดงซับไตเติล
-                </div>
-                <div className="space-y-1.5">
-                  <span className="text-slate-400 block font-medium">คำอ่านฟูริงะนะ (Furigana):</span>
-                  <div className="grid grid-cols-3 gap-1">
-                    {(['all', 'learning_only', 'off'] as FuriganaMode[]).map((mode) => (
-                      <button
-                        key={mode}
-                        onClick={() => setFuriganaMode(mode)}
-                        className={`py-1.5 rounded-lg text-[11px] capitalize font-medium ${
-                          furiganaMode === mode
-                            ? 'bg-indigo-600 text-white font-bold'
-                            : 'bg-slate-800 text-slate-400 hover:text-slate-200'
-                        }`}
-                      >
-                        {mode.replace('_', ' ')}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between pt-1">
-                  <span className="text-slate-300 font-medium">กราฟเสียง Pitch Accent:</span>
-                  <input
-                    type="checkbox"
-                    checked={showPitchAccent}
-                    onChange={(e) => setShowPitchAccent(e.target.checked)}
-                    className="accent-indigo-500 rounded"
-                  />
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span className="text-slate-300 font-medium">ความหมายใต้คำ (Microgloss):</span>
-                  <input
-                    type="checkbox"
-                    checked={showMicroGloss}
-                    onChange={(e) => setShowMicroGloss(e.target.checked)}
-                    className="accent-indigo-500 rounded"
-                  />
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Interactive Japanese Subtitle Dock (Sleek HayaiLearn Glassmorphic Floating Panel) */}
@@ -657,7 +543,7 @@ export const ImmersionPlayer: React.FC = () => {
           </div>
 
             {/* Lines List */}
-            <div className="overflow-y-auto space-y-2.5 flex-1 pr-1">
+            <div ref={transcriptContainerRef} className="overflow-y-auto space-y-2.5 flex-1 pr-1">
               {activeSubtitleLines.map((line, idx) => {
                 const isActive = idx === currentLineIndex;
                 const isMined = minedSentences.some(
@@ -699,6 +585,75 @@ export const ImmersionPlayer: React.FC = () => {
             </div>
         </div>
       </div>
+
+      {/* Subtitle Preferences Modal (Clean, Centered, Never Clipped) */}
+      {showSettingsMenu && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
+          <div className="w-full max-w-sm rounded-3xl bg-slate-900 border-2 border-indigo-500/40 p-5 shadow-2xl space-y-4 animate-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2 text-white font-bold text-sm">
+                <Settings className="w-4 h-4 text-indigo-400" />
+                <span>ตั้งค่าการแสดงซับไตเติล</span>
+              </div>
+              <button
+                onClick={() => setShowSettingsMenu(false)}
+                className="p-1 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Furigana Mode */}
+            <div className="space-y-1.5">
+              <span className="text-slate-300 block text-xs font-semibold">คำอ่านฟูริงะนะ (Furigana):</span>
+              <div className="grid grid-cols-3 gap-1.5">
+                {(['all', 'learning_only', 'off'] as FuriganaMode[]).map((mode) => (
+                  <button
+                    key={mode}
+                    onClick={() => setFuriganaMode(mode)}
+                    className={`py-2 rounded-xl text-xs capitalize font-bold transition-all ${
+                      furiganaMode === mode
+                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                        : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {mode === 'all' ? 'ทั้งหมด' : mode === 'learning_only' ? 'เฉพาะที่เรียน' : 'ปิด'}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Pitch Accent Toggle */}
+            <label className="flex items-center justify-between p-3 rounded-2xl bg-slate-950 border border-slate-800 cursor-pointer">
+              <span className="text-xs text-slate-200 font-semibold">กราฟเสียงสูงต่ำ (Pitch Accent)</span>
+              <input
+                type="checkbox"
+                checked={showPitchAccent}
+                onChange={(e) => setShowPitchAccent(e.target.checked)}
+                className="w-4 h-4 accent-indigo-500 rounded"
+              />
+            </label>
+
+            {/* Microgloss Toggle */}
+            <label className="flex items-center justify-between p-3 rounded-2xl bg-slate-950 border border-slate-800 cursor-pointer">
+              <span className="text-xs text-slate-200 font-semibold">คำแปลภาษาไทยใต้คำ (Microgloss)</span>
+              <input
+                type="checkbox"
+                checked={showMicroGloss}
+                onChange={(e) => setShowMicroGloss(e.target.checked)}
+                className="w-4 h-4 accent-indigo-500 rounded"
+              />
+            </label>
+
+            <button
+              onClick={() => setShowSettingsMenu(false)}
+              className="w-full py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold transition-all shadow-md shadow-indigo-600/30"
+            >
+              บันทึกและปิด
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Contextual Popup Modal */}
       {selectedToken && (

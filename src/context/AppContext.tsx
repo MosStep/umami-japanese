@@ -107,13 +107,13 @@ const STORAGE_KEYS = {
 };
 
 const DEFAULT_ALBUMS: Album[] = [
-  { id: 'alb-favorites', name: 'Must-Watch Anime', emoji: '🌟', video_ids: ['vid-anime-01'] },
-  { id: 'alb-daily', name: 'Tokyo Everyday Life', emoji: '🗼', video_ids: ['vid-vlog-02', 'vid-izakaya-03'] },
+  { id: 'alb-daily', name: 'Tokyo Everyday Life', emoji: '🗼', video_ids: ['vid-n5-vlog', 'vid-n4-cooking'] },
+  { id: 'alb-favorites', name: 'Must-Watch Anime', emoji: '🌟', video_ids: ['vid-n3-frieren', 'vid-n2-ado', 'vid-n1-beastars'] },
 ];
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<'feed' | 'player' | 'words' | 'dojo' | 'profile'>('feed');
-  const [activeVideoId, setActiveVideoId] = useState<string>('vid-anime-01');
+  const [activeVideoId, setActiveVideoId] = useState<string>('vid-n5-vlog');
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
 
   // External API Config (Kob AI active by default with user key)
