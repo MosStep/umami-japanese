@@ -1,5 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
+import { APP_VERSION } from '../config/version';
 import {
   Compass,
   Tv,
@@ -53,9 +54,17 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
                 <span className="font-bold text-slate-100 tracking-tight text-base sm:text-lg font-jp">
                   うまみ <span className="text-xs text-rose-400 font-sans font-medium">(Umami)</span>
                 </span>
-                <span className="text-[9px] sm:text-[10px] uppercase font-semibold px-1 sm:px-1.5 py-0.2 rounded bg-rose-500/10 text-rose-400 border border-rose-500/20">
-                  App
-                </span>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    if (onOpenUpdate) onOpenUpdate();
+                  }}
+                  className="text-[10px] sm:text-xs font-mono font-extrabold px-1.5 py-0.5 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-500/30 transition-all flex items-center gap-1 active:scale-95 cursor-pointer"
+                  title="ตรวจสอบอัปเดตเวอร์ชัน"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  <span>{APP_VERSION}</span>
+                </button>
               </div>
             </div>
           </div>
@@ -145,7 +154,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
                 title="Check for App Updates"
               >
                 <Sparkles className="w-3.5 h-3.5 text-rose-400" />
-                <span className="hidden sm:inline font-mono">v1.0.1</span>
+                <span className="hidden sm:inline font-mono">{APP_VERSION}</span>
               </button>
             )}
 

@@ -19,6 +19,8 @@ import {
   Maximize2,
   Radio,
   X,
+  Eye,
+  EyeOff,
 } from 'lucide-react';
 
 export const ImmersionPlayer: React.FC = () => {
@@ -50,6 +52,16 @@ export const ImmersionPlayer: React.FC = () => {
   const [showSettingsMenu, setShowSettingsMenu] = useState<boolean>(false);
   const [currentTimeSec, setCurrentTimeSec] = useState<number>(0);
   const [isPlayerReady, setIsPlayerReady] = useState<boolean>(false);
+  const [hideTranslation, setHideTranslation] = useState<boolean>(() => {
+    return localStorage.getItem('umami_hide_translation') === 'true';
+  });
+  const [revealedLines, setRevealedLines] = useState<Record<string, boolean>>({});
+
+  const toggleHideTranslation = () => {
+    const next = !hideTranslation;
+    setHideTranslation(next);
+    localStorage.setItem('umami_hide_translation', String(next));
+  };
 
   const playerRef = useRef<any>(null);
   const iframeFallbackRef = useRef<HTMLIFrameElement>(null);
@@ -371,40 +383,57 @@ export const ImmersionPlayer: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Reading Guide Toggle Pills: [ 読 ฮิรากานะ ] [ Abc โรมันจิ ] [ ✕ ปิด ] */}
-                  <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+                  {/* Reading Guide & Translation Toggle Controls */}
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {/* Reading Guide Toggle Pills: [ 読 ฮิรากานะ ] [ Abc โรมันจิ ] [ ✕ ปิด ] */}
+                    <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+                      <button
+                        onClick={() => setReadingGuideMode('hiragana')}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                          readingGuideMode === 'hiragana'
+                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                        title="แสดงฟูริงะนะ / ฮิรากานะกำกับคันจิ"
+                      >
+                        読 ฮิรากานะ
+                      </button>
+                      <button
+                        onClick={() => setReadingGuideMode('romaji')}
+                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                          readingGuideMode === 'romaji'
+                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                        title="แสดงโรมันจิกำกับคันจิ"
+                      >
+                        Abc โรมันจิ
+                      </button>
+                      <button
+                        onClick={() => setReadingGuideMode('off')}
+                        className={`px-2 py-1 rounded-lg text-xs font-bold transition-all ${
+                          readingGuideMode === 'off'
+                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                        title="ปิดตัวช่วยอ่าน (คันจิล้วน)"
+                      >
+                        ✕ ปิด
+                      </button>
+                    </div>
+
+                    {/* Translation Spoiler Toggle Button */}
                     <button
-                      onClick={() => setReadingGuideMode('hiragana')}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                        readingGuideMode === 'hiragana'
-                          ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                          : 'text-slate-400 hover:text-slate-200'
+                      onClick={toggleHideTranslation}
+                      className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
+                        hideTranslation
+                          ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 hover:bg-amber-500/30'
+                          : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/30'
                       }`}
-                      title="แสดงฟูริงะนะ / ฮิรากานะกำกับคันจิ"
+                      title={hideTranslation ? 'คลิกเพื่อแสดงคำแปลอัตโนมัติ' : 'คลิกเพื่อซ่อนเฉลยคำแปล (แตะเปิดดูทีละประโยค)'}
                     >
-                      読 ฮิรากานะ
-                    </button>
-                    <button
-                      onClick={() => setReadingGuideMode('romaji')}
-                      className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
-                        readingGuideMode === 'romaji'
-                          ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                          : 'text-slate-400 hover:text-slate-200'
-                      }`}
-                      title="แสดงโรมันจิกำกับคันจิ"
-                    >
-                      Abc โรมันจิ
-                    </button>
-                    <button
-                      onClick={() => setReadingGuideMode('off')}
-                      className={`px-2 py-1 rounded-lg text-xs font-bold transition-all ${
-                        readingGuideMode === 'off'
-                          ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                          : 'text-slate-400 hover:text-slate-200'
-                      }`}
-                      title="ปิดตัวช่วยอ่าน (คันจิล้วน)"
-                    >
-                      ✕ ปิด
+                      {hideTranslation ? <EyeOff className="w-3.5 h-3.5 text-amber-400" /> : <Eye className="w-3.5 h-3.5 text-emerald-400" />}
+                      <span>{hideTranslation ? 'ซ่อนเฉลยแปล' : 'แสดงคำแปล'}</span>
                     </button>
                   </div>
                 </div>
@@ -569,19 +598,42 @@ export const ImmersionPlayer: React.FC = () => {
 
                 {/* Natural & Thai Translation & Grammar Summary */}
                 <div className="space-y-1.5 pt-2 border-t border-slate-800/80">
-                  <p className="text-base sm:text-lg text-emerald-300 font-bold flex items-center justify-center gap-2">
-                    <span className="text-base">🇹🇭</span>
-                    <span>{activeLine.thai_translation || activeLine.natural_translation}</span>
-                  </p>
-                  {activeLine.thai_translation && activeLine.natural_translation && (
-                    <p className="text-xs text-slate-400 font-medium">
-                      {activeLine.natural_translation}
-                    </p>
-                  )}
-                  {activeLine.ai_grammar_summary && (
-                    <p className="text-xs text-amber-300/90 italic line-clamp-1">
-                      💡 {activeLine.ai_grammar_summary}
-                    </p>
+                  {hideTranslation && !revealedLines[activeLine.id] ? (
+                    <button
+                      onClick={() => setRevealedLines((prev) => ({ ...prev, [activeLine.id]: true }))}
+                      className="w-full py-2.5 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-amber-500/30 text-amber-300 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all active:scale-98 shadow-sm group"
+                    >
+                      <Eye className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
+                      <span>แตะเพื่อดูเฉลยคำแปลภาษาไทย 🇹🇭</span>
+                    </button>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-center gap-2">
+                        <p className="text-base sm:text-lg text-emerald-300 font-bold flex items-center justify-center gap-2">
+                          <span className="text-base">🇹🇭</span>
+                          <span>{activeLine.thai_translation || activeLine.natural_translation}</span>
+                        </p>
+                        {hideTranslation && (
+                          <button
+                            onClick={() => setRevealedLines((prev) => ({ ...prev, [activeLine.id]: false }))}
+                            className="p-1 rounded-lg text-slate-500 hover:text-slate-300 text-xs ml-1"
+                            title="ซ่อนเฉลยประโยคนี้อีกครั้ง"
+                          >
+                            <EyeOff className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                      {activeLine.thai_translation && activeLine.natural_translation && (
+                        <p className="text-xs text-slate-400 font-medium">
+                          {activeLine.natural_translation}
+                        </p>
+                      )}
+                      {activeLine.ai_grammar_summary && (
+                        <p className="text-xs text-amber-300/90 italic line-clamp-1">
+                          💡 {activeLine.ai_grammar_summary}
+                        </p>
+                      )}
+                    </>
                   )}
                 </div>
               </>

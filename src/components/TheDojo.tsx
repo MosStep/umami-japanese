@@ -19,6 +19,7 @@ import {
   Zap,
   Flame,
   Award,
+  BookOpen,
 } from 'lucide-react';
 
 export const TheDojo: React.FC = () => {
@@ -28,6 +29,9 @@ export const TheDojo: React.FC = () => {
     videos,
     activeSubtitleLines,
     dictionaryWords,
+    wordStates,
+    setWordStatus,
+    getWordStatus,
     addXP,
     callAICompletion,
     aiProvider,
@@ -36,7 +40,10 @@ export const TheDojo: React.FC = () => {
 
   const [activeMode, setActiveMode] = useState<'srs' | 'shadowing' | 'roleplay'>('srs');
 
-  // Mode A: Video SRS State
+  // Mode A: Flashcards & SRS State
+  const [srsDeckType, setSrsDeckType] = useState<'words' | 'mined'>('words');
+  const [wordFilter, setWordFilter] = useState<'all' | 'learning' | 'known'>('all');
+  const [wordIndex, setWordIndex] = useState<number>(0);
   const [srsIndex, setSrsIndex] = useState<number>(0);
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
   const [quizMode, setQuizMode] = useState<'cloze' | 'listening'>('cloze');
@@ -68,6 +75,38 @@ export const TheDojo: React.FC = () => {
     },
   ]);
 
+  const learningCount = dictionaryWords.filter(
+    (w) => (wordStates[w.id] || 'new') === 'learning'
+  ).length;
+  const knownCount = dictionaryWords.filter(
+    (w) => (wordStates[w.id] || 'new') === 'known'
+  ).length;
+
+  const filteredWords = React.useMemo(() => {
+    if (wordFilter === 'learning') {
+      const list = dictionaryWords.filter(
+        (w) => (wordStates[w.id] || 'new') === 'learning'
+      );
+      return list.length ? list : dictionaryWords;
+    }
+    if (wordFilter === 'known') {
+      const list = dictionaryWords.filter(
+        (w) => (wordStates[w.id] || 'new') === 'known'
+      );
+      return list.length ? list : dictionaryWords;
+    }
+    return [...dictionaryWords].sort((a, b) => {
+      const sa = wordStates[a.id] || 'new';
+      const sb = wordStates[b.id] || 'new';
+      if (sa === 'learning' && sb !== 'learning') return -1;
+      if (sb === 'learning' && sa !== 'learning') return 1;
+      if (sa === 'known' && sb === 'new') return -1;
+      if (sb === 'known' && sa === 'new') return 1;
+      return 0;
+    });
+  }, [dictionaryWords, wordStates, wordFilter]);
+
+  const currentWord = filteredWords[wordIndex] || filteredWords[0];
   const currentMined = minedSentences[srsIndex] || minedSentences[0];
 
   // Guaranteed native audio playback across all devices
@@ -177,6 +216,26 @@ export const TheDojo: React.FC = () => {
       setSrsIndex((prev) => prev + 1);
     } else {
       setSrsIndex(0);
+    }
+  };
+
+  const handleWordGrade = (grade: 'again' | 'good' | 'easy') => {
+    if (currentWord) {
+      if (grade === 'again') {
+        setWordStatus(currentWord.id, 'learning');
+      } else if (grade === 'good') {
+        setWordStatus(currentWord.id, 'learning');
+        addXP('reading', 5);
+      } else if (grade === 'easy') {
+        setWordStatus(currentWord.id, 'known');
+        addXP('reading', 15);
+      }
+    }
+    setIsRevealed(false);
+    if (wordIndex < filteredWords.length - 1) {
+      setWordIndex((prev) => prev + 1);
+    } else {
+      setWordIndex(0);
     }
   };
 
@@ -328,7 +387,7 @@ Output exactly in this JSON format:
               }`}
             >
               <Award className="w-4 h-4 text-amber-300" />
-              <span>Mode A: Flashcards ({minedSentences.length})</span>
+              <span>Mode A: Flashcards ({srsDeckType === 'words' ? dictionaryWords.length : minedSentences.length})</span>
             </button>
             <button
               onClick={() => setActiveMode('shadowing')}
@@ -356,24 +415,220 @@ Output exactly in this JSON format:
         </div>
       </div>
 
-      {/* Mode A: Video SRS Review */}
+      {/* Mode A: Flashcards & SRS Review */}
       {activeMode === 'srs' && (
-        <div className="max-w-2xl mx-auto space-y-6">
-          {minedSentences.length === 0 ? (
-            <div className="text-center py-16 space-y-4 rounded-3xl bg-slate-900/90 border border-slate-800 p-8 shadow-xl">
-              <Swords className="w-12 h-12 text-rose-500/50 mx-auto" />
-              <h3 className="text-xl font-bold text-slate-200">No Mined Sentences in Dojo Yet</h3>
-              <p className="text-sm text-slate-400 max-w-sm mx-auto leading-relaxed">
-                Go to the Player and tap the "Mine (M)" button on any subtitle to instantly build your personal spaced-repetition deck!
-              </p>
+        <div className="max-w-2xl mx-auto space-y-4">
+          {/* Deck Switcher: Words Vault vs Mined Sentences */}
+          <div className="flex items-center justify-center p-1 rounded-2xl bg-slate-900/90 border border-slate-800">
+            <button
+              onClick={() => {
+                setSrsDeckType('words');
+                setIsRevealed(false);
+              }}
+              className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+                srsDeckType === 'words'
+                  ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white shadow-md shadow-rose-600/30'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <BookOpen className="w-4 h-4" />
+              <span>📖 คลังคำศัพท์ (Words Vault: {dictionaryWords.length})</span>
+            </button>
+            <button
+              onClick={() => {
+                setSrsDeckType('mined');
+                setIsRevealed(false);
+              }}
+              className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
+                srsDeckType === 'mined'
+                  ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white shadow-md shadow-rose-600/30'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Swords className="w-4 h-4" />
+              <span>🎬 ประโยคขุด ({minedSentences.length})</span>
+            </button>
+          </div>
+
+          {srsDeckType === 'words' ? (
+            /* WORDS VAULT DECK */
+            <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 shadow-2xl overflow-hidden space-y-6 p-6 sm:p-8">
+              {/* Words Vault Filter Pills & Meta */}
+              <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-slate-800 pb-4">
+                <div className="flex items-center gap-1.5 overflow-x-auto">
+                  <button
+                    onClick={() => {
+                      setWordFilter('all');
+                      setWordIndex(0);
+                      setIsRevealed(false);
+                    }}
+                    className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+                      wordFilter === 'all'
+                        ? 'bg-rose-600 text-white shadow'
+                        : 'bg-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    ทั้งหมด ({dictionaryWords.length})
+                  </button>
+                  <button
+                    onClick={() => {
+                      setWordFilter('learning');
+                      setWordIndex(0);
+                      setIsRevealed(false);
+                    }}
+                    className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+                      wordFilter === 'learning'
+                        ? 'bg-amber-600 text-white shadow'
+                        : 'bg-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    ⚡ กำลังเรียน ({learningCount})
+                  </button>
+                  <button
+                    onClick={() => {
+                      setWordFilter('known');
+                      setWordIndex(0);
+                      setIsRevealed(false);
+                    }}
+                    className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
+                      wordFilter === 'known'
+                        ? 'bg-emerald-600 text-white shadow'
+                        : 'bg-slate-800 text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    ✓ จำได้แล้ว ({knownCount})
+                  </button>
+                </div>
+                <span className="font-mono font-semibold text-rose-400 shrink-0">
+                  คำที่ {wordIndex + 1} / {filteredWords.length}
+                </span>
+              </div>
+
+              {currentWord ? (
+                <>
+                  {/* Flashcard Body */}
+                  <div className="py-6 space-y-4 text-center">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-slate-800/80 text-cyan-300 border border-slate-700">
+                      <span>{currentWord.jlpt_level}</span>
+                      {currentWord.part_of_speech && <span>• {currentWord.part_of_speech}</span>}
+                    </div>
+
+                    <p className="font-jp text-4xl sm:text-5xl font-extrabold text-white leading-relaxed tracking-wider">
+                      {currentWord.lemma}
+                    </p>
+
+                    {isRevealed && (
+                      <div className="space-y-2 pt-2 animate-in fade-in duration-150">
+                        <p className="text-lg font-jp text-indigo-300 font-bold">
+                          {currentWord.reading_kana} {currentWord.romaji ? `(${currentWord.romaji})` : ''}
+                        </p>
+                        <p className="text-xl sm:text-2xl text-emerald-300 font-bold">
+                          🇹🇭 {currentWord.core_meanings?.join(', ') || 'ความหมายภาษาญี่ปุ่น'}
+                        </p>
+                        <div className="inline-block mt-1">
+                          <span
+                            className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
+                              getWordStatus(currentWord.id) === 'known'
+                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                                : getWordStatus(currentWord.id) === 'learning'
+                                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                                : 'bg-slate-800 text-slate-400 border border-slate-700'
+                            }`}
+                          >
+                            สถานะปัจจุบัน:{' '}
+                            {getWordStatus(currentWord.id) === 'known'
+                              ? '✓ จำได้แล้ว'
+                              : getWordStatus(currentWord.id) === 'learning'
+                              ? '⚡ กำลังเรียน'
+                              : 'ใหม่'}
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Reveal / Controls */}
+                  {!isRevealed ? (
+                    <button
+                      onClick={() => {
+                        setIsRevealed(true);
+                        playAudio(currentWord.lemma);
+                      }}
+                      className="w-full py-4 rounded-2xl text-base font-bold bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-xl shadow-rose-600/30 transition-all active:scale-98"
+                    >
+                      แตะเพื่อดูเฉลยคำอ่านและความหมาย
+                    </button>
+                  ) : (
+                    <div className="space-y-4 animate-in fade-in duration-150">
+                      {/* Audio Button */}
+                      <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
+                        <span className="text-xs text-slate-400 flex items-center gap-1.5 font-medium">
+                          <Volume2 className="w-4 h-4 text-rose-400" />
+                          เสียงออกเสียงภาษาญี่ปุ่น
+                        </span>
+                        <button
+                          onClick={() => playAudio(currentWord.lemma)}
+                          className="px-4 py-2 rounded-xl bg-slate-800 text-xs text-slate-100 hover:bg-slate-700 flex items-center gap-1.5 font-semibold transition-colors"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                          ฟังอีกครั้ง
+                        </button>
+                      </div>
+
+                      {/* Word Grade Rating Buttons: Again, Good, Easy */}
+                      <div className="grid grid-cols-3 gap-2.5 pt-1">
+                        <button
+                          onClick={() => handleWordGrade('again')}
+                          className="p-3.5 rounded-2xl bg-rose-950/40 border-2 border-rose-500/40 text-rose-300 text-xs sm:text-sm font-bold hover:bg-rose-950/80 active:scale-95 transition-all text-center"
+                        >
+                          ❌ ยังจำไม่ได้
+                          <span className="block text-[10px] text-slate-400 font-normal mt-0.5">
+                            ทบทวนต่อ (กำลังเรียน)
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => handleWordGrade('good')}
+                          className="p-3.5 rounded-2xl bg-amber-950/40 border-2 border-amber-500/40 text-amber-300 text-xs sm:text-sm font-bold hover:bg-amber-950/80 active:scale-95 transition-all text-center"
+                        >
+                          ⚡ พอจำได้ (+5 XP)
+                          <span className="block text-[10px] text-slate-400 font-normal mt-0.5">
+                            กำลังเรียน
+                          </span>
+                        </button>
+                        <button
+                          onClick={() => handleWordGrade('easy')}
+                          className="p-3.5 rounded-2xl bg-emerald-950/40 border-2 border-emerald-500/40 text-emerald-300 text-xs sm:text-sm font-bold hover:bg-emerald-950/80 active:scale-95 transition-all text-center"
+                        >
+                          ✓ จำได้แม่นยำ (+15 XP)
+                          <span className="block text-[10px] text-slate-400 font-normal mt-0.5">
+                            บันทึกเป็น "จำได้แล้ว"
+                          </span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div className="text-center py-8 text-slate-400">ไม่พบคำศัพท์ในตัวกรองนี้</div>
+              )}
             </div>
           ) : (
-            <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 shadow-2xl overflow-hidden space-y-6 p-6 sm:p-8">
-              {/* Card Meta & Mode Selector */}
-              <div className="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-4">
-                <span className="font-mono font-semibold text-rose-400">
-                  Card {srsIndex + 1} of {minedSentences.length}
-                </span>
+            /* MINED SENTENCES DECK */
+            minedSentences.length === 0 ? (
+              <div className="text-center py-16 space-y-4 rounded-3xl bg-slate-900/90 border border-slate-800 p-8 shadow-xl">
+                <Swords className="w-12 h-12 text-rose-500/50 mx-auto" />
+                <h3 className="text-xl font-bold text-slate-200">ยังไม่มีประโยคที่ขุดไว้ใน道場</h3>
+                <p className="text-sm text-slate-400 max-w-sm mx-auto leading-relaxed">
+                  ไปที่หน้าเครื่องเล่นวิดีโอ (Player) แล้วแตะปุ่ม "Mine" บนซับไตเติลใดก็ได้เพื่อดึงประโยคเข้ามาฝึกในสำนัก!
+                </p>
+              </div>
+            ) : (
+              <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 shadow-2xl overflow-hidden space-y-6 p-6 sm:p-8">
+                {/* Card Meta & Mode Selector */}
+                <div className="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-4">
+                  <span className="font-mono font-semibold text-rose-400">
+                    Card {srsIndex + 1} of {minedSentences.length}
+                  </span>
                 <div className="flex items-center gap-2">
                   <button
                     onClick={() => setQuizMode(quizMode === 'cloze' ? 'listening' : 'cloze')}
@@ -490,9 +745,10 @@ Output exactly in this JSON format:
                 </div>
               )}
             </div>
-          )}
-        </div>
-      )}
+          )
+        )}
+      </div>
+    )}
 
       {/* Mode B: Shadowing & Live Waveform Grader */}
       {activeMode === 'shadowing' && (

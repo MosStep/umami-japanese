@@ -36,11 +36,12 @@ export const VideoFeed: React.FC = () => {
   const categories = [
     { id: 'All', label: 'ทั้งหมด' },
     { id: 'Podcasts', label: '🎙️ พอดแคสต์' },
-    { id: 'J-Pop', label: '🎵 เพลง J-Pop' },
+    { id: 'Gaming', label: '🎮 เกม & แคสเกม' },
     { id: 'Anime', label: '⚔️ อนิเมะ' },
-    { id: 'Street Food', label: '🐙 อาหาร & สตรีทฟู้ด' },
+    { id: 'Vlogs', label: '☕ Vlogs & เที่ยวญี่ปุ่น' },
+    { id: 'Street Food', label: '🐙 สตรีทฟู้ด & อาหาร' },
+    { id: 'J-Pop', label: '🎵 เพลง J-Pop' },
     { id: 'Daily Conversation', label: '💬 สนทนา' },
-    { id: 'Vlogs', label: '☕ Vlogs' },
   ];
   const jlptLevels = ['All', 'N5', 'N4', 'N3', 'N2', 'N1'];
 
