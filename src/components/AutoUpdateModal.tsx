@@ -4,13 +4,11 @@ import {
   CheckCircle2,
   Sparkles,
   X,
-  Smartphone,
   ShieldCheck,
-  ArrowRight,
-  FolderDown,
-  Settings as SettingsIcon,
+  RefreshCw,
   AlertCircle,
   ExternalLink,
+  Github,
 } from 'lucide-react';
 
 interface Props {
@@ -30,24 +28,27 @@ export const CURRENT_APP_VERSION: VersionInfo = {
   build: 101,
   releaseDate: '2026-11-06',
   releaseNotes: [
-    '✨ วิดีโอญี่ปุ่นจริง (Anime, Tokyo Vlog, Izakaya, NHK News) พร้อม IFrame PostMessage Sync',
-    '🔊 สตรีมเสียง Native Audio ภาษาญี่ปุ่นแท้ 100% ไม่พึ่งพาระบบ TTS ภายในเครื่องที่เงียบ',
-    '🎙️ The Dojo Shadowing พร้อมไมโครโฟนสด และกราฟคลื่นเสียง Waveform แบบไดนามิก',
-    '🤖 เชื่อมต่อ Kob AI API (minimax-m3.1-flash) และ Tenixe AI บทสนทนาบทบาทสมมติ',
-    '📱 ระบบ Auto-Update ตรวจจับเนทีฟแอนดรอยด์ ติดตั้งตรงจาก Downloads หรือออนไลน์',
+    '✨ วิดีโอเพลงและบทสนทนาญี่ปุ่นจริง พร้อมระบบซิงค์เนื้อร้องแบบเรียลไทม์ (Smooth Flow)',
+    '🇹🇭 แปลภาษาไทยทั้งประโยคและคำศัพท์ (Micro-gloss) แบบแตะดูได้ทันที',
+    '🔊 เสียงอ่าน Native TTS ภาษาญี่ปุ่นแท้ 100% ตอบสนอง 0ms ไม่มีดีเลย์',
+    '🎙️ The Dojo Shadowing ฝึกออกเสียงตามจังหวะพร้อมคลื่นเสียง Waveform',
+    '🤖 เชื่อมต่อ Kob AI & Tenixe AI วิเคราะห์ไวยากรณ์และสนทนาโต้ตอบ',
+    '🚀 ระบบ GitHub Auto-Update อัปเดตผ่าน GitHub Releases อัตโนมัติในคลิกเดียว',
   ],
 };
 
-const STORAGE_KEY_CUSTOM_APK_URL = 'umami_custom_apk_url';
+const GITHUB_REPO = 'MosStep/umami-japanese';
+const GITHUB_API_URL = `https://api.github.com/repos/${GITHUB_REPO}/releases/latest`;
 
 export const AutoUpdateModal: React.FC<Props> = ({ isOpen, onClose }) => {
-  const [downloadProgress, setDownloadProgress] = useState<number | null>(null);
-  const [isDownloaded, setIsDownloaded] = useState<boolean>(false);
+  const [status, setStatus] = useState<'checking' | 'has_update' | 'up_to_date' | 'downloading' | 'error'>('checking');
+  const [latestTag, setLatestTag] = useState<string>('');
+  const [latestTitle, setLatestTitle] = useState<string>('');
+  const [latestBody, setLatestBody] = useState<string>('');
+  const [apkUrl, setApkUrl] = useState<string>('');
+  const [apkSizeMB, setApkSizeMB] = useState<string>('');
   const [isNativeApp, setIsNativeApp] = useState<boolean>(false);
   const [canInstall, setCanInstall] = useState<boolean>(true);
-  const [customApkUrl, setCustomApkUrl] = useState<string>(() => {
-    return localStorage.getItem(STORAGE_KEY_CUSTOM_APK_URL) || '';
-  });
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
@@ -57,89 +58,142 @@ export const AutoUpdateModal: React.FC<Props> = ({ isOpen, onClose }) => {
         setCanInstall((window as any).AndroidAutoUpdater.canInstallPackages());
       }
     }
+  }, []);
+
+  const checkForUpdates = async () => {
+    setStatus('checking');
+    setErrorMessage('');
+
+    try {
+      const res = await fetch(GITHUB_API_URL, {
+        headers: {
+          Accept: 'application/vnd.github.v3+json',
+        },
+      });
+
+      if (!res.ok) {
+        throw new Error(`ไม่สามารถเชื่อมต่อ GitHub ได้ (HTTP ${res.status})`);
+      }
+
+      const data = await res.json();
+      const rawTag = (data.tag_name || '').trim();
+      const cleanTag = rawTag.replace(/^v/, '');
+      const currentClean = CURRENT_APP_VERSION.version.replace(/^v/, '');
+
+      setLatestTag(rawTag || `v${cleanTag}`);
+      setLatestTitle(data.name || rawTag);
+      setLatestBody(data.body || 'ไม่มีรายละเอียดการเปลี่ยนแปลง');
+
+      // Find APK asset
+      const apkAsset = Array.isArray(data.assets)
+        ? data.assets.find((asset: any) => asset.name?.endsWith('.apk'))
+        : null;
+
+      if (apkAsset) {
+        setApkUrl(apkAsset.browser_download_url);
+        if (apkAsset.size) {
+          setApkSizeMB((apkAsset.size / (1024 * 1024)).toFixed(1));
+        }
+      } else {
+        // Fallback default APK release asset name
+        setApkUrl(`https://github.com/${GITHUB_REPO}/releases/download/${rawTag}/umami-app-debug.apk`);
+      }
+
+      // Version comparison: compare semantic versions
+      const isNewer = isVersionNewer(cleanTag, currentClean);
+
+      if (isNewer) {
+        setStatus('has_update');
+      } else {
+        setStatus('up_to_date');
+      }
+    } catch (err: any) {
+      console.warn('AutoUpdate check failed:', err);
+      setStatus('error');
+      setErrorMessage(err.message || 'เกิดข้อผิดพลาดในการตรวจสอบอัปเดตจาก GitHub');
+    }
+  };
+
+  // Semantic version comparison
+  const isVersionNewer = (latest: string, current: string): boolean => {
+    const lParts = latest.split('.').map((n) => parseInt(n, 10) || 0);
+    const cParts = current.split('.').map((n) => parseInt(n, 10) || 0);
+    for (let i = 0; i < Math.max(lParts.length, cParts.length); i++) {
+      const l = lParts[i] || 0;
+      const c = cParts[i] || 0;
+      if (l > c) return true;
+      if (l < c) return false;
+    }
+    return false;
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      checkForUpdates();
+    }
   }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const handleSaveApkUrl = (url: string) => {
-    setCustomApkUrl(url);
-    localStorage.setItem(STORAGE_KEY_CUSTOM_APK_URL, url);
-  };
-
-  // 1. Install from local Download folder on phone
-  const handleInstallLocal = () => {
-    setErrorMessage('');
-    if ((window as any).AndroidAutoUpdater?.installLocalApk) {
-      (window as any).AndroidAutoUpdater.installLocalApk('umami-app-debug.apk');
-    } else {
-      setErrorMessage('ฟังก์ชันนี้ใช้งานได้เฉพาะบนแอป Android ที่ติดตั้งแล้วเท่านั้น');
+  // Perform automatic update
+  const handleStartAutoUpdate = () => {
+    if (!apkUrl) {
+      setErrorMessage('ไม่พบไฟล์ APK ใน Release บน GitHub');
+      return;
     }
+
+    setStatus('downloading');
+
+    if (isNativeApp && (window as any).AndroidAutoUpdater?.installApkFromUrl) {
+      // Check install permission first
+      if (!canInstall && (window as any).AndroidAutoUpdater?.openUnknownAppSourcesPermission) {
+        (window as any).AndroidAutoUpdater.openUnknownAppSourcesPermission();
+        return;
+      }
+      // Trigger native Android download & auto-install
+      (window as any).AndroidAutoUpdater.installApkFromUrl(apkUrl);
+      setTimeout(() => {
+        onClose();
+      }, 1500);
+      return;
+    }
+
+    // Browser fallback: direct download from GitHub
+    const a = document.createElement('a');
+    a.href = apkUrl;
+    a.download = 'umami-app-debug.apk';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(() => {
+      setStatus('up_to_date');
+    }, 2000);
   };
 
-  // 2. Open Android "Allow unknown apps" settings
   const handleOpenPermissionSettings = () => {
     if ((window as any).AndroidAutoUpdater?.openUnknownAppSourcesPermission) {
       (window as any).AndroidAutoUpdater.openUnknownAppSourcesPermission();
     }
   };
 
-  // 3. Online Download & Install
-  const handleStartOnlineDownload = () => {
-    setErrorMessage('');
-    const targetUrl = customApkUrl.trim();
-
-    if (!targetUrl || (!targetUrl.startsWith('http://') && !targetUrl.startsWith('https://'))) {
-      setErrorMessage(
-        'กรุณาระบุ URL ของไฟล์ APK ที่ดาวน์โหลดได้จริง (เช่น Google Drive Direct Link, GitHub Release หรือเซิร์ฟเวอร์ของคุณ) หรือกดปุ่ม "ติดตั้งจากไฟล์ในเครื่อง"'
-      );
-      return;
-    }
-
-    if (isNativeApp && (window as any).AndroidAutoUpdater?.installApkFromUrl) {
-      // Trigger native download manager
-      (window as any).AndroidAutoUpdater.installApkFromUrl(targetUrl);
-      onClose();
-      return;
-    }
-
-    // Browser mode fallback
-    setDownloadProgress(20);
-    const interval = setInterval(() => {
-      setDownloadProgress((prev) => {
-        if (prev === null) return 20;
-        if (prev >= 100) {
-          clearInterval(interval);
-          setIsDownloaded(true);
-          const a = document.createElement('a');
-          a.href = targetUrl;
-          a.download = 'umami-app-update.apk';
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          return 100;
-        }
-        return prev + 25;
-      });
-    }, 250);
-  };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="w-full max-w-lg rounded-3xl bg-slate-900 border-2 border-rose-500/40 shadow-2xl shadow-rose-950/50 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 max-h-[90vh]">
-        {/* Top Banner */}
-        <div className="p-5 bg-gradient-to-r from-rose-950/80 via-slate-900 to-indigo-950/80 border-b border-rose-500/20 flex items-start justify-between">
+      <div className="w-full max-w-lg rounded-3xl bg-slate-900 border-2 border-indigo-500/40 shadow-2xl shadow-indigo-950/50 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 max-h-[90vh]">
+        {/* Top Header Banner */}
+        <div className="p-5 bg-gradient-to-r from-indigo-950/90 via-slate-900 to-rose-950/90 border-b border-indigo-500/20 flex items-start justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-rose-600 flex items-center justify-center shadow-lg shadow-rose-600/30">
+            <div className="w-10 h-10 rounded-2xl bg-indigo-600 flex items-center justify-center shadow-lg shadow-indigo-600/30">
               <Sparkles className="w-5 h-5 text-white animate-pulse" />
             </div>
             <div>
-              <span className="text-[10px] uppercase font-bold tracking-wider text-rose-400 block">
-                Umami Auto-Update System
-              </span>
+              <div className="flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-wider text-indigo-400">
+                <Github className="w-3.5 h-3.5" />
+                <span>GitHub Auto-Updater</span>
+              </div>
               <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <span>จัดการและอัปเดตแอป (v{CURRENT_APP_VERSION.version})</span>
-                <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 font-normal">
-                  ล่าสุด
+                <span>ระบบอัปเดตอัตโนมัติ</span>
+                <span className="text-[11px] px-2 py-0.5 rounded-full bg-slate-800 text-slate-300 font-mono">
+                  v{CURRENT_APP_VERSION.version}
                 </span>
               </h2>
             </div>
@@ -154,15 +208,7 @@ export const AutoUpdateModal: React.FC<Props> = ({ isOpen, onClose }) => {
 
         {/* Modal Body */}
         <div className="p-5 sm:p-6 space-y-4 overflow-y-auto flex-1">
-          {/* Status Alert Banner */}
-          <div className="p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 flex items-center gap-3 text-xs text-emerald-300">
-            <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
-            <span>
-              ขณะนี้คุณกำลังใช้งานเวอร์ชัน <strong>v{CURRENT_APP_VERSION.version}</strong> ซึ่งรองรับวิดีโอญี่ปุ่นจริง เสียงพูดคมชัด และไมโครโฟนเรียบร้อยแล้ว
-            </span>
-          </div>
-
-          {/* Android Permissions Reminder */}
+          {/* Unknown App Sources Alert */}
           {isNativeApp && !canInstall && (
             <div className="p-3.5 rounded-2xl bg-amber-950/30 border border-amber-500/40 space-y-2 text-xs">
               <div className="flex items-center justify-between text-amber-300 font-bold">
@@ -178,87 +224,149 @@ export const AutoUpdateModal: React.FC<Props> = ({ isOpen, onClose }) => {
                 </button>
               </div>
               <p className="text-[11px] text-slate-300">
-                หากระบบแจ้งว่า "แอพมีปัญหา" มักเกิดจากการที่ Android บล็อกการติดตั้งไฟล์ภายนอก ให้กดปุ่มด้านบนเพื่อเปิดสิทธิ์ "อนุญาตจากแหล่งที่มานี้"
+                กรุณาแตะ "กดเปิดสิทธิ์" เพื่อเปิดตัวเลือก <strong>อนุญาตจากแหล่งที่มานี้</strong> เพื่อให้ระบบติดตั้งอัปเดตอัตโนมัติได้
               </p>
             </div>
           )}
 
-          {/* Option 1: Direct Local Install from Phone Storage */}
-          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-white flex items-center gap-2">
-                <FolderDown className="w-4 h-4 text-rose-400" />
-                วิธีที่ 1: ติดตั้งจากไฟล์ในเครื่อง (แนะนำ)
-              </span>
-            </div>
-            <p className="text-[11px] text-slate-400">
-              หากคุณมีไฟล์ <span className="text-rose-300 font-mono">umami-app-debug.apk</span> อยู่ในโฟลเดอร์ <strong>Downloads</strong> ของมือถือแล้ว สามารถกดให้ระบบเปิดตัวติดตั้งได้ทันที
-            </p>
-            <button
-              onClick={handleInstallLocal}
-              className="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 active:scale-95 text-white text-xs font-bold shadow-md shadow-rose-600/30 transition-all flex items-center justify-center gap-2"
-            >
-              <FolderDown className="w-4 h-4" />
-              <span>ติดตั้งจากไฟล์ umami-app-debug.apk ในเครื่อง</span>
-            </button>
-          </div>
-
-          {/* Option 2: Online Download from URL */}
-          <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2.5">
-            <span className="text-xs font-bold text-white flex items-center gap-2">
-              <DownloadCloud className="w-4 h-4 text-amber-400" />
-              วิธีที่ 2: ดาวน์โหลดและอัปเดตออนไลน์ผ่าน URL
-            </span>
-            <p className="text-[11px] text-slate-400">
-              ใส่ URL ตรงของไฟล์ APK (เช่น ลิงก์ตรงจาก Google Drive, GitHub Release หรือเซิร์ฟเวอร์ส่วนตัว):
-            </p>
-            <input
-              type="text"
-              placeholder="https://example.com/releases/umami-v1.0.2.apk"
-              value={customApkUrl}
-              onChange={(e) => handleSaveApkUrl(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl bg-slate-900 border border-slate-800 text-xs text-white focus:outline-none focus:border-rose-500 font-mono"
-            />
-            <button
-              onClick={handleStartOnlineDownload}
-              className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition-colors flex items-center justify-center gap-2"
-            >
-              <DownloadCloud className="w-4 h-4 text-amber-400" />
-              <span>ดาวน์โหลดและติดตั้งจาก URL ออนไลน์</span>
-            </button>
-          </div>
-
-          {/* Error Message */}
-          {errorMessage && (
-            <div className="p-3 rounded-xl bg-rose-950/40 border border-rose-500/40 text-xs text-rose-300 flex items-start gap-2">
-              <AlertCircle className="w-4 h-4 shrink-0 text-rose-400 mt-0.5" />
-              <span>{errorMessage}</span>
+          {/* Status 1: Checking */}
+          {status === 'checking' && (
+            <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col items-center justify-center text-center space-y-3">
+              <RefreshCw className="w-8 h-8 text-indigo-400 animate-spin" />
+              <div>
+                <p className="text-sm font-bold text-white">กำลังตรวจสอบเวอร์ชันล่าสุดจาก GitHub...</p>
+                <p className="text-xs text-slate-400 font-mono mt-1">{GITHUB_REPO}</p>
+              </div>
             </div>
           )}
 
-          {/* Release Notes */}
-          <div className="space-y-1.5 p-3.5 rounded-2xl bg-slate-950/60 border border-slate-800">
-            <span className="text-[11px] font-semibold text-slate-300 block">
-              สิ่งที่ปรับปรุงในเวอร์ชันปัจจุบัน:
-            </span>
-            <ul className="space-y-1 text-xs text-slate-300">
-              {CURRENT_APP_VERSION.releaseNotes.map((note, idx) => (
-                <li key={idx} className="flex items-start gap-2">
-                  <span className="text-rose-400 font-bold">•</span>
-                  <span>{note}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+          {/* Status 2: Has New Update Available! */}
+          {status === 'has_update' && (
+            <div className="space-y-4 animate-in fade-in">
+              <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950/40 to-indigo-950/40 border border-emerald-500/40 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[11px] font-bold border border-emerald-500/30 flex items-center gap-1">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    พบเวอร์ชันใหม่พร้อมใช้งาน!
+                  </span>
+                  <span className="text-xs font-mono font-bold text-indigo-300">
+                    {latestTag} {apkSizeMB && `(${apkSizeMB} MB)`}
+                  </span>
+                </div>
+                <h3 className="text-base font-bold text-white">{latestTitle}</h3>
+              </div>
+
+              {/* Release Notes */}
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider">
+                  บันทึกการเปลี่ยนแปลง (Release Notes):
+                </span>
+                <p className="text-xs text-slate-200 leading-relaxed whitespace-pre-line bg-slate-900/60 p-3 rounded-xl border border-slate-800/80">
+                  {latestBody}
+                </p>
+              </div>
+
+              {/* One-Tap Auto Update Button */}
+              <button
+                onClick={handleStartAutoUpdate}
+                className="w-full py-3.5 px-5 rounded-2xl bg-gradient-to-r from-indigo-600 via-indigo-500 to-rose-600 hover:opacity-95 active:scale-98 text-white text-sm font-bold shadow-xl shadow-indigo-600/30 flex items-center justify-center gap-2.5 transition-all"
+              >
+                <DownloadCloud className="w-5 h-5" />
+                <span>ดาวน์โหลดและอัปเดตอัตโนมัติทันที</span>
+              </button>
+            </div>
+          )}
+
+          {/* Status 3: Downloading / Installing */}
+          {status === 'downloading' && (
+            <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 flex flex-col items-center justify-center text-center space-y-3 animate-in fade-in">
+              <DownloadCloud className="w-8 h-8 text-indigo-400 animate-bounce" />
+              <div>
+                <p className="text-sm font-bold text-white">กำลังดาวน์โหลดอัปเดตจาก GitHub...</p>
+                <p className="text-xs text-slate-400 mt-1">
+                  ระบบ Download Manager กำลังโหลดไฟล์ และจะเปิดหน้าจอติดตั้งให้ทันที
+                </p>
+              </div>
+            </div>
+          )}
+
+          {/* Status 4: Up to date */}
+          {status === 'up_to_date' && (
+            <div className="space-y-4 animate-in fade-in">
+              <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 flex items-center gap-3 text-xs text-emerald-300">
+                <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0" />
+                <span>
+                  แอปของคุณเป็นเวอร์ชันล่าสุดแล้ว (<strong>v{CURRENT_APP_VERSION.version}</strong>) ไม่มีอัปเดตค้างอยู่
+                </span>
+              </div>
+
+              {/* Current Version Features */}
+              <div className="p-4 rounded-2xl bg-slate-950 border border-slate-800 space-y-2">
+                <span className="text-[11px] font-semibold text-slate-400 block uppercase tracking-wider">
+                  ฟีเจอร์ในเวอร์ชันปัจจุบัน:
+                </span>
+                <ul className="space-y-1.5 text-xs text-slate-300">
+                  {CURRENT_APP_VERSION.releaseNotes.map((note, idx) => (
+                    <li key={idx} className="flex items-start gap-2">
+                      <span className="text-indigo-400 font-bold">•</span>
+                      <span>{note}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="flex gap-2">
+                <button
+                  onClick={checkForUpdates}
+                  className="flex-1 py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-2 transition-colors"
+                >
+                  <RefreshCw className="w-3.5 h-3.5" />
+                  <span>ตรวจหาอัปเดตอีกครั้ง</span>
+                </button>
+                <a
+                  href={`https://github.com/${GITHUB_REPO}/releases`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold flex items-center justify-center gap-1.5 transition-colors"
+                >
+                  <span>ดูบน GitHub</span>
+                  <ExternalLink className="w-3.5 h-3.5" />
+                </a>
+              </div>
+            </div>
+          )}
+
+          {/* Error Message */}
+          {status === 'error' && (
+            <div className="space-y-3 animate-in fade-in">
+              <div className="p-4 rounded-2xl bg-rose-950/40 border border-rose-500/40 text-xs text-rose-300 flex items-start gap-2.5">
+                <AlertCircle className="w-5 h-5 shrink-0 text-rose-400 mt-0.5" />
+                <div>
+                  <p className="font-bold">เกิดข้อผิดพลาด</p>
+                  <p className="text-[11px] text-rose-300/90 mt-0.5">{errorMessage}</p>
+                </div>
+              </div>
+              <button
+                onClick={checkForUpdates}
+                className="w-full py-2.5 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-2"
+              >
+                <RefreshCw className="w-3.5 h-3.5" />
+                <span>ลองใหม่อีกครั้ง</span>
+              </button>
+            </div>
+          )}
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 bg-slate-950 border-t border-slate-800 flex items-center justify-end">
+        <div className="p-4 bg-slate-950 border-t border-slate-800 flex items-center justify-between">
+          <span className="text-[11px] text-slate-500 font-mono">
+            {GITHUB_REPO}
+          </span>
           <button
             onClick={onClose}
-            className="py-2.5 px-6 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors"
+            className="py-2 px-5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-bold transition-colors"
           >
-            ปิดหน้าต่างนี้
+            ปิด
           </button>
         </div>
       </div>
