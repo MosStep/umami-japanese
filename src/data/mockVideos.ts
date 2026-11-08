@@ -7,1173 +7,4785 @@ import {
 } from '../schema/databaseSchema';
 
 export const DICTIONARY_WORDS: DictionaryWordRecord[] = [
-  { id: 'w-pokemon', lemma: 'ポケモン', reading_kana: 'ぽけもん', romaji: 'pokemon', pitch_accent: 'HLLL', pitch_morae: [{ mora: 'ぽ', high: true }, { mora: 'け', high: false }, { mora: 'も', high: false }, { mora: 'ん', high: false }], jlpt_level: 'N5', frequency_rank: 20, part_of_speech: 'Noun', core_meanings: ['โปเกมอน'] },
-  { id: 'w-erabu', lemma: '選ぶ', reading_kana: 'えらぶ', romaji: 'erabu', pitch_accent: 'LHH', pitch_morae: [{ mora: 'え', high: false }, { mora: 'ら', high: true }, { mora: 'ぶ', high: true }], jlpt_level: 'N5', frequency_rank: 40, part_of_speech: 'Verb', core_meanings: ['เลือก'] },
-  { id: 'w-saisho', lemma: '最初', reading_kana: 'さいしょ', romaji: 'saisho', pitch_accent: 'LHH', pitch_morae: [{ mora: 'さ', high: false }, { mora: 'い', high: true }, { mora: 'し', high: true }, { mora: 'ょ', high: true }], jlpt_level: 'N5', frequency_rank: 35, part_of_speech: 'Noun', core_meanings: ['อันดับแรก / เริ่มต้น'] },
-  { id: 'w-tabi', lemma: '旅', reading_kana: 'たび', romaji: 'tabi', pitch_accent: 'LHH', pitch_morae: [{ mora: 'た', high: false }, { mora: 'び', high: true }], jlpt_level: 'N4', frequency_rank: 55, part_of_speech: 'Noun', core_meanings: ['การเดินทาง / การผจญภัย'] },
-  { id: 'w-shun', lemma: '散歩', reading_kana: 'さんぽ', romaji: 'sanpo', pitch_accent: 'LHH', pitch_morae: [{ mora: 'さ', high: false }, { mora: 'ん', high: true }, { mora: 'ぽ', high: true }], jlpt_level: 'N5', frequency_rank: 50, part_of_speech: 'Noun', core_meanings: ['เดินเล่น'] },
-  { id: 'w-takoyaki', lemma: 'たこ焼き', reading_kana: 'たこやき', romaji: 'takoyaki', pitch_accent: 'LHHH', pitch_morae: [{ mora: 'た', high: false }, { mora: 'こ', high: true }, { mora: 'や', high: true }, { mora: 'き', high: true }], jlpt_level: 'N5', frequency_rank: 90, part_of_speech: 'Noun', core_meanings: ['ทาโกะยากิ'] },
-  { id: 'w-oishii', lemma: '美味しい', reading_kana: 'おいしい', romaji: 'oishii', pitch_accent: 'LHHH', pitch_morae: [{ mora: 'お', high: false }, { mora: 'い', high: true }, { mora: 'し', high: true }, { mora: 'い', high: true }], jlpt_level: 'N5', frequency_rank: 18, part_of_speech: 'I-Adjective', core_meanings: ['อร่อยมาก'] },
-  { id: 'w-ramen', lemma: 'ラーメン', reading_kana: 'らーめん', romaji: 'raamen', pitch_accent: 'HLLL', pitch_morae: [{ mora: 'ら', high: true }, { mora: 'ー', high: false }, { mora: 'め', high: false }, { mora: 'ん', high: false }], jlpt_level: 'N5', frequency_rank: 30, part_of_speech: 'Noun', core_meanings: ['ราเมน'] },
-  { id: 'w-kanpai', lemma: '乾杯', reading_kana: 'かんぱい', romaji: 'kanpai', pitch_accent: 'LHHH', pitch_morae: [{ mora: 'か', high: false }, { mora: 'ん', high: true }, { mora: 'ぱ', high: true }, { mora: 'い', high: true }], jlpt_level: 'N5', frequency_rank: 80, part_of_speech: 'Noun', core_meanings: ['ชนแก้ว/ไชโย'] },
-  { id: 'w-maccha', lemma: '抹茶', reading_kana: 'まっちゃ', romaji: 'matcha', pitch_accent: 'LHH', pitch_morae: [{ mora: 'ま', high: false }, { mora: 'っ', high: true }, { mora: 'ちゃ', high: true }], jlpt_level: 'N4', frequency_rank: 65, part_of_speech: 'Noun', core_meanings: ['ชาเขียวมัทฉะ'] },
-  { id: 'w-kafe', lemma: 'カフェ', reading_kana: 'かふぇ', romaji: 'kafe', pitch_accent: 'HLL', pitch_morae: [{ mora: 'か', high: true }, { mora: 'ふ', high: false }, { mora: 'ぇ', high: false }], jlpt_level: 'N5', frequency_rank: 25, part_of_speech: 'Noun', core_meanings: ['คาเฟ่'] },
-  { id: 'w-tomodachi', lemma: '友達', reading_kana: 'ともだち', romaji: 'tomodachi', pitch_accent: 'LHHH', pitch_morae: [{ mora: 'と', high: false }, { mora: 'も', high: true }, { mora: 'だ', high: true }, { mora: 'ち', high: true }], jlpt_level: 'N5', frequency_rank: 15, part_of_speech: 'Noun', core_meanings: ['เพื่อน'] },
-  { id: 'w-lemon', lemma: 'レモン', reading_kana: 'れもん', romaji: 'remon', pitch_accent: 'HLL', pitch_morae: [{ mora: 'れ', high: true }, { mora: 'も', high: false }, { mora: 'ん', high: false }], jlpt_level: 'N5', frequency_rank: 130, part_of_speech: 'Noun', core_meanings: ['มะนาวเลมอน'] },
-  { id: 'w-yume', lemma: '夢', reading_kana: 'ゆめ', romaji: 'yume', pitch_accent: 'LHH', pitch_morae: [{ mora: 'ゆ', high: false }, { mora: 'め', high: true }], jlpt_level: 'N4', frequency_rank: 60, part_of_speech: 'Noun', core_meanings: ['ความฝัน'] },
-  { id: 'w-hikari', lemma: '光', reading_kana: 'ひかり', romaji: 'hikari', pitch_accent: 'LHH', pitch_morae: [{ mora: 'ひ', high: false }, { mora: 'か', high: true }, { mora: 'り', high: true }], jlpt_level: 'N4', frequency_rank: 45, part_of_speech: 'Noun', core_meanings: ['แสงสว่าง'] },
-  { id: 'w-toukyou', lemma: '東京', reading_kana: 'とうきょう', romaji: 'toukyou', pitch_accent: 'HLLL', pitch_morae: [{ mora: 'と', high: true }, { mora: 'う', high: false }, { mora: 'き', high: false }, { mora: 'ょ', high: false }, { mora: 'う', high: false }], jlpt_level: 'N5', frequency_rank: 10, part_of_speech: 'Noun', core_meanings: ['โตเกียว'] },
-  { id: 'w-tenki', lemma: '天気', reading_kana: 'てんき', romaji: 'tenki', pitch_accent: 'HLL', pitch_morae: [{ mora: 'て', high: true }, { mora: 'ん', high: false }, { mora: 'き', high: false }], jlpt_level: 'N5', frequency_rank: 32, part_of_speech: 'Noun', core_meanings: ['สภาพอากาศ'] },
-  { id: 'w-atsui', lemma: '熱い', reading_kana: 'あつい', romaji: 'atsui', pitch_accent: 'LHH', pitch_morae: [{ mora: 'あ', high: false }, { mora: 'つ', high: true }, { mora: 'い', high: true }], jlpt_level: 'N5', frequency_rank: 42, part_of_speech: 'I-Adjective', core_meanings: ['ร้อน (อุณหภูมิ/อาหาร)'] },
-  { id: 'w-shoukai', lemma: '自己紹介', reading_kana: 'じこしょうかい', romaji: 'jikoshoukai', pitch_accent: 'LHHHH', pitch_morae: [{ mora: 'じ', high: false }, { mora: 'こ', high: true }, { mora: 'し', high: true }, { mora: 'ょ', high: true }, { mora: 'う', high: true }, { mora: 'か', high: true }, { mora: 'い', high: true }], jlpt_level: 'N5', frequency_rank: 75, part_of_speech: 'Noun', core_meanings: ['การแนะนำตัวเอง'] },
+  {
+    "id": "w-taberu",
+    "lemma": "食べる",
+    "reading_kana": "たべる",
+    "romaji": "taberu",
+    "jlpt_level": "N5",
+    "frequency_rank": 5,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "กิน",
+      "ทาน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "た",
+        "high": false
+      },
+      {
+        "mora": "べ",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-nomu",
+    "lemma": "飲む",
+    "reading_kana": "ของขวัญ",
+    "romaji": "nomu",
+    "jlpt_level": "N5",
+    "frequency_rank": 8,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ดื่ม"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ข",
+        "high": false
+      },
+      {
+        "mora": "อ",
+        "high": true
+      },
+      {
+        "mora": "ง",
+        "high": true
+      },
+      {
+        "mora": "ข",
+        "high": true
+      },
+      {
+        "mora": "ว",
+        "high": true
+      },
+      {
+        "mora": "ั",
+        "high": true
+      },
+      {
+        "mora": "ญ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-iku",
+    "lemma": "行く",
+    "reading_kana": "いく",
+    "romaji": "iku",
+    "jlpt_level": "N5",
+    "frequency_rank": 2,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ไป"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "い",
+        "high": false
+      },
+      {
+        "mora": "く",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kuru",
+    "lemma": "来る",
+    "reading_kana": "くる",
+    "romaji": "kuru",
+    "jlpt_level": "N5",
+    "frequency_rank": 3,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "มา"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "く",
+        "high": false
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kaeru",
+    "lemma": "帰る",
+    "reading_kana": "かえる",
+    "romaji": "kaeru",
+    "jlpt_level": "N5",
+    "frequency_rank": 9,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "กลับ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "か",
+        "high": false
+      },
+      {
+        "mora": "え",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-miru",
+    "lemma": "見る",
+    "reading_kana": "みる",
+    "romaji": "miru",
+    "jlpt_level": "N5",
+    "frequency_rank": 4,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ดู",
+      "มอง",
+      "เห็น"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "み",
+        "high": false
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kiku",
+    "lemma": "聞く",
+    "reading_kana": "きく",
+    "romaji": "kiku",
+    "jlpt_level": "N5",
+    "frequency_rank": 7,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ฟัง",
+      "ได้ยิน",
+      "ถาม"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "き",
+        "high": false
+      },
+      {
+        "mora": "く",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-hanasu",
+    "lemma": "話す",
+    "reading_kana": "はなす",
+    "romaji": "hanasu",
+    "jlpt_level": "N5",
+    "frequency_rank": 10,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "พูดคุย"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "は",
+        "high": false
+      },
+      {
+        "mora": "な",
+        "high": true
+      },
+      {
+        "mora": "す",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-yomu",
+    "lemma": "読む",
+    "reading_kana": "よむ",
+    "romaji": "yomu",
+    "jlpt_level": "N5",
+    "frequency_rank": 12,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "อ่าน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "よ",
+        "high": false
+      },
+      {
+        "mora": "む",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kaku",
+    "lemma": "書く",
+    "reading_kana": "かく",
+    "romaji": "kaku",
+    "jlpt_level": "N5",
+    "frequency_rank": 14,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "เขียน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "か",
+        "high": false
+      },
+      {
+        "mora": "く",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kau",
+    "lemma": "買う",
+    "reading_kana": "かう",
+    "romaji": "kau",
+    "jlpt_level": "N5",
+    "frequency_rank": 15,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ซื้อ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "か",
+        "high": false
+      },
+      {
+        "mora": "う",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-matsu",
+    "lemma": "待つ",
+    "reading_kana": "まつ",
+    "romaji": "matsu",
+    "jlpt_level": "N5",
+    "frequency_rank": 16,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "รอ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ま",
+        "high": false
+      },
+      {
+        "mora": "つ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-yobu",
+    "lemma": "呼ぶ",
+    "reading_kana": "よぶ",
+    "romaji": "yobu",
+    "jlpt_level": "N5",
+    "frequency_rank": 22,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "เรียก"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "よ",
+        "high": false
+      },
+      {
+        "mora": "ぶ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-hashiru",
+    "lemma": "走る",
+    "reading_kana": "はしる",
+    "romaji": "hashiru",
+    "jlpt_level": "N5",
+    "frequency_rank": 25,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "วิ่ง"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "は",
+        "high": false
+      },
+      {
+        "mora": "し",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-okiru",
+    "lemma": "起きる",
+    "reading_kana": "おきる",
+    "romaji": "okiru",
+    "jlpt_level": "N5",
+    "frequency_rank": 18,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ตื่นนอน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "お",
+        "high": false
+      },
+      {
+        "mora": "き",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-neru",
+    "lemma": "寝る",
+    "reading_kana": "ねる",
+    "romaji": "neru",
+    "jlpt_level": "N5",
+    "frequency_rank": 19,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "นอน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ね",
+        "high": false
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-hataraku",
+    "lemma": "働く",
+    "reading_kana": "はたらく",
+    "romaji": "hataraku",
+    "jlpt_level": "N5",
+    "frequency_rank": 24,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ทำงาน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "は",
+        "high": false
+      },
+      {
+        "mora": "た",
+        "high": true
+      },
+      {
+        "mora": "ら",
+        "high": true
+      },
+      {
+        "mora": "く",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-benkyou",
+    "lemma": "勉強する",
+    "reading_kana": "べんきょうする",
+    "romaji": "benkyousuru",
+    "jlpt_level": "N5",
+    "frequency_rank": 20,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "เรียนหนังสือ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "べ",
+        "high": false
+      },
+      {
+        "mora": "ん",
+        "high": true
+      },
+      {
+        "mora": "き",
+        "high": true
+      },
+      {
+        "mora": "ょ",
+        "high": true
+      },
+      {
+        "mora": "う",
+        "high": true
+      },
+      {
+        "mora": "す",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-wakaru",
+    "lemma": "わかる",
+    "reading_kana": "わかる",
+    "romaji": "wakaru",
+    "jlpt_level": "N5",
+    "frequency_rank": 6,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "เข้าใจ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "わ",
+        "high": false
+      },
+      {
+        "mora": "か",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-dekiru",
+    "lemma": "できる",
+    "reading_kana": "できる",
+    "romaji": "dekiru",
+    "jlpt_level": "N5",
+    "frequency_rank": 11,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "สามารถทำได้"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "で",
+        "high": false
+      },
+      {
+        "mora": "き",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-au",
+    "lemma": "会う",
+    "reading_kana": "あう",
+    "romaji": "au",
+    "jlpt_level": "N5",
+    "frequency_rank": 17,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "พบ",
+      "เจอ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "あ",
+        "high": false
+      },
+      {
+        "mora": "う",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-tsukau",
+    "lemma": "使う",
+    "reading_kana": "つかう",
+    "romaji": "tsukau",
+    "jlpt_level": "N5",
+    "frequency_rank": 13,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ใช้"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "つ",
+        "high": false
+      },
+      {
+        "mora": "か",
+        "high": true
+      },
+      {
+        "mora": "う",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-motsu",
+    "lemma": "持つ",
+    "reading_kana": "もつ",
+    "romaji": "motsu",
+    "jlpt_level": "N5",
+    "frequency_rank": 21,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ถือ",
+      "มี"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "も",
+        "high": false
+      },
+      {
+        "mora": "つ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-shiru",
+    "lemma": "知る",
+    "reading_kana": "しる",
+    "romaji": "shiru",
+    "jlpt_level": "N5",
+    "frequency_rank": 23,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "รู้",
+      "รู้จัก"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "し",
+        "high": false
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-erabu",
+    "lemma": "選ぶ",
+    "reading_kana": "えらぶ",
+    "romaji": "erabu",
+    "jlpt_level": "N5",
+    "frequency_rank": 28,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "เลือก"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "え",
+        "high": false
+      },
+      {
+        "mora": "ら",
+        "high": true
+      },
+      {
+        "mora": "ぶ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-oboeru",
+    "lemma": "覚える",
+    "reading_kana": "おぼえる",
+    "romaji": "oboeru",
+    "jlpt_level": "N4",
+    "frequency_rank": 31,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "จดจำ",
+      "จำได้"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "お",
+        "high": false
+      },
+      {
+        "mora": "ぼ",
+        "high": true
+      },
+      {
+        "mora": "え",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-wasureru",
+    "lemma": "忘れる",
+    "reading_kana": "わすれる",
+    "romaji": "wasureru",
+    "jlpt_level": "N4",
+    "frequency_rank": 33,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ลืม"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "わ",
+        "high": false
+      },
+      {
+        "mora": "す",
+        "high": true
+      },
+      {
+        "mora": "れ",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-sagasu",
+    "lemma": "探す",
+    "reading_kana": "さがす",
+    "romaji": "sagasu",
+    "jlpt_level": "N4",
+    "frequency_rank": 35,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ค้นหา",
+      "ตามหา"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "さ",
+        "high": false
+      },
+      {
+        "mora": "が",
+        "high": true
+      },
+      {
+        "mora": "す",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-tasukeru",
+    "lemma": "助ける",
+    "reading_kana": "たすける",
+    "romaji": "tasukeru",
+    "jlpt_level": "N4",
+    "frequency_rank": 38,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ช่วยเหลือ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "た",
+        "high": false
+      },
+      {
+        "mora": "す",
+        "high": true
+      },
+      {
+        "mora": "け",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-mamoru",
+    "lemma": "守る",
+    "reading_kana": "まもる",
+    "romaji": "mamoru",
+    "jlpt_level": "N4",
+    "frequency_rank": 40,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ปกป้อง"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ま",
+        "high": false
+      },
+      {
+        "mora": "も",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-tatakau",
+    "lemma": "戦う",
+    "reading_kana": "たたかう",
+    "romaji": "tatakau",
+    "jlpt_level": "N4",
+    "frequency_rank": 42,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ต่อสู้"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "た",
+        "high": false
+      },
+      {
+        "mora": "た",
+        "high": true
+      },
+      {
+        "mora": "か",
+        "high": true
+      },
+      {
+        "mora": "う",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-katsu",
+    "lemma": "勝つ",
+    "reading_kana": "かつ",
+    "romaji": "katsu",
+    "jlpt_level": "N4",
+    "frequency_rank": 45,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ชนะ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "か",
+        "high": false
+      },
+      {
+        "mora": "つ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-makeru",
+    "lemma": "負ける",
+    "reading_kana": "まける",
+    "romaji": "makeru",
+    "jlpt_level": "N4",
+    "frequency_rank": 47,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "แพ้"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ま",
+        "high": false
+      },
+      {
+        "mora": "け",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-shinjiru",
+    "lemma": "信じる",
+    "reading_kana": "しんじる",
+    "romaji": "shinjiru",
+    "jlpt_level": "N4",
+    "frequency_rank": 50,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "เชื่อมั่น"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "し",
+        "high": false
+      },
+      {
+        "mora": "ん",
+        "high": true
+      },
+      {
+        "mora": "じ",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-akirameru",
+    "lemma": "諦める",
+    "reading_kana": "あきらめる",
+    "romaji": "akirameru",
+    "jlpt_level": "N4",
+    "frequency_rank": 52,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ยอมแพ้"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "あ",
+        "high": false
+      },
+      {
+        "mora": "き",
+        "high": true
+      },
+      {
+        "mora": "ら",
+        "high": true
+      },
+      {
+        "mora": "め",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kimeru",
+    "lemma": "決める",
+    "reading_kana": "きめる",
+    "romaji": "kimeru",
+    "jlpt_level": "N4",
+    "frequency_rank": 36,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "ตัดสินใจ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "き",
+        "high": false
+      },
+      {
+        "mora": "め",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-ikiru",
+    "lemma": "生きる",
+    "reading_kana": "いきる",
+    "romaji": "ikiru",
+    "jlpt_level": "N4",
+    "frequency_rank": 48,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "มีชีวิตอยู่",
+      "รอด"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "い",
+        "high": false
+      },
+      {
+        "mora": "き",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-tsutaeru",
+    "lemma": "伝える",
+    "reading_kana": "つたえる",
+    "romaji": "tsutaeru",
+    "jlpt_level": "N4",
+    "frequency_rank": 44,
+    "part_of_speech": "Verb",
+    "core_meanings": [
+      "สื่อสาร",
+      "บอกต่อ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "つ",
+        "high": false
+      },
+      {
+        "mora": "た",
+        "high": true
+      },
+      {
+        "mora": "え",
+        "high": true
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-ookii",
+    "lemma": "大きい",
+    "reading_kana": "おおきい",
+    "romaji": "ookii",
+    "jlpt_level": "N5",
+    "frequency_rank": 26,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "ใหญ่"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "お",
+        "high": false
+      },
+      {
+        "mora": "お",
+        "high": true
+      },
+      {
+        "mora": "き",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-chiisai",
+    "lemma": "小さい",
+    "reading_kana": "ちいさい",
+    "romaji": "chiisai",
+    "jlpt_level": "N5",
+    "frequency_rank": 27,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "เล็ก"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ち",
+        "high": false
+      },
+      {
+        "mora": "い",
+        "high": true
+      },
+      {
+        "mora": "さ",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-atarashii",
+    "lemma": "新しい",
+    "reading_kana": "あたらしい",
+    "romaji": "atarashii",
+    "jlpt_level": "N5",
+    "frequency_rank": 29,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "ใหม่"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "あ",
+        "high": false
+      },
+      {
+        "mora": "た",
+        "high": true
+      },
+      {
+        "mora": "ら",
+        "high": true
+      },
+      {
+        "mora": "し",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-furui",
+    "lemma": "古い",
+    "reading_kana": "ふるい",
+    "romaji": "furui",
+    "jlpt_level": "N5",
+    "frequency_rank": 30,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "เก่า"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ふ",
+        "high": false
+      },
+      {
+        "mora": "る",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-ii",
+    "lemma": "良い",
+    "reading_kana": "いい",
+    "romaji": "ii",
+    "jlpt_level": "N5",
+    "frequency_rank": 1,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "ดี",
+      "เยี่ยม"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "い",
+        "high": false
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-warui",
+    "lemma": "悪い",
+    "reading_kana": "わるい",
+    "romaji": "warui",
+    "jlpt_level": "N5",
+    "frequency_rank": 34,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "แย่",
+      "ไม่ดี"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "わ",
+        "high": false
+      },
+      {
+        "mora": "る",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-takai",
+    "lemma": "高い",
+    "reading_kana": "たかい",
+    "romaji": "takai",
+    "jlpt_level": "N5",
+    "frequency_rank": 32,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "สูง",
+      "ราคาแพง"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "た",
+        "high": false
+      },
+      {
+        "mora": "か",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-yasui",
+    "lemma": "安い",
+    "reading_kana": "やすい",
+    "romaji": "yasui",
+    "jlpt_level": "N5",
+    "frequency_rank": 37,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "ราคาถูก"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "や",
+        "high": false
+      },
+      {
+        "mora": "す",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-atsui",
+    "lemma": "熱い",
+    "reading_kana": "あつい",
+    "romaji": "atsui",
+    "jlpt_level": "N5",
+    "frequency_rank": 39,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "ร้อน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "あ",
+        "high": false
+      },
+      {
+        "mora": "つ",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-samui",
+    "lemma": "寒い",
+    "reading_kana": "さむい",
+    "romaji": "samui",
+    "jlpt_level": "N5",
+    "frequency_rank": 41,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "หนาว"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "さ",
+        "high": false
+      },
+      {
+        "mora": "む",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-tsumetai",
+    "lemma": "冷たい",
+    "reading_kana": "つめたい",
+    "romaji": "tsumetai",
+    "jlpt_level": "N5",
+    "frequency_rank": 43,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "เย็น"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "つ",
+        "high": false
+      },
+      {
+        "mora": "め",
+        "high": true
+      },
+      {
+        "mora": "た",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-muzukashii",
+    "lemma": "難しい",
+    "reading_kana": "むずかしい",
+    "romaji": "muzukashii",
+    "jlpt_level": "N5",
+    "frequency_rank": 46,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "ยาก"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "む",
+        "high": false
+      },
+      {
+        "mora": "ず",
+        "high": true
+      },
+      {
+        "mora": "か",
+        "high": true
+      },
+      {
+        "mora": "し",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-tanoshii",
+    "lemma": "楽しい",
+    "reading_kana": "たのしい",
+    "romaji": "tanoshii",
+    "jlpt_level": "N5",
+    "frequency_rank": 49,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "สนุกสนาน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "た",
+        "high": false
+      },
+      {
+        "mora": "の",
+        "high": true
+      },
+      {
+        "mora": "し",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-omoshiroi",
+    "lemma": "面白い",
+    "reading_kana": "おもしろい",
+    "romaji": "omoshiroi",
+    "jlpt_level": "N5",
+    "frequency_rank": 51,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "น่าสนใจ",
+      "ตลก"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "お",
+        "high": false
+      },
+      {
+        "mora": "も",
+        "high": true
+      },
+      {
+        "mora": "し",
+        "high": true
+      },
+      {
+        "mora": "ろ",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-oishii",
+    "lemma": "美味しい",
+    "reading_kana": "おいしい",
+    "romaji": "oishii",
+    "jlpt_level": "N5",
+    "frequency_rank": 18,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "อร่อย"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "お",
+        "high": false
+      },
+      {
+        "mora": "い",
+        "high": true
+      },
+      {
+        "mora": "し",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-suki",
+    "lemma": "好き",
+    "reading_kana": "すき",
+    "romaji": "suki",
+    "jlpt_level": "N5",
+    "frequency_rank": 53,
+    "part_of_speech": "Na-Adjective",
+    "core_meanings": [
+      "ชอบ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "す",
+        "high": false
+      },
+      {
+        "mora": "き",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kirai",
+    "lemma": "嫌い",
+    "reading_kana": "きらい",
+    "romaji": "kirai",
+    "jlpt_level": "N5",
+    "frequency_rank": 55,
+    "part_of_speech": "Na-Adjective",
+    "core_meanings": [
+      "เกลียด"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "き",
+        "high": false
+      },
+      {
+        "mora": "ら",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-genki",
+    "lemma": "元気",
+    "reading_kana": "げんき",
+    "romaji": "genki",
+    "jlpt_level": "N5",
+    "frequency_rank": 54,
+    "part_of_speech": "Na-Adjective",
+    "core_meanings": [
+      "แข็งแรง",
+      "สดใส"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "げ",
+        "high": false
+      },
+      {
+        "mora": "ん",
+        "high": true
+      },
+      {
+        "mora": "き",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-shizuka",
+    "lemma": "静か",
+    "reading_kana": "しずか",
+    "romaji": "shizuka",
+    "jlpt_level": "N5",
+    "frequency_rank": 56,
+    "part_of_speech": "Na-Adjective",
+    "core_meanings": [
+      "เงียบสงบ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "し",
+        "high": false
+      },
+      {
+        "mora": "ず",
+        "high": true
+      },
+      {
+        "mora": "か",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-benri",
+    "lemma": "便利",
+    "reading_kana": "べんり",
+    "romaji": "benri",
+    "jlpt_level": "N5",
+    "frequency_rank": 58,
+    "part_of_speech": "Na-Adjective",
+    "core_meanings": [
+      "สะดวกสบาย"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "べ",
+        "high": false
+      },
+      {
+        "mora": "ん",
+        "high": true
+      },
+      {
+        "mora": "り",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-taisetsu",
+    "lemma": "大切",
+    "reading_kana": "たいせつ",
+    "romaji": "taisetsu",
+    "jlpt_level": "N5",
+    "frequency_rank": 60,
+    "part_of_speech": "Na-Adjective",
+    "core_meanings": [
+      "สำคัญมาก"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "た",
+        "high": false
+      },
+      {
+        "mora": "い",
+        "high": true
+      },
+      {
+        "mora": "せ",
+        "high": true
+      },
+      {
+        "mora": "つ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kirei",
+    "lemma": "綺麗",
+    "reading_kana": "きれい",
+    "romaji": "kirei",
+    "jlpt_level": "N5",
+    "frequency_rank": 62,
+    "part_of_speech": "Na-Adjective",
+    "core_meanings": [
+      "สวยงาม",
+      "สะอาด"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "き",
+        "high": false
+      },
+      {
+        "mora": "れ",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-tsuyoi",
+    "lemma": "強い",
+    "reading_kana": "つよい",
+    "romaji": "tsuyoi",
+    "jlpt_level": "N4",
+    "frequency_rank": 64,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "แข็งแกร่ง"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "つ",
+        "high": false
+      },
+      {
+        "mora": "よ",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-yowai",
+    "lemma": "弱い",
+    "reading_kana": "よわい",
+    "romaji": "yowai",
+    "jlpt_level": "N4",
+    "frequency_rank": 66,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "อ่อนแอ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "よ",
+        "high": false
+      },
+      {
+        "mora": "わ",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-hayai",
+    "lemma": "早い",
+    "reading_kana": "はやい",
+    "romaji": "hayai",
+    "jlpt_level": "N5",
+    "frequency_rank": 57,
+    "part_of_speech": "I-Adjective",
+    "core_meanings": [
+      "เร็ว",
+      "เช้า"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "は",
+        "high": false
+      },
+      {
+        "mora": "や",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-watashi",
+    "lemma": "私",
+    "reading_kana": "わたし",
+    "romaji": "watashi",
+    "jlpt_level": "N5",
+    "frequency_rank": 3,
+    "part_of_speech": "Pronoun",
+    "core_meanings": [
+      "ฉัน",
+      "ผม"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "わ",
+        "high": false
+      },
+      {
+        "mora": "た",
+        "high": true
+      },
+      {
+        "mora": "し",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-boku",
+    "lemma": "僕",
+    "reading_kana": "ぼく",
+    "romaji": "boku",
+    "jlpt_level": "N5",
+    "frequency_rank": 61,
+    "part_of_speech": "Pronoun",
+    "core_meanings": [
+      "ผม (ชาย)"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ぼ",
+        "high": false
+      },
+      {
+        "mora": "く",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-ore",
+    "lemma": "俺",
+    "reading_kana": "おれ",
+    "romaji": "ore",
+    "jlpt_level": "N4",
+    "frequency_rank": 63,
+    "part_of_speech": "Pronoun",
+    "core_meanings": [
+      "ข้า",
+      "ฉัน (ภาษาพูดชาย)"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "お",
+        "high": false
+      },
+      {
+        "mora": "れ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-anata",
+    "lemma": "あなた",
+    "reading_kana": "あなた",
+    "romaji": "anata",
+    "jlpt_level": "N5",
+    "frequency_rank": 65,
+    "part_of_speech": "Pronoun",
+    "core_meanings": [
+      "คุณ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "あ",
+        "high": false
+      },
+      {
+        "mora": "な",
+        "high": true
+      },
+      {
+        "mora": "た",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-tomodachi",
+    "lemma": "友達",
+    "reading_kana": "ともだち",
+    "romaji": "tomodachi",
+    "jlpt_level": "N5",
+    "frequency_rank": 15,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "เพื่อน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "と",
+        "high": false
+      },
+      {
+        "mora": "も",
+        "high": true
+      },
+      {
+        "mora": "だ",
+        "high": true
+      },
+      {
+        "mora": "ち",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-nakama",
+    "lemma": "仲間",
+    "reading_kana": "なかま",
+    "romaji": "nakama",
+    "jlpt_level": "N4",
+    "frequency_rank": 67,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "พวกพ้อง",
+      "สหาย"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "な",
+        "high": false
+      },
+      {
+        "mora": "か",
+        "high": true
+      },
+      {
+        "mora": "ま",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kazoku",
+    "lemma": "家族",
+    "reading_kana": "かぞく",
+    "romaji": "kazoku",
+    "jlpt_level": "N5",
+    "frequency_rank": 68,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ครอบครัว"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "か",
+        "high": false
+      },
+      {
+        "mora": "ぞ",
+        "high": true
+      },
+      {
+        "mora": "く",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-sensei",
+    "lemma": "先生",
+    "reading_kana": "せんせい",
+    "romaji": "sensei",
+    "jlpt_level": "N5",
+    "frequency_rank": 69,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ครู",
+      "อาจารย์"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "せ",
+        "high": false
+      },
+      {
+        "mora": "ん",
+        "high": true
+      },
+      {
+        "mora": "せ",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-gakusei",
+    "lemma": "学生",
+    "reading_kana": "がくせい",
+    "romaji": "gakusei",
+    "jlpt_level": "N5",
+    "frequency_rank": 70,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "นักเรียน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "が",
+        "high": false
+      },
+      {
+        "mora": "く",
+        "high": true
+      },
+      {
+        "mora": "せ",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-hito",
+    "lemma": "人",
+    "reading_kana": "ひと",
+    "romaji": "hito",
+    "jlpt_level": "N5",
+    "frequency_rank": 71,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "คน",
+      "มนุษย์"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ひ",
+        "high": false
+      },
+      {
+        "mora": "と",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-nihon",
+    "lemma": "日本",
+    "reading_kana": "にほん",
+    "romaji": "nihon",
+    "jlpt_level": "N5",
+    "frequency_rank": 72,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ประเทศญี่ปุ่น"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "に",
+        "high": false
+      },
+      {
+        "mora": "ほ",
+        "high": true
+      },
+      {
+        "mora": "ん",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-nihongo",
+    "lemma": "日本語",
+    "reading_kana": "にほんご",
+    "romaji": "nihongo",
+    "jlpt_level": "N5",
+    "frequency_rank": 73,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ภาษาญี่ปุ่น"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "に",
+        "high": false
+      },
+      {
+        "mora": "ほ",
+        "high": true
+      },
+      {
+        "mora": "ん",
+        "high": true
+      },
+      {
+        "mora": "ご",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-jikan",
+    "lemma": "時間",
+    "reading_kana": "じかん",
+    "romaji": "jikan",
+    "jlpt_level": "N5",
+    "frequency_rank": 74,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "เวลา"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "じ",
+        "high": false
+      },
+      {
+        "mora": "か",
+        "high": true
+      },
+      {
+        "mora": "ん",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kyou",
+    "lemma": "今日",
+    "reading_kana": "きょう",
+    "romaji": "kyou",
+    "jlpt_level": "N5",
+    "frequency_rank": 75,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "วันนี้"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "き",
+        "high": false
+      },
+      {
+        "mora": "ょ",
+        "high": true
+      },
+      {
+        "mora": "う",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-ashita",
+    "lemma": "明日",
+    "reading_kana": "あした",
+    "romaji": "ashita",
+    "jlpt_level": "N5",
+    "frequency_rank": 76,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "พรุ่งนี้"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "あ",
+        "high": false
+      },
+      {
+        "mora": "し",
+        "high": true
+      },
+      {
+        "mora": "た",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kinou",
+    "lemma": "昨日",
+    "reading_kana": "きのう",
+    "romaji": "kinou",
+    "jlpt_level": "N5",
+    "frequency_rank": 77,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "เมื่อวานนี้"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "き",
+        "high": false
+      },
+      {
+        "mora": "の",
+        "high": true
+      },
+      {
+        "mora": "う",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-ima",
+    "lemma": "今",
+    "reading_kana": "いま",
+    "romaji": "ima",
+    "jlpt_level": "N5",
+    "frequency_rank": 78,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ตอนนี้"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "い",
+        "high": false
+      },
+      {
+        "mora": "ま",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-asa",
+    "lemma": "朝",
+    "reading_kana": "あさ",
+    "romaji": "asa",
+    "jlpt_level": "N5",
+    "frequency_rank": 79,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ตอนเช้า"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "あ",
+        "high": false
+      },
+      {
+        "mora": "さ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-yoru",
+    "lemma": "夜",
+    "reading_kana": "よる",
+    "romaji": "yoru",
+    "jlpt_level": "N5",
+    "frequency_rank": 80,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ตอนกลางคืน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "よ",
+        "high": false
+      },
+      {
+        "mora": "る",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-ie",
+    "lemma": "家",
+    "reading_kana": "いえ",
+    "romaji": "ie",
+    "jlpt_level": "N5",
+    "frequency_rank": 81,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "บ้าน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "い",
+        "high": false
+      },
+      {
+        "mora": "え",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-gakkou",
+    "lemma": "学校",
+    "reading_kana": "がっこう",
+    "romaji": "gakkou",
+    "jlpt_level": "N5",
+    "frequency_rank": 82,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "โรงเรียน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "が",
+        "high": false
+      },
+      {
+        "mora": "っ",
+        "high": true
+      },
+      {
+        "mora": "こ",
+        "high": true
+      },
+      {
+        "mora": "う",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-eki",
+    "lemma": "駅",
+    "reading_kana": "えき",
+    "romaji": "eki",
+    "jlpt_level": "N5",
+    "frequency_rank": 83,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "สถานีรถไฟ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "え",
+        "high": false
+      },
+      {
+        "mora": "き",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-mise",
+    "lemma": "店",
+    "reading_kana": "みせ",
+    "romaji": "mise",
+    "jlpt_level": "N5",
+    "frequency_rank": 84,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ร้านค้า"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "み",
+        "high": false
+      },
+      {
+        "mora": "せ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-mizu",
+    "lemma": "水",
+    "reading_kana": "みず",
+    "romaji": "mizu",
+    "jlpt_level": "N5",
+    "frequency_rank": 85,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "น้ำ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "み",
+        "high": false
+      },
+      {
+        "mora": "ず",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-ocha",
+    "lemma": "お茶",
+    "reading_kana": "おちゃ",
+    "romaji": "ocha",
+    "jlpt_level": "N5",
+    "frequency_rank": 86,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "น้ำชา"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "お",
+        "high": false
+      },
+      {
+        "mora": "ち",
+        "high": true
+      },
+      {
+        "mora": "ゃ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-gohan",
+    "lemma": "ご飯",
+    "reading_kana": "ごはん",
+    "romaji": "gohan",
+    "jlpt_level": "N5",
+    "frequency_rank": 87,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ข้าว",
+      "อาหาร"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ご",
+        "high": false
+      },
+      {
+        "mora": "は",
+        "high": true
+      },
+      {
+        "mora": "ん",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-hon",
+    "lemma": "本",
+    "reading_kana": "ほん",
+    "romaji": "hon",
+    "jlpt_level": "N5",
+    "frequency_rank": 88,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "หนังสือ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ほ",
+        "high": false
+      },
+      {
+        "mora": "ん",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-eiga",
+    "lemma": "映画",
+    "reading_kana": "えいが",
+    "romaji": "eiga",
+    "jlpt_level": "N5",
+    "frequency_rank": 89,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ภาพยนตร์"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "え",
+        "high": false
+      },
+      {
+        "mora": "い",
+        "high": true
+      },
+      {
+        "mora": "が",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-ongaku",
+    "lemma": "音楽",
+    "reading_kana": "おんがく",
+    "romaji": "ongaku",
+    "jlpt_level": "N5",
+    "frequency_rank": 90,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ดนตรี",
+      "เพลง"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "お",
+        "high": false
+      },
+      {
+        "mora": "ん",
+        "high": true
+      },
+      {
+        "mora": "が",
+        "high": true
+      },
+      {
+        "mora": "く",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kokoro",
+    "lemma": "心",
+    "reading_kana": "こころ",
+    "romaji": "kokoro",
+    "jlpt_level": "N4",
+    "frequency_rank": 91,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "หัวใจ",
+      "จิตใจ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "こ",
+        "high": false
+      },
+      {
+        "mora": "こ",
+        "high": true
+      },
+      {
+        "mora": "ろ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-yume",
+    "lemma": "夢",
+    "reading_kana": "ゆめ",
+    "romaji": "yume",
+    "jlpt_level": "N4",
+    "frequency_rank": 60,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ความฝัน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ゆ",
+        "high": false
+      },
+      {
+        "mora": "め",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-hikari",
+    "lemma": "光",
+    "reading_kana": "ひかり",
+    "romaji": "hikari",
+    "jlpt_level": "N4",
+    "frequency_rank": 45,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "แสงสว่าง"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ひ",
+        "high": false
+      },
+      {
+        "mora": "か",
+        "high": true
+      },
+      {
+        "mora": "り",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-takoyaki",
+    "lemma": "たこ焼き",
+    "reading_kana": "たこやき",
+    "romaji": "takoyaki",
+    "jlpt_level": "N5",
+    "frequency_rank": 92,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ทาโกะยากิ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "た",
+        "high": false
+      },
+      {
+        "mora": "こ",
+        "high": true
+      },
+      {
+        "mora": "や",
+        "high": true
+      },
+      {
+        "mora": "き",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-ramen",
+    "lemma": "ラーメン",
+    "reading_kana": "らーめん",
+    "romaji": "raamen",
+    "jlpt_level": "N5",
+    "frequency_rank": 93,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ราเมน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ら",
+        "high": false
+      },
+      {
+        "mora": "ー",
+        "high": true
+      },
+      {
+        "mora": "め",
+        "high": true
+      },
+      {
+        "mora": "ん",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kanpai",
+    "lemma": "乾杯",
+    "reading_kana": "かんぱい",
+    "romaji": "kanpai",
+    "jlpt_level": "N5",
+    "frequency_rank": 94,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ชนแก้ว/ไชโย"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "か",
+        "high": false
+      },
+      {
+        "mora": "ん",
+        "high": true
+      },
+      {
+        "mora": "ぱ",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-maccha",
+    "lemma": "抹茶",
+    "reading_kana": "まっちゃ",
+    "romaji": "matcha",
+    "jlpt_level": "N4",
+    "frequency_rank": 95,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ชาเขียวมัทฉะ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ま",
+        "high": false
+      },
+      {
+        "mora": "っ",
+        "high": true
+      },
+      {
+        "mora": "ち",
+        "high": true
+      },
+      {
+        "mora": "ゃ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kafe",
+    "lemma": "カフェ",
+    "reading_kana": "かふぇ",
+    "romaji": "kafe",
+    "jlpt_level": "N5",
+    "frequency_rank": 25,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "คาเฟ่"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "か",
+        "high": false
+      },
+      {
+        "mora": "ふ",
+        "high": true
+      },
+      {
+        "mora": "ぇ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-lemon",
+    "lemma": "レモン",
+    "reading_kana": "れもん",
+    "romaji": "remon",
+    "jlpt_level": "N5",
+    "frequency_rank": 96,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "มะนาวเลมอน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "れ",
+        "high": false
+      },
+      {
+        "mora": "も",
+        "high": true
+      },
+      {
+        "mora": "ん",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-pokemon",
+    "lemma": "ポケモン",
+    "reading_kana": "ぽけもん",
+    "romaji": "pokemon",
+    "jlpt_level": "N5",
+    "frequency_rank": 20,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "โปเกมอน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ぽ",
+        "high": false
+      },
+      {
+        "mora": "け",
+        "high": true
+      },
+      {
+        "mora": "も",
+        "high": true
+      },
+      {
+        "mora": "ん",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-noroi",
+    "lemma": "呪い",
+    "reading_kana": "のろい",
+    "romaji": "noroi",
+    "jlpt_level": "N4",
+    "frequency_rank": 97,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "คำสาป"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "の",
+        "high": false
+      },
+      {
+        "mora": "ろ",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-jujutsu",
+    "lemma": "呪術",
+    "reading_kana": "じゅじゅつ",
+    "romaji": "jujutsu",
+    "jlpt_level": "N3",
+    "frequency_rank": 98,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "คุณไสย",
+      "ไสยเวท"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "じ",
+        "high": false
+      },
+      {
+        "mora": "ゅ",
+        "high": true
+      },
+      {
+        "mora": "じ",
+        "high": true
+      },
+      {
+        "mora": "ゅ",
+        "high": true
+      },
+      {
+        "mora": "つ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-ryouiki",
+    "lemma": "領域展開",
+    "reading_kana": "りょういきてんかい",
+    "romaji": "ryouikitenkai",
+    "jlpt_level": "N3",
+    "frequency_rank": 99,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "การกางอาณาเขต"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "り",
+        "high": false
+      },
+      {
+        "mora": "ょ",
+        "high": true
+      },
+      {
+        "mora": "う",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      },
+      {
+        "mora": "き",
+        "high": true
+      },
+      {
+        "mora": "て",
+        "high": true
+      },
+      {
+        "mora": "ん",
+        "high": true
+      },
+      {
+        "mora": "か",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-akuma",
+    "lemma": "悪魔",
+    "reading_kana": "あくま",
+    "romaji": "akuma",
+    "jlpt_level": "N3",
+    "frequency_rank": 100,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ปีศาจ",
+      "ซาตาน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "あ",
+        "high": false
+      },
+      {
+        "mora": "く",
+        "high": true
+      },
+      {
+        "mora": "ま",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-shinigami",
+    "lemma": "死神",
+    "reading_kana": "しにがみ",
+    "romaji": "shinigami",
+    "jlpt_level": "N4",
+    "frequency_rank": 101,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ยมทูต",
+      "เทพมรณะ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "し",
+        "high": false
+      },
+      {
+        "mora": "に",
+        "high": true
+      },
+      {
+        "mora": "が",
+        "high": true
+      },
+      {
+        "mora": "み",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-bankai",
+    "lemma": "卍解",
+    "reading_kana": "ばんかい",
+    "romaji": "bankai",
+    "jlpt_level": "N3",
+    "frequency_rank": 102,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ปลดปล่อยสวัสดิกะ (บังไค)"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ば",
+        "high": false
+      },
+      {
+        "mora": "ん",
+        "high": true
+      },
+      {
+        "mora": "か",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-chikara",
+    "lemma": "力",
+    "reading_kana": "ちから",
+    "romaji": "chikara",
+    "jlpt_level": "N5",
+    "frequency_rank": 103,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "พลัง",
+      "กำลัง"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ち",
+        "high": false
+      },
+      {
+        "mora": "か",
+        "high": true
+      },
+      {
+        "mora": "ら",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-yuuki",
+    "lemma": "勇気",
+    "reading_kana": "ゆうき",
+    "romaji": "yuuki",
+    "jlpt_level": "N4",
+    "frequency_rank": 104,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ความกล้าหาญ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ゆ",
+        "high": false
+      },
+      {
+        "mora": "う",
+        "high": true
+      },
+      {
+        "mora": "き",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kakugo",
+    "lemma": "覚悟",
+    "reading_kana": "かくご",
+    "romaji": "kakugo",
+    "jlpt_level": "N3",
+    "frequency_rank": 105,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "การเตรียมใจ",
+      "ปณิธาน"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "か",
+        "high": false
+      },
+      {
+        "mora": "く",
+        "high": true
+      },
+      {
+        "mora": "ご",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-yakusoku",
+    "lemma": "約束",
+    "reading_kana": "やくそく",
+    "romaji": "yakusoku",
+    "jlpt_level": "N5",
+    "frequency_rank": 106,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "สัญญา"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "や",
+        "high": false
+      },
+      {
+        "mora": "く",
+        "high": true
+      },
+      {
+        "mora": "そ",
+        "high": true
+      },
+      {
+        "mora": "く",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-unmei",
+    "lemma": "運命",
+    "reading_kana": "うんめい",
+    "romaji": "unmei",
+    "jlpt_level": "N3",
+    "frequency_rank": 107,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "โชคชะตา"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "う",
+        "high": false
+      },
+      {
+        "mora": "ん",
+        "high": true
+      },
+      {
+        "mora": "め",
+        "high": true
+      },
+      {
+        "mora": "い",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-kiseki",
+    "lemma": "奇跡",
+    "reading_kana": "きせき",
+    "romaji": "kiseki",
+    "jlpt_level": "N3",
+    "frequency_rank": 108,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "ปาฏิหาริย์"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "き",
+        "high": false
+      },
+      {
+        "mora": "せ",
+        "high": true
+      },
+      {
+        "mora": "き",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-saikyou",
+    "lemma": "最強",
+    "reading_kana": "さいきょう",
+    "romaji": "saikyou",
+    "jlpt_level": "N3",
+    "frequency_rank": 109,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "แข็งแกร่งที่สุด"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "さ",
+        "high": false
+      },
+      {
+        "mora": "い",
+        "high": true
+      },
+      {
+        "mora": "き",
+        "high": true
+      },
+      {
+        "mora": "ょ",
+        "high": true
+      },
+      {
+        "mora": "う",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-itadori",
+    "lemma": "虎杖",
+    "reading_kana": "いたどり",
+    "romaji": "itadori",
+    "jlpt_level": "N4",
+    "frequency_rank": 110,
+    "part_of_speech": "Proper Noun",
+    "core_meanings": [
+      "อิตาโดริ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "い",
+        "high": false
+      },
+      {
+        "mora": "た",
+        "high": true
+      },
+      {
+        "mora": "ど",
+        "high": true
+      },
+      {
+        "mora": "り",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-sukuna",
+    "lemma": "宿儺",
+    "reading_kana": "すくな",
+    "romaji": "sukuna",
+    "jlpt_level": "N3",
+    "frequency_rank": 111,
+    "part_of_speech": "Proper Noun",
+    "core_meanings": [
+      "สุคุนะ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "す",
+        "high": false
+      },
+      {
+        "mora": "く",
+        "high": true
+      },
+      {
+        "mora": "な",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-gojou",
+    "lemma": "五条",
+    "reading_kana": "ごじょう",
+    "romaji": "gojou",
+    "jlpt_level": "N4",
+    "frequency_rank": 112,
+    "part_of_speech": "Proper Noun",
+    "core_meanings": [
+      "โกโจ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ご",
+        "high": false
+      },
+      {
+        "mora": "じ",
+        "high": true
+      },
+      {
+        "mora": "ょ",
+        "high": true
+      },
+      {
+        "mora": "う",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-fushiguro",
+    "lemma": "伏黒",
+    "reading_kana": "ふしぐろ",
+    "romaji": "fushiguro",
+    "jlpt_level": "N4",
+    "frequency_rank": 113,
+    "part_of_speech": "Proper Noun",
+    "core_meanings": [
+      "ฟุชิงุโระ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ふ",
+        "high": false
+      },
+      {
+        "mora": "し",
+        "high": true
+      },
+      {
+        "mora": "ぐ",
+        "high": true
+      },
+      {
+        "mora": "ろ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-ichigo",
+    "lemma": "一護",
+    "reading_kana": "いちご",
+    "romaji": "ichigo",
+    "jlpt_level": "N4",
+    "frequency_rank": 114,
+    "part_of_speech": "Proper Noun",
+    "core_meanings": [
+      "อิจิโกะ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "い",
+        "high": false
+      },
+      {
+        "mora": "ち",
+        "high": true
+      },
+      {
+        "mora": "ご",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-rukia",
+    "lemma": "ルキア",
+    "reading_kana": "るきあ",
+    "romaji": "rukia",
+    "jlpt_level": "N4",
+    "frequency_rank": 115,
+    "part_of_speech": "Proper Noun",
+    "core_meanings": [
+      "ลูเคีย"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "る",
+        "high": false
+      },
+      {
+        "mora": "き",
+        "high": true
+      },
+      {
+        "mora": "あ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-denji",
+    "lemma": "デンジ",
+    "reading_kana": "でんじ",
+    "romaji": "denji",
+    "jlpt_level": "N4",
+    "frequency_rank": 116,
+    "part_of_speech": "Proper Noun",
+    "core_meanings": [
+      "เดนจิ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "で",
+        "high": false
+      },
+      {
+        "mora": "ん",
+        "high": true
+      },
+      {
+        "mora": "じ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-pochita",
+    "lemma": "ポチタ",
+    "reading_kana": "ぽちた",
+    "romaji": "pochita",
+    "jlpt_level": "N4",
+    "frequency_rank": 117,
+    "part_of_speech": "Proper Noun",
+    "core_meanings": [
+      "โพชิตะ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "ぽ",
+        "high": false
+      },
+      {
+        "mora": "ち",
+        "high": true
+      },
+      {
+        "mora": "た",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-isagi",
+    "lemma": "潔",
+    "reading_kana": "いさぎ",
+    "romaji": "isagi",
+    "jlpt_level": "N4",
+    "frequency_rank": 118,
+    "part_of_speech": "Proper Noun",
+    "core_meanings": [
+      "อิซางิ"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "い",
+        "high": false
+      },
+      {
+        "mora": "さ",
+        "high": true
+      },
+      {
+        "mora": "ぎ",
+        "high": true
+      }
+    ]
+  },
+  {
+    "id": "w-ego",
+    "lemma": "エゴ",
+    "reading_kana": "えご",
+    "romaji": "ego",
+    "jlpt_level": "N3",
+    "frequency_rank": 119,
+    "part_of_speech": "Noun",
+    "core_meanings": [
+      "อีโก้"
+    ],
+    "pitch_accent": "LHH",
+    "pitch_morae": [
+      {
+        "mora": "え",
+        "high": false
+      },
+      {
+        "mora": "ご",
+        "high": true
+      }
+    ]
+  }
 ];
 
 export const MOCK_VIDEOS: VideoRecord[] = [
-  // === 1. GAMING (เกม & แคสเกม) - N5 / N4 ===
   {
-    id: 'vid-game-n5-starter',
-    youtube_id: 'nGLVwQuwnfY',
-    title: "Pokémon FireRed/LeafGreen: Choose Starter Pokémon (N5)",
-    japanese_title: 'ポケモンで学ぶ日本語！最初の3匹を選ぼう (N5)',
-    channel: 'Game Gengo ゲーム言語',
-    category: 'Gaming',
-    difficulty_rating: 1,
-    primary_jlpt: 'N5',
-    jlpt_distribution: { N5: 85, N4: 15, N3: 0, N2: 0, N1: 0 },
-    duration: 65,
-    thumbnail_gradient: 'from-red-600 via-orange-600 to-slate-900',
-    scene_emoji: '🎮',
-    description: "Beginner gaming Japanese: learning basic vocabulary, commands, choosing your partner Pokémon, and starting your adventure.",
+    "id": "vid-anione-jjk-01",
+    "youtube_id": "miiLadou1cw",
+    "title": "Jujutsu Kaisen EP 1: Ryomen Sukuna (Ani-One Asia)",
+    "japanese_title": "【呪術廻戦】第1話 両面宿儺！特級呪物を喰らう (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 35,
+      "N4": 45,
+      "N3": 20,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 65,
+    "thumbnail_gradient": "from-purple-900 via-indigo-950 to-slate-900",
+    "scene_emoji": "⚔️",
+    "description": "Official licensed anime from Ani-One Asia: Yuji Itadori encounters Megumi Fushiguro and swallows the cursed finger of Ryomen Sukuna."
   },
   {
-    id: 'vid-game-n5-letgo',
-    youtube_id: 'a6JwRs2in0E',
-    title: "Pokémon Let’s Go Pikachu: 100 Beginner Words (N5)",
-    japanese_title: 'ピカチュウと冒険！超重要100単語でゲーム攻略 (N5)',
-    channel: 'Game Gengo ゲーム言語',
-    category: 'Gaming',
-    difficulty_rating: 1,
-    primary_jlpt: 'N5',
-    jlpt_distribution: { N5: 80, N4: 20, N3: 0, N2: 0, N1: 0 },
-    duration: 60,
-    thumbnail_gradient: 'from-yellow-500 via-amber-600 to-stone-900',
-    scene_emoji: '⚡',
-    description: "Essential RPG and gaming vocabulary: items, monster balls, catching Pokémon, and basic battle menu interactions.",
+    "id": "vid-anione-jjk-02",
+    "youtube_id": "YKnowHCkAA8",
+    "title": "Jujutsu Kaisen EP 2: Satoru Gojo (Ani-One Asia)",
+    "japanese_title": "【呪術廻戦】第2話 最強の呪術師・五条悟登場！(Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 30,
+      "N4": 50,
+      "N3": 20,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 60,
+    "thumbnail_gradient": "from-blue-900 via-indigo-900 to-slate-900",
+    "scene_emoji": "🤞",
+    "description": "Official licensed anime from Ani-One Asia: Satoru Gojo effortlessly handles Sukuna and introduces Yuji to the world of Jujutsu Sorcery."
   },
   {
-    id: 'vid-game-n4-trainer',
-    youtube_id: 'mOr_WSebOYg',
-    title: "Pokémon Let’s Go: Becoming a Pokémon Trainer (N4)",
-    japanese_title: 'ポケモントレーナーへの道！冒険の始まり (N4)',
-    channel: 'Game Gengo ゲーム言語',
-    category: 'Gaming',
-    difficulty_rating: 2,
-    primary_jlpt: 'N4',
-    jlpt_distribution: { N5: 45, N4: 45, N3: 10, N2: 0, N1: 0 },
-    duration: 65,
-    thumbnail_gradient: 'from-blue-600 via-indigo-700 to-slate-950',
-    scene_emoji: '🧢',
-    description: "Conversational dialogue between trainers, professor instructions, rivals, and level progression in Japanese.",
+    "id": "vid-anione-bleach-01",
+    "youtube_id": "OgyORlzV0uw",
+    "title": "BLEACH EP 1: The Day I Became a Shinigami (Ani-One Asia)",
+    "japanese_title": "【BLEACH 死神】第1話 死神になっちゃった日！朽木ルキアとの出会い (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 40,
+      "N4": 45,
+      "N3": 15,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 60,
+    "thumbnail_gradient": "from-orange-950 via-red-950 to-slate-900",
+    "scene_emoji": "🗡️",
+    "description": "Official classic anime from Ani-One Asia: Ichigo Kurosaki encounters Soul Reaper Rukia Kuchiki and awakens his dormant spirit power."
   },
   {
-    id: 'vid-game-n5-immersion',
-    youtube_id: 'Iy4XxbE0vRs',
-    title: "Comprehensible Beginner Game Immersion Practice (N5)",
-    japanese_title: 'けんさんとゲームで学ぶ！やさしい日本語実況 (N5)',
-    channel: 'けんさんおかえり Japanese',
-    category: 'Gaming',
-    difficulty_rating: 1,
-    primary_jlpt: 'N5',
-    jlpt_distribution: { N5: 90, N4: 10, N3: 0, N2: 0, N1: 0 },
-    duration: 60,
-    thumbnail_gradient: 'from-emerald-600 via-teal-700 to-slate-900',
-    scene_emoji: '🕹️',
-    description: "Clear, gentle commentary during gameplay: actions, directions, finding items, and expressing excitement.",
-  },
-
-  // === 2. ANIME (อนิเมะ) - N5 / N4 ===
-  {
-    id: 'vid-anime-n4-cafe1',
-    youtube_id: 'u9F3TO-3Rbo',
-    title: "Learn Japanese with Anime: Polar Bear Café Ep.1 (N4)",
-    japanese_title: 'アニメ「しろくまカフェ」で学ぶ日常フレーズ (N4)',
-    channel: 'Red Fox Japan Channel',
-    category: 'Anime',
-    difficulty_rating: 2,
-    primary_jlpt: 'N4',
-    jlpt_distribution: { N5: 50, N4: 45, N3: 5, N2: 0, N1: 0 },
-    duration: 60,
-    thumbnail_gradient: 'from-cyan-600 via-sky-700 to-slate-900',
-    scene_emoji: '🐻‍❄️',
-    description: "Slow, conversational anime comedy: ordering coffee, chatting with animal friends, and natural polite conversation.",
+    "id": "vid-anione-chainsaw-01",
+    "youtube_id": "BMpzc-gck0c",
+    "title": "Chainsaw Man Compilation: Dog & Chainsaw (Ani-One Thailand)",
+    "japanese_title": "【チェンソーマン】デンジとポチタの約束！犬とチェンソー (Ani-One Thailand)",
+    "channel": "Ani-One Thailand",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 40,
+      "N4": 45,
+      "N3": 15,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 60,
+    "thumbnail_gradient": "from-red-900 via-amber-950 to-slate-900",
+    "scene_emoji": "🪚",
+    "description": "Official licensed anime from Ani-One Thailand: Denji makes an unforgettable soul pact with the Chainsaw Devil Pochita."
   },
   {
-    id: 'vid-anime-n4-cafe2',
-    youtube_id: '-Sw19FcVD54',
-    title: "Polar Bear Café: Ordering & Relaxing Coffee Chat (N4)",
-    japanese_title: 'しろくまカフェの日常会話：カフェでの注文と雑談 (N4)',
-    channel: 'Red Fox Japan Channel',
-    category: 'Anime',
-    difficulty_rating: 2,
-    primary_jlpt: 'N4',
-    jlpt_distribution: { N5: 45, N4: 50, N3: 5, N2: 0, N1: 0 },
-    duration: 60,
-    thumbnail_gradient: 'from-teal-600 via-emerald-700 to-slate-950',
-    scene_emoji: '☕',
-    description: "Helpful cafe phrases, friendly questions, asking about daily life, and gentle humorous Japanese banters.",
-  },
-
-  // === 3. VLOGS & เที่ยวญี่ปุ่น - N5 / N4 ===
-  {
-    id: 'vid-vlog-n5-uji',
-    youtube_id: 'oovPYmGgX0U',
-    title: "Walking in Uji, Kyoto | Matcha & Historic Streets (N5-N4)",
-    japanese_title: '京都・宇治をお散歩！抹茶の街で食べ歩き (N5-N4)',
-    channel: 'Japanese with Shun',
-    category: 'Vlogs',
-    difficulty_rating: 1,
-    primary_jlpt: 'N5',
-    jlpt_distribution: { N5: 75, N4: 25, N3: 0, N2: 0, N1: 0 },
-    duration: 60,
-    thumbnail_gradient: 'from-emerald-600 via-green-700 to-slate-900',
-    scene_emoji: '🍵',
-    description: "Immersive travel vlog: strolling traditional stone streets, visiting historical bridges, and tasting green tea soft cream.",
+    "id": "vid-anione-bluelock-01",
+    "youtube_id": "S-zdoi1dv8k",
+    "title": "BLUE LOCK VS. U-20 JAPAN EP 1 (Ani-One Thailand)",
+    "japanese_title": "【ブルーロック】U-20日本代表戦 第1話！エゴイストたちの挑戦 (Ani-One Thailand)",
+    "channel": "Ani-One Thailand",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 35,
+      "N4": 50,
+      "N3": 15,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 60,
+    "thumbnail_gradient": "from-cyan-950 via-blue-950 to-slate-900",
+    "scene_emoji": "⚽",
+    "description": "Official licensed anime from Ani-One Thailand: Isagi Yoichi and Blue Lock strikers ignite their ultimate ego to take on Japan U-20."
   },
   {
-    id: 'vid-vlog-n4-osaka',
-    youtube_id: 'L7X9o2Zd4us',
-    title: "Bar Hopping in Osaka | Friendly Night Streets (N4)",
-    japanese_title: '大阪の夜を楽しもう！活気ある街で乾杯 (N4)',
-    channel: 'Japanese with Shun',
-    category: 'Vlogs',
-    difficulty_rating: 2,
-    primary_jlpt: 'N4',
-    jlpt_distribution: { N5: 45, N4: 50, N3: 5, N2: 0, N1: 0 },
-    duration: 60,
-    thumbnail_gradient: 'from-amber-600 via-rose-700 to-slate-950',
-    scene_emoji: '🏮',
-    description: "Night market food crawl: lively Osaka banter, ordering street food, and cheering with local shop owners.",
+    "id": "vid-game-n5-starter",
+    "youtube_id": "nGLVwQuwnfY",
+    "title": "Pokémon FireRed/LeafGreen: Choose Starter Pokémon (N5)",
+    "japanese_title": "ポケモンで学ぶ日本語！最初の3匹を選ぼう (N5)",
+    "channel": "Game Gengo ゲーム言語",
+    "category": "Gaming",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 85,
+      "N4": 15,
+      "N3": 0,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 65,
+    "thumbnail_gradient": "from-red-600 via-orange-600 to-slate-900",
+    "scene_emoji": "🎮",
+    "description": "Beginner gaming Japanese: learning basic vocabulary, commands, choosing your partner Pokémon, and starting your adventure."
   },
   {
-    id: 'vid-vlog-n4-yamagata',
-    youtube_id: 'fDtOgmm4uk0',
-    title: "Catch and Cook River Fish in Yamagata Nature (N4)",
-    japanese_title: '山形の自然で魚釣り！釣った魚を焼いて食べる (N4)',
-    channel: 'Japanese with Shun',
-    category: 'Vlogs',
-    difficulty_rating: 2,
-    primary_jlpt: 'N4',
-    jlpt_distribution: { N5: 40, N4: 50, N3: 10, N2: 0, N1: 0 },
-    duration: 60,
-    thumbnail_gradient: 'from-teal-600 via-cyan-800 to-stone-900',
-    scene_emoji: '🐟',
-    description: "Relaxing countryside vlog: river fishing, grilling fresh fish with salt, and enjoying fresh Japanese mountain air.",
+    "id": "vid-game-n5-letgo",
+    "youtube_id": "a6JwRs2in0E",
+    "title": "Pokémon Let’s Go Pikachu: 100 Beginner Words (N5)",
+    "japanese_title": "ピカチュウと冒険！超重要100単語でゲーム攻略 (N5)",
+    "channel": "Game Gengo ゲーム言語",
+    "category": "Gaming",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 80,
+      "N4": 20,
+      "N3": 0,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 60,
+    "thumbnail_gradient": "from-yellow-500 via-amber-600 to-stone-900",
+    "scene_emoji": "⚡",
+    "description": "Essential RPG and gaming vocabulary: items, monster balls, catching Pokémon, and basic battle menu interactions."
   },
   {
-    id: 'vid-vlog-n4-student',
-    youtube_id: 'qGeALpYfiRo',
-    title: "A Day in the Life of a Japanese University Student (N4)",
-    japanese_title: '日本の女子大生のリアルな1日！日常密着Vlog (N4)',
-    channel: 'Learn Easy Japanese with Kaneko',
-    category: 'Vlogs',
-    difficulty_rating: 2,
-    primary_jlpt: 'N4',
-    jlpt_distribution: { N5: 45, N4: 45, N3: 10, N2: 0, N1: 0 },
-    duration: 60,
-    thumbnail_gradient: 'from-pink-600 via-rose-700 to-slate-900',
-    scene_emoji: '🎒',
-    description: "Authentic daily routine: morning alarm, train commute to campus, lunch with friends, and evening homework.",
+    "id": "vid-n5-takoyaki",
+    "youtube_id": "6q_3f5mE6E8",
+    "title": "Osaka Takoyaki Street Food: Ordering in Japanese (N5)",
+    "japanese_title": "大阪名物たこ焼き！本場の注文と熱々グルメ (N5)",
+    "channel": "Nippon Wandering",
+    "category": "Street Food",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 85,
+      "N4": 15,
+      "N3": 0,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 60,
+    "thumbnail_gradient": "from-amber-600 via-orange-700 to-slate-900",
+    "scene_emoji": "🐙",
+    "description": "Watch authentic Osaka takoyaki being prepared while learning ordering phrases, food toppings, and hot taste expressions."
   },
   {
-    id: 'vid-n5-vlog',
-    youtube_id: 'etkJ6Se-WwA',
-    title: "Tokyo Walking & Cafe Vlog | N5 Easy Japanese",
-    japanese_title: '東京散歩とおしゃれなカフェ巡り (N5)',
-    channel: 'Japanese with Shun',
-    category: 'Vlogs',
-    difficulty_rating: 1,
-    primary_jlpt: 'N5',
-    jlpt_distribution: { N5: 80, N4: 20, N3: 0, N2: 0, N1: 0 },
-    duration: 60,
-    thumbnail_gradient: 'from-emerald-600 via-teal-700 to-slate-900',
-    scene_emoji: '☕',
-    description: "Clear beginner Japanese: walking along Tokyo city streets, describing the weather, and ordering coffee at a small cafe.",
-  },
-
-  // === 4. STREET FOOD & DINING - N5 / N4 ===
-  {
-    id: 'vid-n5-takoyaki',
-    youtube_id: 'shom9nyhj5Y',
-    title: "Tokyo Street Food Takoyaki | N5 Easy Japanese",
-    japanese_title: '中野の絶品たこ焼き！焼きたてアツアツ (N5)',
-    channel: 'Japan Travel Guide',
-    category: 'Street Food',
-    difficulty_rating: 1,
-    primary_jlpt: 'N5',
-    jlpt_distribution: { N5: 85, N4: 15, N3: 0, N2: 0, N1: 0 },
-    duration: 55,
-    thumbnail_gradient: 'from-amber-600 via-rose-700 to-slate-900',
-    scene_emoji: '🐙',
-    description: "Real street food ordering and dining in Nakano, Tokyo: sizzling takoyaki, bonito flakes, and basic dining phrases.",
+    "id": "vid-n4-cooking",
+    "youtube_id": "FkL4CjZ12aM",
+    "title": "Tokyo Ramen Master: Rich Tonkotsu Broth (N4)",
+    "japanese_title": "職人の極上とんこつラーメン！スープ作りの極意 (N4)",
+    "channel": "Ramen Walker Japan",
+    "category": "Street Food",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 50,
+      "N4": 40,
+      "N3": 10,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 60,
+    "thumbnail_gradient": "from-yellow-700 via-red-800 to-slate-900",
+    "scene_emoji": "🍜",
+    "description": "Learn cooking terms, noodles texture (katame, futsuu), and rich umami soup seasoning in authentic Tokyo ramen shops."
   },
   {
-    id: 'vid-n4-cooking',
-    youtube_id: 'jUI29j4mFvc',
-    title: "Easy Homemade Ramen Cooking (N4)",
-    japanese_title: '家で美味しいラーメンを作ろう！ (N4)',
-    channel: 'Japanese with Shun',
-    category: 'Street Food',
-    difficulty_rating: 2,
-    primary_jlpt: 'N4',
-    jlpt_distribution: { N5: 40, N4: 50, N3: 10, N2: 0, N1: 0 },
-    duration: 60,
-    thumbnail_gradient: 'from-orange-600 via-amber-700 to-stone-900',
-    scene_emoji: '🍜',
-    description: "Kitchen and cooking Japanese: boiling broth, cooking noodles, timing, and enjoying a warm bowl of ramen.",
+    "id": "vid-pod-n5-intro",
+    "youtube_id": "2OvyA2__Lak",
+    "title": "Japanese with Shun Ep 1: Self Introduction (N5)",
+    "japanese_title": "日本語の森 • はじめまして！日常会話の第一歩 (N5)",
+    "channel": "Japanese with Shun",
+    "category": "Podcasts",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 90,
+      "N4": 10,
+      "N3": 0,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 60,
+    "thumbnail_gradient": "from-teal-600 via-emerald-700 to-slate-900",
+    "scene_emoji": "🎙️",
+    "description": "Clear, gentle spoken Japanese for complete beginners covering hobbies, origins, daily schedule, and polite self-introduction."
   },
   {
-    id: 'vid-n4-izakaya',
-    youtube_id: 'K4TOrB7at0Y',
-    title: "Ordering at a Lively Tokyo Izakaya (N4)",
-    japanese_title: '居酒屋で乾杯！絶品焼き鳥と仕事帰りの一杯 (N4)',
-    channel: 'Foodie Japan Tokyo',
-    category: 'Daily Conversation',
-    difficulty_rating: 2,
-    primary_jlpt: 'N4',
-    jlpt_distribution: { N5: 50, N4: 40, N3: 10, N2: 0, N1: 0 },
-    duration: 55,
-    thumbnail_gradient: 'from-yellow-600 via-amber-700 to-slate-900',
-    scene_emoji: '🍻',
-    description: "Authentic dining culture: ordering draft beer, yakitori skewers, friendly staff greetings, and the bill.",
-  },
-
-  // === 5. PODCASTS (พอดแคสต์) - N5 / N4 + N3-N1 ===
-  {
-    id: 'vid-pod-n5-intro',
-    youtube_id: 'OlZx_o60qAs',
-    title: "Japanese Podcast for Beginners | Ep1 Self-Introduction",
-    japanese_title: '日本語ポッドキャスト Ep1 自己紹介 (N5 初心者)',
-    channel: 'Japanese with Shun',
-    category: 'Podcasts',
-    difficulty_rating: 1,
-    primary_jlpt: 'N5',
-    jlpt_distribution: { N5: 90, N4: 10, N3: 0, N2: 0, N1: 0 },
-    duration: 60,
-    thumbnail_gradient: 'from-blue-600 via-indigo-700 to-slate-900',
-    scene_emoji: '🎙️',
-    description: "Slow and comprehensible Japanese podcast: Shun talks about his background, hobbies, and simple self-introduction.",
+    "id": "vid-n5-vlog",
+    "youtube_id": "5yx6BWlEVcY",
+    "title": "Tokyo Cafe & Shinjuku Street Walk Vlog (N5)",
+    "japanese_title": "東京新宿のカフェ巡り！のんびり街歩き日本語 (N5)",
+    "channel": "Tokyo Stroll",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 80,
+      "N4": 20,
+      "N3": 0,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 60,
+    "thumbnail_gradient": "from-indigo-600 via-purple-700 to-slate-900",
+    "scene_emoji": "☕",
+    "description": "Walking through Shinjuku alleys, ordering iced matcha latte in a quiet cafe, and admiring evening city lights in easy Japanese."
   },
   {
-    id: 'vid-pod-n5-teppei',
-    youtube_id: 'drTGtJEvRCA',
-    title: "Nihongo con Teppei #1 | 元気ですか？",
-    japanese_title: 'Nihongo con Teppei #1 元気ですか？ (N5)',
-    channel: 'Teppei',
-    category: 'Podcasts',
-    difficulty_rating: 1,
-    primary_jlpt: 'N5',
-    jlpt_distribution: { N5: 85, N4: 15, N3: 0, N2: 0, N1: 0 },
-    duration: 55,
-    thumbnail_gradient: 'from-cyan-600 via-teal-700 to-slate-900',
-    scene_emoji: '🎧',
-    description: "Teppei explains everyday Japanese greetings and natural conversation starters in friendly, clear tones.",
+    "id": "vid-vlog-n5-uji",
+    "youtube_id": "nGLVwQuwnfY",
+    "title": "Kyoto Uji Matcha Walk: Green Tea & Historic Temples (N5)",
+    "japanese_title": "宇治の抹茶と歴史の散歩道！京都ぶらり旅 (N5)",
+    "channel": "Kyoto Walk 日本語",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 85,
+      "N4": 15,
+      "N3": 0,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 60,
+    "thumbnail_gradient": "from-emerald-600 via-teal-700 to-slate-900",
+    "scene_emoji": "🍵",
+    "description": "Strolling through Kyoto Uji, enjoying rich matcha soft cream, visiting historic Byodoin Phoenix Hall, and practicing travel Japanese."
   },
   {
-    id: 'vid-pod-n4-friends',
-    youtube_id: '_Oi-9tGMxyM',
-    title: "Ep278 Making Friends & Relationships | Easy Japanese",
-    japanese_title: 'Ep278 友達の作り方と人間関係 (N4)',
-    channel: 'Japanese with Shun',
-    category: 'Podcasts',
-    difficulty_rating: 2,
-    primary_jlpt: 'N4',
-    jlpt_distribution: { N5: 45, N4: 50, N3: 5, N2: 0, N1: 0 },
-    duration: 60,
-    thumbnail_gradient: 'from-emerald-600 via-teal-800 to-slate-950',
-    scene_emoji: '🤝',
-    description: "Practical interpersonal Japanese: discussing friendship, keeping in touch, and cultural nuances in Japan.",
-  },
-
-  // === 6. J-POP (เพลง) - VERIFIED CLEAN HIT SONGS ===
-  {
-    id: 'vid-n4-pretender',
-    youtube_id: 'TQ8WlA2GXbk',
-    title: "Official HIGE DANdism - Pretender (N4)",
-    japanese_title: 'Official髭男dism - Pretender (映画「コンフィデンスマンJP」)',
-    channel: 'Official HIGE DANdism',
-    category: 'J-Pop',
-    difficulty_rating: 3,
-    primary_jlpt: 'N4',
-    jlpt_distribution: { N5: 30, N4: 45, N3: 25, N2: 0, N1: 0 },
-    duration: 55,
-    thumbnail_gradient: 'from-cyan-600 via-blue-700 to-slate-950',
-    scene_emoji: '🎸',
-    description: "Uptempo emotional romance: love confession dilemmas, modern conversational idioms, and vibrant vocals.",
-  },
-  {
-    id: 'vid-n4-lemon',
-    youtube_id: 'SX_ViT4Ra7k',
-    title: "Kenshi Yonezu - Lemon | Drama Unnatural OST (N4)",
-    japanese_title: '米津玄師 - Lemon (ドラマ「アンナチュラル」主題歌)',
-    channel: 'Kenshi Yonezu',
-    category: 'J-Pop',
-    difficulty_rating: 3,
-    primary_jlpt: 'N4',
-    jlpt_distribution: { N5: 35, N4: 45, N3: 20, N2: 0, N1: 0 },
-    duration: 55,
-    thumbnail_gradient: 'from-yellow-500 via-amber-600 to-stone-950',
-    scene_emoji: '🍋',
-    description: "Legendary hit ballad: poignant memories, bittersweet emotion, and clear melodic Japanese phrasing.",
-  },
-  {
-    id: 'vid-n3-yoru',
-    youtube_id: 'by4SYYWlhEs',
-    title: "YOASOBI - 夜に駆ける (Racing into the Night) (N3)",
-    japanese_title: 'YOASOBI「夜に駆ける」小説連動ソング',
-    channel: 'Ayase / YOASOBI',
-    category: 'J-Pop',
-    difficulty_rating: 3,
-    primary_jlpt: 'N3',
-    jlpt_distribution: { N5: 25, N4: 35, N3: 35, N2: 5, N1: 0 },
-    duration: 55,
-    thumbnail_gradient: 'from-indigo-600 via-pink-700 to-slate-950',
-    scene_emoji: '🌙',
-    description: "The mega-viral J-Pop masterpiece: rapid cadence, storytelling lyrics, and nighttime metaphors.",
-  },
-  {
-    id: 'vid-n1-idol',
-    youtube_id: 'ZRtdQ81jPUQ',
-    title: "YOASOBI - アイドル (IDOL) | Oshi no Ko OP (N1)",
-    japanese_title: 'YOASOBI「アイドル」推しの子 OP',
-    channel: 'Ayase / YOASOBI',
-    category: 'J-Pop',
-    difficulty_rating: 5,
-    primary_jlpt: 'N1',
-    jlpt_distribution: { N5: 10, N4: 20, N3: 30, N2: 25, N1: 15 },
-    duration: 55,
-    thumbnail_gradient: 'from-fuchsia-600 via-rose-700 to-slate-950',
-    scene_emoji: '🎤',
-    description: "Global chart-topper: show business glamour vs secrecy, complex vocabulary, and lightning-speed rap segments.",
-  },
+    "id": "vid-n4-lemon",
+    "youtube_id": "SX_ViT4Ra7k",
+    "title": "Lemon - Kenshi Yonezu: Learn Japanese Through Music (N4)",
+    "japanese_title": "米津玄師 - Lemon で学ぶ日本語！胸に響く歌詞の世界 (N4)",
+    "channel": "J-Pop Japanese",
+    "category": "J-Pop",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 45,
+      "N4": 45,
+      "N3": 10,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 60,
+    "thumbnail_gradient": "from-amber-500 via-yellow-600 to-stone-900",
+    "scene_emoji": "🎵",
+    "description": "Study emotional grammar patterns and expressive vocabulary through the masterpiece Lemon by Kenshi Yonezu."
+  }
 ];
 
 export const MOCK_SUBTITLE_LINES: Record<string, SubtitleLineRecord[]> = {
-  // === GAMING 1: Pokémon LeafGreen Starters (nGLVwQuwnfY) ===
-  'vid-game-n5-starter': [
+  "vid-anione-jjk-01": [
     {
-      id: 'sub-poke-01',
-      video_id: 'vid-game-n5-starter',
-      line_index: 0,
-      start_time_ms: 0,
-      end_time_ms: 7000,
-      speaker: 'Oak',
-      raw_text: 'ここに 3匹の ポケモンが いるじゃろう！',
-      natural_translation: "Right here are three Pokémon, as you can see!",
-      thai_translation: 'ตรงนี้มีโปเกมอนอยู่ 3 ตัวยังไงล่ะ!',
-      ai_grammar_summary: "〜じゃろう = คำลงท้ายแบบคนแก่ (ดร.โอคิโดะ) เทียบเท่า 〜でしょう",
-      tokens_json: [
-        { surface: 'ここに', word_id: 'w-kokoni', lemma: 'ここ', reading_kana: 'ここに', romaji: 'koko ni', jlpt_level: 'N5', part_of_speech: 'Pronoun + Particle', contextual_meaning: 'here', thai_meaning: 'ตรงนี้', general_meanings: ['here'] },
-        { surface: '3匹の', word_id: 'w-sanbiki', lemma: '3匹', reading_kana: 'さんびきの', romaji: 'sanbiki no', jlpt_level: 'N5', part_of_speech: 'Counter', contextual_meaning: 'three animals', thai_meaning: '3 ตัว', general_meanings: ['three small animals'] },
-        { surface: 'ポケモンが', word_id: 'w-pokemon', lemma: 'ポケモン', reading_kana: 'ぽけもんが', romaji: 'pokemon ga', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'Pokemon', thai_meaning: 'โปเกมอน', general_meanings: ['pokemon'] },
-        { surface: 'いるじゃろう', word_id: 'w-irujarou', lemma: 'いる', reading_kana: 'いるじゃろう', romaji: 'iru jarou', jlpt_level: 'N4', part_of_speech: 'Phrase', contextual_meaning: 'are here, right?', thai_meaning: 'อยู่ยังไงล่ะ', general_meanings: ['are present'] },
-      ],
+      "id": "sub-jjk01-01",
+      "video_id": "vid-anione-jjk-01",
+      "line_index": 0,
+      "start_time_ms": 0,
+      "end_time_ms": 6500,
+      "speaker": "伏黒恵 (Megumi)",
+      "raw_text": "おい、そこの特級呪物を渡せ！それは危険すぎる！",
+      "natural_translation": "Hey, hand over that special grade cursed object! It is way too dangerous!",
+      "thai_translation": "เฮ้ย! ส่งวัตถุต้องสาประดับพิเศษชิ้นนั้นมาเดี๋ยวนี้! มันอันตรายเกินไป!",
+      "ai_grammar_summary": "〜を渡せ = รูปคำสั่งเด็ดขาด (Imperative) / すぎる = เกินขอบเขต",
+      "tokens_json": [
+        {
+          "surface": "おい",
+          "word_id": "w-oi",
+          "lemma": "おい",
+          "reading_kana": "おい",
+          "romaji": "oi",
+          "jlpt_level": "N5",
+          "part_of_speech": "Interjection",
+          "contextual_meaning": "hey",
+          "thai_meaning": "เฮ้ย"
+        },
+        {
+          "surface": "そこの",
+          "word_id": "w-soko",
+          "lemma": "そこ",
+          "reading_kana": "そこの",
+          "romaji": "soko no",
+          "jlpt_level": "N5",
+          "part_of_speech": "Pronoun",
+          "contextual_meaning": "that over there",
+          "thai_meaning": "ตรงนั้น"
+        },
+        {
+          "surface": "特級呪物",
+          "word_id": "w-noroi",
+          "lemma": "呪い",
+          "reading_kana": "とっきゅうじゅぶつ",
+          "romaji": "tokkyuu jubutsu",
+          "jlpt_level": "N3",
+          "part_of_speech": "Noun",
+          "contextual_meaning": "special grade cursed object",
+          "thai_meaning": "วัตถุต้องสาประดับพิเศษ"
+        },
+        {
+          "surface": "渡せ",
+          "word_id": "w-watase",
+          "lemma": "渡す",
+          "reading_kana": "わたせ",
+          "romaji": "watase",
+          "jlpt_level": "N4",
+          "part_of_speech": "Verb (Imperative)",
+          "contextual_meaning": "hand it over",
+          "thai_meaning": "ส่งมา"
+        },
+        {
+          "surface": "危険すぎる",
+          "word_id": "w-kikensugiru",
+          "lemma": "危険",
+          "reading_kana": "きけんすぎる",
+          "romaji": "kiken sugiru",
+          "jlpt_level": "N4",
+          "part_of_speech": "Adjective + Verb",
+          "contextual_meaning": "too dangerous",
+          "thai_meaning": "อันตรายเกินไป"
+        }
+      ]
     },
     {
-      id: 'sub-poke-02',
-      video_id: 'vid-game-n5-starter',
-      line_index: 1,
-      start_time_ms: 7100,
-      end_time_ms: 15000,
-      speaker: 'Oak',
-      raw_text: '好きな ポケモンを 1匹 えらびなさい！',
-      natural_translation: "Choose one Pokémon that you like!",
-      thai_translation: 'จงเลือกโปเกมอนตัวที่เธอชอบมา 1 ตัวสิ!',
-      ai_grammar_summary: "〜なさい = คำสั่งอย่างเป็นมิตรของผู้ใหญ่บอกเด็ก (\"จงเลือก...\")",
-      tokens_json: [
-        { surface: '好きな', word_id: 'w-sukina', lemma: '好き', reading_kana: 'すきな', romaji: 'suki na', jlpt_level: 'N5', part_of_speech: 'Na-Adjective', contextual_meaning: 'favorite', thai_meaning: 'ที่ชื่นชอบ', general_meanings: ['liked'] },
-        { surface: 'ポケモンを', word_id: 'w-pokemon', lemma: 'ポケモン', reading_kana: 'ぽけもんを', romaji: 'pokemon o', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'Pokemon', thai_meaning: 'โปเกมอน', general_meanings: ['pokemon'] },
-        { surface: '1匹', word_id: 'w-ippiki', lemma: '1匹', reading_kana: 'いっぴき', romaji: 'ippiki', jlpt_level: 'N5', part_of_speech: 'Counter', contextual_meaning: 'one Pokémon', thai_meaning: 'หนึ่งตัว', general_meanings: ['one'] },
-        { surface: 'えらびなさい', word_id: 'w-erabinasai', lemma: '選ぶ', reading_kana: 'えらびなさい', romaji: 'erabinasai', jlpt_level: 'N4', part_of_speech: 'Verb (Imperative)', contextual_meaning: 'choose!', thai_meaning: 'จงเลือกมาเลย', general_meanings: ['choose'] },
-      ],
+      "id": "sub-jjk01-02",
+      "video_id": "vid-anione-jjk-01",
+      "line_index": 1,
+      "start_time_ms": 6600,
+      "end_time_ms": 13500,
+      "speaker": "虎杖悠仁 (Yuji)",
+      "raw_text": "みんなを助けるためなら、俺は呪いだって喰ってやる！",
+      "natural_translation": "If it is to save everyone, I will even eat this curse!",
+      "thai_translation": "ถ้าเพื่อช่วยทุกคนล่ะก็ ต่อให้เป็นคำสาปฉันก็จะกลืนกินมันเข้าไป!",
+      "ai_grammar_summary": "〜ためなら = ถ้าเพื่อการนั้น... / 〜だって = แม้กระทั่ง / 〜てやる = แสดงความมุ่งมั่นลงมือทำ",
+      "tokens_json": [
+        {
+          "surface": "みんなを",
+          "word_id": "w-minna",
+          "lemma": "みんな",
+          "reading_kana": "みんなを",
+          "romaji": "minna o",
+          "jlpt_level": "N5",
+          "part_of_speech": "Noun + Particle",
+          "contextual_meaning": "everyone",
+          "thai_meaning": "ทุกคน"
+        },
+        {
+          "surface": "助けるためなら",
+          "word_id": "w-tasukeru",
+          "lemma": "助ける",
+          "reading_kana": "たすけるためなら",
+          "romaji": "tasukeru tame nara",
+          "jlpt_level": "N4",
+          "part_of_speech": "Verb + Grammar",
+          "contextual_meaning": "if it is to save",
+          "thai_meaning": "ถ้าเพื่อช่วย"
+        },
+        {
+          "surface": "俺は",
+          "word_id": "w-ore",
+          "lemma": "俺",
+          "reading_kana": "おれは",
+          "romaji": "ore wa",
+          "jlpt_level": "N4",
+          "part_of_speech": "Pronoun",
+          "contextual_meaning": "I",
+          "thai_meaning": "ฉัน/ข้า"
+        },
+        {
+          "surface": "呪いだって",
+          "word_id": "w-noroi",
+          "lemma": "呪い",
+          "reading_kana": "のろいだって",
+          "romaji": "noroi datte",
+          "jlpt_level": "N4",
+          "part_of_speech": "Noun + Particle",
+          "contextual_meaning": "even a curse",
+          "thai_meaning": "แม้แต่คำสาป"
+        },
+        {
+          "surface": "喰ってやる",
+          "word_id": "w-taberu",
+          "lemma": "食べる",
+          "reading_kana": "くってやる",
+          "romaji": "kutte yaru",
+          "jlpt_level": "N4",
+          "part_of_speech": "Verb phrase",
+          "contextual_meaning": "I will devour it",
+          "thai_meaning": "จะสวาปามกินเข้าไป!"
+        }
+      ]
     },
     {
-      id: 'sub-poke-03',
-      video_id: 'vid-game-n5-starter',
-      line_index: 2,
-      start_time_ms: 15100,
-      end_time_ms: 25000,
-      speaker: 'Player',
-      raw_text: 'ヒトカゲ、きみに決めた！一緒に旅に出よう！',
-      natural_translation: "Charmander, I choose you! Let’s embark on our journey together!",
-      thai_translation: 'ฮิโตคาเงะ ฉันเลือกนาย! ออกเดินทางไปด้วยกันเถอะ!',
-      ai_grammar_summary: "〜に決めた = ตัดสินใจเลือก... / 〜よう = รูปชักชวน (Volitional form)",
-      tokens_json: [
-        { surface: 'ヒトカゲ', word_id: 'w-hitokage', lemma: 'ヒトカゲ', reading_kana: 'ひとかげ', romaji: 'hitokage', jlpt_level: 'N5', part_of_speech: 'Proper noun', contextual_meaning: 'Charmander', thai_meaning: 'ฮิโตคาเงะ (ชาร์แมนเดอร์)', general_meanings: ['Charmander'] },
-        { surface: 'きみに決めた', word_id: 'w-kiminikimeta', lemma: '決める', reading_kana: 'きみにきめた', romaji: 'kimi ni kimeta', jlpt_level: 'N4', part_of_speech: 'Phrase', contextual_meaning: 'I choose you', thai_meaning: 'ฉันเลือกนายแล้ว!', general_meanings: ['decided on you'] },
-        { surface: '一緒に', word_id: 'w-isshoni', lemma: '一緒', reading_kana: 'いっしょに', romaji: 'issho ni', jlpt_level: 'N5', part_of_speech: 'Adverb', contextual_meaning: 'together', thai_meaning: 'ไปด้วยกัน', general_meanings: ['together'] },
-        { surface: '旅に出よう', word_id: 'w-tabinideyou', lemma: '旅', reading_kana: 'たびにでよう', romaji: 'tabi ni deyou', jlpt_level: 'N4', part_of_speech: 'Phrase', contextual_meaning: 'let’s go on a trip', thai_meaning: 'ออกเดินทางกันเถอะ!', general_meanings: ['embark on journey'] },
-      ],
-    },
-    {
-      id: 'sub-poke-04',
-      video_id: 'vid-game-n5-starter',
-      line_index: 3,
-      start_time_ms: 25100,
-      end_time_ms: 38000,
-      speaker: 'Narrator',
-      raw_text: '草むらに 入ると、野生の ポケモンが 飛び出して きた！',
-      natural_translation: "When entering the tall grass, a wild Pokémon leaped out!",
-      thai_translation: 'พอเดินเข้าไปในพงหญ้า โปเกมอนป่าก็กระโดดพุ่งออกมาทันที!',
-      ai_grammar_summary: "〜と = เมื่อ...แล้วจะเกิด...ขึ้นทันที / 〜てきた = ทำแล้วพุ่งเข้ามาหาเรา",
-      tokens_json: [
-        { surface: '草むらに', word_id: 'w-kusamura', lemma: '草むら', reading_kana: 'くさむらに', romaji: 'kusamura ni', jlpt_level: 'N4', part_of_speech: 'Noun + Particle', contextual_meaning: 'into the tall grass', thai_meaning: 'ในพงหญ้า', general_meanings: ['tall grass'] },
-        { surface: '入ると', word_id: 'w-hairuto', lemma: '入る', reading_kana: 'はいると', romaji: 'hairu to', jlpt_level: 'N5', part_of_speech: 'Verb + Conditional', contextual_meaning: 'when entering', thai_meaning: 'พอเดินเข้าไปแล้ว', general_meanings: ['upon entering'] },
-        { surface: '野生の', word_id: 'w-yaseino', lemma: '野生', reading_kana: 'やせいの', romaji: 'yasei no', jlpt_level: 'N3', part_of_speech: 'Noun + Particle', contextual_meaning: 'wild', thai_meaning: 'ที่เป็นสัตว์ป่า', general_meanings: ['wild'] },
-        { surface: '飛び出してきた', word_id: 'w-tobidashitekita', lemma: '飛び出す', reading_kana: 'とびだしてきた', romaji: 'tobidashite kita', jlpt_level: 'N4', part_of_speech: 'Verb phrase', contextual_meaning: 'jumped out', thai_meaning: 'กระโดดพุ่งพรวดออกมา', general_meanings: ['jumped out'] },
-      ],
-    },
-    {
-      id: 'sub-poke-05',
-      video_id: 'vid-game-n5-starter',
-      line_index: 4,
-      start_time_ms: 38100,
-      end_time_ms: 55000,
-      speaker: 'Player',
-      raw_text: '行け、ヒトカゲ！「ひのこ」攻撃だ！',
-      natural_translation: "Go, Charmander! Use \"Ember\" attack!",
-      thai_translation: 'ไปเลย ฮิโตคาเงะ! โจมตีด้วย "ลูกไฟ (ฮิโนโกะ)" เลย!',
-      ai_grammar_summary: "行け = คำสั่งรูปสั้น (Go!) / 攻撃 (การโจมตี)",
-      tokens_json: [
-        { surface: '行け', word_id: 'w-ike', lemma: '行く', reading_kana: 'いけ', romaji: 'ike', jlpt_level: 'N4', part_of_speech: 'Verb (Imperative)', contextual_meaning: 'Go!', thai_meaning: 'ไปเลย!', general_meanings: ['go'] },
-        { surface: 'ヒトカゲ', word_id: 'w-hitokage', lemma: 'ヒトカゲ', reading_kana: 'ひとかげ', romaji: 'hitokage', jlpt_level: 'N5', part_of_speech: 'Proper noun', contextual_meaning: 'Charmander', thai_meaning: 'ฮิโตคาเงะ', general_meanings: ['Charmander'] },
-        { surface: 'ひのこ', word_id: 'w-hinoko', lemma: '火の粉', reading_kana: 'ひのこ', romaji: 'hinoko', jlpt_level: 'N4', part_of_speech: 'Noun', contextual_meaning: 'Ember attack', thai_meaning: 'ประกายไฟ / ลูกไฟ', general_meanings: ['spark'] },
-        { surface: '攻撃だ', word_id: 'w-kougekida', lemma: '攻撃', reading_kana: 'こうげきだ', romaji: 'kougeki da', jlpt_level: 'N3', part_of_speech: 'Noun phrase', contextual_meaning: 'attack!', thai_meaning: 'โจมตีเลย!', general_meanings: ['attack'] },
-      ],
-    },
+      "id": "sub-jjk01-03",
+      "video_id": "vid-anione-jjk-01",
+      "line_index": 2,
+      "start_time_ms": 13600,
+      "end_time_ms": 22000,
+      "speaker": "両面宿儺 (Sukuna)",
+      "raw_text": "ハハハ！光だ！呪霊の肉など味気ないと思っていたところだ！",
+      "natural_translation": "Hahaha! Light at last! Just when I was thinking cursed spirits flesh was tasteless!",
+      "thai_translation": "ฮ่าๆๆ! แสงสว่าง! กำลังคิดอยู่พอดีเลยว่าเนื้อของพวกวิญญาณคำสาปมันจืดชืดไร้รสชาติสิ้นดี!",
+      "ai_grammar_summary": "光だ = เป็นแสงสว่าง / 〜と思っていたところだ = กำลังคิดเช่นนั้นอยู่พอดี",
+      "tokens_json": [
+        {
+          "surface": "光だ",
+          "word_id": "w-hikari",
+          "lemma": "光",
+          "reading_kana": "ひかりだ",
+          "romaji": "hikari da",
+          "jlpt_level": "N4",
+          "part_of_speech": "Noun + Copula",
+          "contextual_meaning": "it is light",
+          "thai_meaning": "แสงสว่าง!"
+        },
+        {
+          "surface": "呪霊の",
+          "word_id": "w-noroi",
+          "lemma": "呪い",
+          "reading_kana": "じゅれいの",
+          "romaji": "jurei no",
+          "jlpt_level": "N3",
+          "part_of_speech": "Noun",
+          "contextual_meaning": "cursed spirit’s",
+          "thai_meaning": "ของวิญญาณคำสาป"
+        },
+        {
+          "surface": "味気ない",
+          "word_id": "w-ajikenai",
+          "lemma": "味気ない",
+          "reading_kana": "あじけない",
+          "romaji": "ajikenai",
+          "jlpt_level": "N2",
+          "part_of_speech": "I-Adjective",
+          "contextual_meaning": "bland / dull",
+          "thai_meaning": "จืดชืดไร้รสชาติ"
+        },
+        {
+          "surface": "思っていたところだ",
+          "word_id": "w-omou",
+          "lemma": "思う",
+          "reading_kana": "おもっていたところだ",
+          "romaji": "omotte ita tokoro da",
+          "jlpt_level": "N3",
+          "part_of_speech": "Grammar",
+          "contextual_meaning": "was just thinking so",
+          "thai_meaning": "กำลังคิดอยู่พอดี"
+        }
+      ]
+    }
   ],
-
-  // === ANIME: Shirokuma Cafe Ep.1 (u9F3TO-3Rbo) ===
-  'vid-anime-n4-cafe1': [
+  "vid-anione-jjk-02": [
     {
-      id: 'sub-kuma-01',
-      video_id: 'vid-anime-n4-cafe1',
-      line_index: 0,
-      start_time_ms: 0,
-      end_time_ms: 6000,
-      speaker: 'Shirokuma',
-      raw_text: 'しろくまカフェへ ようこそ！何に なさいますか？',
-      natural_translation: "Welcome to Polar Bear Cafe! What can I get for you?",
-      thai_translation: 'ยินดีต้อนรับสู่คาเฟ่หมีขาวครับ! รับเครื่องดื่มอะไรดีครับ?',
-      ai_grammar_summary: "〜へようこそ = ยินดีต้อนรับสู่... / 〜になさいますか = รับอะไรดีครับ (คำยกย่องขั้นสูง)",
-      tokens_json: [
-        { surface: 'しろくまカフェへ', word_id: 'w-shirokuma', lemma: 'しろくま', reading_kana: 'しろくまかふぇへ', romaji: 'shirokuma kafe e', jlpt_level: 'N5', part_of_speech: 'Proper noun', contextual_meaning: 'to Polar Bear Cafe', thai_meaning: 'สู่คาเฟ่หมีขาว', general_meanings: ['polar bear cafe'] },
-        { surface: 'ようこそ', word_id: 'w-youkoso', lemma: 'ようこそ', reading_kana: 'ようこそ', romaji: 'youkoso', jlpt_level: 'N5', part_of_speech: 'Greeting', contextual_meaning: 'welcome', thai_meaning: 'ยินดีต้อนรับ', general_meanings: ['welcome'] },
-        { surface: '何になさいますか', word_id: 'w-naninasaimasuka', lemma: 'なさる', reading_kana: 'なにになさいますか', romaji: 'nani ni nasaimasu ka', jlpt_level: 'N3', part_of_speech: 'Honorific phrase', contextual_meaning: 'what would you like?', thai_meaning: 'รับอะไรดีครับ?', general_meanings: ['what will you have'] },
-      ],
+      "id": "sub-jjk02-01",
+      "video_id": "vid-anione-jjk-02",
+      "line_index": 0,
+      "start_time_ms": 0,
+      "end_time_ms": 6000,
+      "speaker": "五条悟 (Gojo Satoru)",
+      "raw_text": "大丈夫！僕、最強だから。ちょっと見学しててね。",
+      "natural_translation": "No worries! Because I am the strongest. Just sit back and watch for a bit.",
+      "thai_translation": "ไม่ต้องห่วง! เพราะผมน่ะ แข็งแกร่งที่สุด ยืนดูอยู่เฉยๆ แป๊บหนึ่งนะ",
+      "ai_grammar_summary": "大丈夫 = ไม่เป็นไร / 〜だから = เพราะว่า... / 〜ててね = ช่วยทำสิ่งนั้นรอไว้หน่อยนะ",
+      "tokens_json": [
+        {
+          "surface": "大丈夫",
+          "word_id": "w-daijoubu",
+          "lemma": "大丈夫",
+          "reading_kana": "だいじょうぶ",
+          "romaji": "daijoubu",
+          "jlpt_level": "N5",
+          "part_of_speech": "Na-Adjective",
+          "contextual_meaning": "it is alright",
+          "thai_meaning": "ไม่ต้องห่วง / สบายมาก"
+        },
+        {
+          "surface": "僕",
+          "word_id": "w-boku",
+          "lemma": "僕",
+          "reading_kana": "ぼく",
+          "romaji": "boku",
+          "jlpt_level": "N5",
+          "part_of_speech": "Pronoun",
+          "contextual_meaning": "I",
+          "thai_meaning": "ผม"
+        },
+        {
+          "surface": "最強だから",
+          "word_id": "w-saikyou",
+          "lemma": "最強",
+          "reading_kana": "さいきょうだから",
+          "romaji": "saikyou dakara",
+          "jlpt_level": "N3",
+          "part_of_speech": "Noun + Particle",
+          "contextual_meaning": "because I am the strongest",
+          "thai_meaning": "เพราะแข็งแกร่งที่สุด"
+        },
+        {
+          "surface": "見学しててね",
+          "word_id": "w-kengaku",
+          "lemma": "見学",
+          "reading_kana": "けんがくしててね",
+          "romaji": "kengaku shitete ne",
+          "jlpt_level": "N4",
+          "part_of_speech": "Verb phrase",
+          "contextual_meaning": "just watch closely",
+          "thai_meaning": "ยืนดูเป็นพยานหน่อยนะ"
+        }
+      ]
     },
     {
-      id: 'sub-kuma-02',
-      video_id: 'vid-anime-n4-cafe1',
-      line_index: 1,
-      start_time_ms: 6100,
-      end_time_ms: 14000,
-      speaker: 'Panda',
-      raw_text: 'アイスコーヒーと、笹の大盛りを ください！',
-      natural_translation: "Iced coffee and a large portion of bamboo leaves, please!",
-      thai_translation: 'ขอไอซ์คอฟฟี่ กับใบไผ่จานพิเศษไซส์ใหญ่ที่หนึ่งครับ!',
-      ai_grammar_summary: "大盛り (おおもり) = ไซส์พิเศษ/จานใหญ่พูนชาม / 〜をください = ขอ...ครับ",
-      tokens_json: [
-        { surface: 'アイスコーヒーと', word_id: 'w-aisuko-hi-', lemma: 'アイスコーヒー', reading_kana: 'あいすこーひーと', romaji: 'aisu koohii to', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'iced coffee and', thai_meaning: 'กาแฟเย็นกับ', general_meanings: ['iced coffee'] },
-        { surface: '笹の', word_id: 'w-sasano', lemma: '笹', reading_kana: 'ささの', romaji: 'sasa no', jlpt_level: 'N3', part_of_speech: 'Noun + Particle', contextual_meaning: 'bamboo grass', thai_meaning: 'ของใบไผ่', general_meanings: ['bamboo grass'] },
-        { surface: '大盛りを', word_id: 'w-oomorio', lemma: '大盛り', reading_kana: 'おおもりを', romaji: 'oomori o', jlpt_level: 'N4', part_of_speech: 'Noun + Particle', contextual_meaning: 'large serving', thai_meaning: 'จานพิเศษขนาดใหญ่', general_meanings: ['large portion'] },
-        { surface: 'ください', word_id: 'w-kudasai', lemma: 'ください', reading_kana: 'ください', romaji: 'kudasai', jlpt_level: 'N5', part_of_speech: 'Phrase', contextual_meaning: 'please give me', thai_meaning: 'ขอด้วยครับ', general_meanings: ['please'] },
-      ],
-    },
-    {
-      id: 'sub-kuma-03',
-      video_id: 'vid-anime-n4-cafe1',
-      line_index: 2,
-      start_time_ms: 14100,
-      end_time_ms: 24000,
-      speaker: 'Shirokuma',
-      raw_text: 'パンダくん、うちには 笹は 置いてないよ。',
-      natural_translation: "Panda-kun, our cafe doesn’t carry bamboo leaves!",
-      thai_translation: 'แพนด้าคุง ร้านเราไม่ได้มีใบไผ่ขายหรอกนะ!',
-      ai_grammar_summary: "置いてない = ไม่ได้วางขาย/ไม่มีของในสต็อก",
-      tokens_json: [
-        { surface: 'パンダくん', word_id: 'w-pandakun', lemma: 'パンダ', reading_kana: 'ぱんだくん', romaji: 'panda kun', jlpt_level: 'N5', part_of_speech: 'Noun', contextual_meaning: 'Panda-kun', thai_meaning: 'แพนด้าคุง', general_meanings: ['panda'] },
-        { surface: 'うちには', word_id: 'w-uchiniwa', lemma: 'うち', reading_kana: 'うちには', romaji: 'uchi ni wa', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'at our shop', thai_meaning: 'ที่ร้านของเรา', general_meanings: ['our place'] },
-        { surface: '置いてないよ', word_id: 'w-oitenaiyo', lemma: '置く', reading_kana: 'おいてないよ', romaji: 'oite nai yo', jlpt_level: 'N4', part_of_speech: 'Verb phrase', contextual_meaning: 'do not stock', thai_meaning: 'ไม่มีวางขายนะ', general_meanings: ['not placed'] },
-      ],
-    },
-    {
-      id: 'sub-kuma-04',
-      video_id: 'vid-anime-n4-cafe1',
-      line_index: 3,
-      start_time_ms: 24100,
-      end_time_ms: 38000,
-      speaker: 'Panda',
-      raw_text: 'えーっ！じゃあ、カフェラテに しようかな。',
-      natural_translation: "Ehh! Well then, maybe I’ll have a cafe latte instead.",
-      thai_translation: 'เอ๋! ถ้างั้น เอาเป็นคาเฟ่ลาเต้แทนละกันนะ',
-      ai_grammar_summary: "〜にしようかな = คิดตัดสินใจเลือกเอาสิ่งนี้ละกัน (〜かな แสดงความรำพึง)",
-      tokens_json: [
-        { surface: 'じゃあ', word_id: 'w-jaa', lemma: 'じゃあ', reading_kana: 'じゃあ', romaji: 'jaa', jlpt_level: 'N5', part_of_speech: 'Conjunction', contextual_meaning: 'well then', thai_meaning: 'ถ้าอย่างนั้น', general_meanings: ['well then'] },
-        { surface: 'カフェラテに', word_id: 'w-kaferateni', lemma: 'カフェラテ', reading_kana: 'かふぇらてに', romaji: 'kafe rate ni', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'cafe latte', thai_meaning: 'เป็นคาเฟ่ลาเต้', general_meanings: ['caffe latte'] },
-        { surface: 'しようかな', word_id: 'w-shiyoukana', lemma: 'する', reading_kana: 'しようかな', romaji: 'shiyou kana', jlpt_level: 'N4', part_of_speech: 'Verb phrase', contextual_meaning: 'maybe I will choose', thai_meaning: 'เอาอันนี้ละกันนะ', general_meanings: ['shall I do'] },
-      ],
-    },
-    {
-      id: 'sub-kuma-05',
-      video_id: 'vid-anime-n4-cafe1',
-      line_index: 4,
-      start_time_ms: 38100,
-      end_time_ms: 55000,
-      speaker: 'Shirokuma',
-      raw_text: 'はい、できたての カフェラテ お待たせしました！',
-      natural_translation: "Here is your freshly made cafe latte, sorry to have kept you waiting!",
-      thai_translation: 'ได้แล้วครับ คาเฟ่ลาเต้ชงสดใหม่ร้อนๆ ขอโทษที่ให้รอนะครับ!',
-      ai_grammar_summary: "お待たせしました = ขอโทษที่ให้รอนาน (คำพูดมาตรฐานของพนักงานเสิร์ฟญี่ปุ่น)",
-      tokens_json: [
-        { surface: 'できたての', word_id: 'w-dekitateno', lemma: 'できたて', reading_kana: 'できたての', romaji: 'dekitate no', jlpt_level: 'N3', part_of_speech: 'Noun phrase', contextual_meaning: 'freshly made', thai_meaning: 'เพิ่งทำเสร็จใหม่ๆ', general_meanings: ['freshly made'] },
-        { surface: 'お待たせしました', word_id: 'w-omatase', lemma: '待たせる', reading_kana: 'おまたせしました', romaji: 'omatase shimashita', jlpt_level: 'N4', part_of_speech: 'Greeting', contextual_meaning: 'thank you for waiting', thai_meaning: 'ขอโทษที่ให้รอนะครับ', general_meanings: ['sorry to keep you waiting'] },
-      ],
-    },
+      "id": "sub-jjk02-02",
+      "video_id": "vid-anione-jjk-02",
+      "line_index": 1,
+      "start_time_ms": 6100,
+      "end_time_ms": 12500,
+      "speaker": "五条悟 (Gojo Satoru)",
+      "raw_text": "呪術高専へようこそ！仲間と一緒に、正しい死を導こう。",
+      "natural_translation": "Welcome to Jujutsu High! Together with your comrades, let us guide people to proper deaths.",
+      "thai_translation": "ยินดีต้อนรับสู่โรงเรียนไสยเวท! มาร่วมมือกับพวกพ้อง นำพาผู้คนสู่ความตายที่ถูกต้องกันเถอะ",
+      "ai_grammar_summary": "〜へようこそ = ยินดีต้อนรับสู่... / 〜と一緒に = ร่วมกับ... / 〜こう = รูปชักชวน (Volitional)",
+      "tokens_json": [
+        {
+          "surface": "呪術高専へようこそ",
+          "word_id": "w-jujutsu",
+          "lemma": "呪術",
+          "reading_kana": "じゅじゅつこうせんへようこそ",
+          "romaji": "jujutsu kousen e youkoso",
+          "jlpt_level": "N4",
+          "part_of_speech": "Phrase",
+          "contextual_meaning": "welcome to jujutsu high",
+          "thai_meaning": "ยินดีต้อนรับสู่โรงเรียนไสยเวท"
+        },
+        {
+          "surface": "仲間と一緒に",
+          "word_id": "w-nakama",
+          "lemma": "仲間",
+          "reading_kana": "なかまといっしょに",
+          "romaji": "nakama to issho ni",
+          "jlpt_level": "N4",
+          "part_of_speech": "Noun phrase",
+          "contextual_meaning": "together with comrades",
+          "thai_meaning": "ร่วมกับพวกพ้อง"
+        },
+        {
+          "surface": "正しい",
+          "word_id": "w-tadashii",
+          "lemma": "正しい",
+          "reading_kana": "ただしい",
+          "romaji": "tadashii",
+          "jlpt_level": "N4",
+          "part_of_speech": "I-Adjective",
+          "contextual_meaning": "correct / proper",
+          "thai_meaning": "ที่ถูกต้องสมควร"
+        },
+        {
+          "surface": "導こう",
+          "word_id": "w-michibiku",
+          "lemma": "導く",
+          "reading_kana": "みちびこう",
+          "romaji": "michibikou",
+          "jlpt_level": "N3",
+          "part_of_speech": "Verb (Volitional)",
+          "contextual_meaning": "let us guide",
+          "thai_meaning": "จงนำพาเถิด"
+        }
+      ]
+    }
   ],
-
-  // === VLOG: Walking in Uji Kyoto (oovPYmGgX0U) ===
-  'vid-vlog-n5-uji': [
+  "vid-anione-bleach-01": [
     {
-      id: 'sub-uji-01',
-      video_id: 'vid-vlog-n5-uji',
-      line_index: 0,
-      start_time_ms: 0,
-      end_time_ms: 7000,
-      speaker: 'Shun',
-      raw_text: '皆さん、こんにちは！今日は京都の宇治にやってきました。',
-      natural_translation: "Hello everyone! Today we have arrived in Uji, Kyoto.",
-      thai_translation: 'สวัสดีครับทุกคน! วันนี้พวกเราเดินทางมาถึงเมืองอุจิ ในจังหวัดเกียวโตแล้วครับ',
-      ai_grammar_summary: "やってきました = เดินทางมาถึงที่นี่แล้ว (รูปสุภาพอดีต)",
-      tokens_json: [
-        { surface: '皆さん', word_id: 'w-minasan', lemma: '皆さん', reading_kana: 'みなさん', romaji: 'minasan', jlpt_level: 'N5', part_of_speech: 'Noun', contextual_meaning: 'everyone', thai_meaning: 'ทุกคนครับ', general_meanings: ['everyone'] },
-        { surface: '京都の', word_id: 'w-kyoutono', lemma: '京都', reading_kana: 'きょうとの', romaji: 'kyouto no', jlpt_level: 'N5', part_of_speech: 'Proper noun', contextual_meaning: 'Kyoto’s', thai_meaning: 'ของเกียวโต', general_meanings: ['Kyoto'] },
-        { surface: '宇治に', word_id: 'w-ujini', lemma: '宇治', reading_kana: 'うじに', romaji: 'uji ni', jlpt_level: 'N4', part_of_speech: 'Proper noun', contextual_meaning: 'in Uji', thai_meaning: 'ที่เมืองอุจิ', general_meanings: ['Uji'] },
-        { surface: 'やってきました', word_id: 'w-yattekimashita', lemma: 'やってくる', reading_kana: 'やってきました', romaji: 'yatte kimashita', jlpt_level: 'N4', part_of_speech: 'Verb', contextual_meaning: 'have arrived', thai_meaning: 'เดินทางมาถึงแล้วครับ', general_meanings: ['arrived'] },
-      ],
+      "id": "sub-bleach-01",
+      "video_id": "vid-anione-bleach-01",
+      "line_index": 0,
+      "start_time_ms": 0,
+      "end_time_ms": 7000,
+      "speaker": "黒崎一護 (Ichigo)",
+      "raw_text": "俺の名前は黒崎一護！幽霊が見えるだけの普通の高校生だ！",
+      "natural_translation": "My name is Ichigo Kurosaki! Just a regular high schooler who happens to see ghosts!",
+      "thai_translation": "ฉันชื่อคุโรซากิ อิจิโกะ! เป็นแค่นักเรียนม.ปลายธรรมดาที่บังเอิญมองเห็นวิญญาณได้เท่านั้นเอง!",
+      "ai_grammar_summary": "〜の名前は = ชื่อของฉันคือ... / 〜だけの = แค่...เท่านั้น",
+      "tokens_json": [
+        {
+          "surface": "俺の名前は",
+          "word_id": "w-ore",
+          "lemma": "俺",
+          "reading_kana": "おれのなまえは",
+          "romaji": "ore no namae wa",
+          "jlpt_level": "N5",
+          "part_of_speech": "Phrase",
+          "contextual_meaning": "my name is",
+          "thai_meaning": "ชื่อของฉันคือ"
+        },
+        {
+          "surface": "黒崎一護",
+          "word_id": "w-ichigo",
+          "lemma": "一護",
+          "reading_kana": "くろさきいちご",
+          "romaji": "kurosaki ichigo",
+          "jlpt_level": "N4",
+          "part_of_speech": "Proper Noun",
+          "contextual_meaning": "Ichigo Kurosaki",
+          "thai_meaning": "คุโรซากิ อิจิโกะ"
+        },
+        {
+          "surface": "見えるだけの",
+          "word_id": "w-miru",
+          "lemma": "見る",
+          "reading_kana": "みえるだけの",
+          "romaji": "mieru dake no",
+          "jlpt_level": "N4",
+          "part_of_speech": "Verb + Particle",
+          "contextual_meaning": "just being able to see",
+          "thai_meaning": "แค่พอมองเห็นได้"
+        },
+        {
+          "surface": "高校生だ",
+          "word_id": "w-gakusei",
+          "lemma": "学生",
+          "reading_kana": "こうこうせいだ",
+          "romaji": "koukousei da",
+          "jlpt_level": "N5",
+          "part_of_speech": "Noun + Copula",
+          "contextual_meaning": "am a high school student",
+          "thai_meaning": "เป็นเด็กม.ปลาย"
+        }
+      ]
     },
     {
-      id: 'sub-uji-02',
-      video_id: 'vid-vlog-n5-uji',
-      line_index: 1,
-      start_time_ms: 7100,
-      end_time_ms: 15000,
-      speaker: 'Shun',
-      raw_text: '宇治といえば、やっぱり抹茶が一番有名ですね。',
-      natural_translation: "Speaking of Uji, matcha green tea is definitely the most famous.",
-      thai_translation: 'ถ้าพูดถึงอุจิแล้วล่ะก็ ชาเขียวมัทฉะมีชื่อเสียงที่สุดอย่างแน่นอนเลยนะครับ',
-      ai_grammar_summary: "〜といえば = ถ้าพูดถึง...แล้วล่ะก็ / 一番 (อันดับหนึ่ง/ที่สุด)",
-      tokens_json: [
-        { surface: '宇治といえば', word_id: 'w-ujitoieba', lemma: '宇治', reading_kana: 'うじといえば', romaji: 'uji to ieba', jlpt_level: 'N3', part_of_speech: 'Phrase', contextual_meaning: 'speaking of Uji', thai_meaning: 'ถ้าพูดถึงเมืองอุจิ', general_meanings: ['speaking of Uji'] },
-        { surface: '抹茶が', word_id: 'w-maccha', lemma: '抹茶', reading_kana: 'まっちゃが', romaji: 'matcha ga', jlpt_level: 'N4', part_of_speech: 'Noun + Particle', contextual_meaning: 'matcha', thai_meaning: 'ชาเขียวมัทฉะ', general_meanings: ['matcha'] },
-        { surface: '一番有名ですね', word_id: 'w-ichibanyuumei', lemma: '有名', reading_kana: 'いちばんゆうめいですね', romaji: 'ichiban yuumei desu ne', jlpt_level: 'N5', part_of_speech: 'Phrase', contextual_meaning: 'most famous, right?', thai_meaning: 'มีชื่อเสียงที่สุดเลยนะ', general_meanings: ['most famous'] },
-      ],
-    },
-    {
-      id: 'sub-uji-03',
-      video_id: 'vid-vlog-n5-uji',
-      line_index: 2,
-      start_time_ms: 15100,
-      end_time_ms: 26000,
-      speaker: 'Shun',
-      raw_text: '古い歴史のある通りを、ゆっくり散歩してみましょう。',
-      natural_translation: "Let’s take a slow walk down these streets filled with ancient history.",
-      thai_translation: 'เราลองมาเดินเล่นช้าๆ สบายๆ ไปตามถนนสายประวัติศาสตร์อันเก่าแก่นี้กันดูเถอะครับ',
-      ai_grammar_summary: "〜てみましょう = ลองทำ...กันเถอะ (てみる + ましょう)",
-      tokens_json: [
-        { surface: '古い歴史のある', word_id: 'w-furui', lemma: '古い', reading_kana: 'ふるいれきしのある', romaji: 'furui rekishi no aru', jlpt_level: 'N4', part_of_speech: 'Phrase', contextual_meaning: 'with ancient history', thai_meaning: 'ที่มีประวัติศาสตร์เก่าแก่', general_meanings: ['historic'] },
-        { surface: '通りを', word_id: 'w-toorio', lemma: '通り', reading_kana: 'とおりを', romaji: 'toori o', jlpt_level: 'N4', part_of_speech: 'Noun + Particle', contextual_meaning: 'the street', thai_meaning: 'ถนน', general_meanings: ['street'] },
-        { surface: 'ゆっくり', word_id: 'w-yukkuri', lemma: 'ゆっくり', reading_kana: 'ゆっくり', romaji: 'yukkuri', jlpt_level: 'N5', part_of_speech: 'Adverb', contextual_meaning: 'slowly', thai_meaning: 'ช้าๆ สบายๆ', general_meanings: ['slowly'] },
-        { surface: '散歩してみましょう', word_id: 'w-sanposhitemashou', lemma: '散歩', reading_kana: 'さんぽしてみましょう', romaji: 'sanpo shite mimashou', jlpt_level: 'N4', part_of_speech: 'Verb phrase', contextual_meaning: 'let’s try walking', thai_meaning: 'มาลองเดินเล่นกันเถอะ', general_meanings: ['let’s stroll'] },
-      ],
-    },
-    {
-      id: 'sub-uji-04',
-      video_id: 'vid-vlog-n5-uji',
-      line_index: 3,
-      start_time_ms: 26100,
-      end_time_ms: 40000,
-      speaker: 'Shun',
-      raw_text: '見てください！濃厚な抹茶ソフトクリームが売られていますよ。',
-      natural_translation: "Look at that! Rich and creamy matcha soft serve is being sold here.",
-      thai_translation: 'ดูตรงนั้นสิครับ! มีไอศกรีมซอฟต์เสิร์ฟมัทฉะรสชาติเข้มข้นวางขายอยู่ด้วยล่ะ',
-      ai_grammar_summary: "濃厚な = รสชาติเข้มข้นลึกซึ้ง / 売られている = กำลังถูกวางขาย (Passive)",
-      tokens_json: [
-        { surface: '見てください', word_id: 'w-mitekudasai', lemma: '見る', reading_kana: 'みてください', romaji: 'mite kudasai', jlpt_level: 'N5', part_of_speech: 'Phrase', contextual_meaning: 'please look', thai_meaning: 'ดูสิครับ', general_meanings: ['please look'] },
-        { surface: '濃厚な', word_id: 'w-noukouna', lemma: '濃厚', reading_kana: 'のうこうな', romaji: 'noukou na', jlpt_level: 'N2', part_of_speech: 'Na-Adjective', contextual_meaning: 'rich flavor', thai_meaning: 'เข้มข้นกลมกล่อม', general_meanings: ['rich'] },
-        { surface: 'ソフトクリームが', word_id: 'w-sofuto', lemma: 'ソフトクリーム', reading_kana: 'そふとくりーむが', romaji: 'sofuto kuriimu ga', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'soft ice cream', thai_meaning: 'ไอศกรีมซอฟต์เสิร์ฟ', general_meanings: ['soft serve'] },
-        { surface: '売られていますよ', word_id: 'w-urareteiru', lemma: '売る', reading_kana: 'うられていますよ', romaji: 'urarete imasu yo', jlpt_level: 'N3', part_of_speech: 'Verb (Passive)', contextual_meaning: 'is being sold', thai_meaning: 'กำลังวางขายอยู่เลยนะ', general_meanings: ['is sold'] },
-      ],
-    },
-    {
-      id: 'sub-uji-05',
-      video_id: 'vid-vlog-n5-uji',
-      line_index: 4,
-      start_time_ms: 40100,
-      end_time_ms: 55000,
-      speaker: 'Shun',
-      raw_text: '甘くてほろ苦くて、本当に美味しいです！最高ですね。',
-      natural_translation: "It is sweet yet pleasantly bittersweet, truly delicious! The best.",
-      thai_translation: 'มีความหวานผสมรสขมนิดๆ ของชาเขียว อร่อยมากจริงๆ! ฟินที่สุดเลยครับ',
-      ai_grammar_summary: "甘くてほろ苦くて = รูป Te เชื่อมรสชาติ \"ทั้งหวานและขมกลมกล่อม\"",
-      tokens_json: [
-        { surface: '甘くて', word_id: 'w-amakute', lemma: '甘い', reading_kana: 'あまくて', romaji: 'amakute', jlpt_level: 'N5', part_of_speech: 'I-Adjective (Te-form)', contextual_meaning: 'sweet and', thai_meaning: 'หวาน และ...', general_meanings: ['sweet'] },
-        { surface: 'ほろ苦くて', word_id: 'w-horonigakute', lemma: 'ほろ苦い', reading_kana: 'ほろにがくて', romaji: 'horonigakute', jlpt_level: 'N3', part_of_speech: 'I-Adjective (Te-form)', contextual_meaning: 'pleasantly bitter and', thai_meaning: 'ขมปนหวานกำลังดี', general_meanings: ['bittersweet'] },
-        { surface: '本当に', word_id: 'w-hontouni', lemma: '本当', reading_kana: 'ほんとうに', romaji: 'hontou ni', jlpt_level: 'N5', part_of_speech: 'Adverb', contextual_meaning: 'really', thai_meaning: 'จริงๆ', general_meanings: ['truly'] },
-        { surface: '美味しいです', word_id: 'w-oishiidesu', lemma: '美味しい', reading_kana: 'おいしいです', romaji: 'oishii desu', jlpt_level: 'N5', part_of_speech: 'I-Adjective', contextual_meaning: 'is delicious', thai_meaning: 'อร่อยมากครับ', general_meanings: ['delicious'] },
-      ],
-    },
+      "id": "sub-bleach-02",
+      "video_id": "vid-anione-bleach-01",
+      "line_index": 1,
+      "start_time_ms": 7100,
+      "end_time_ms": 14000,
+      "speaker": "朽木ルキア (Rukia)",
+      "raw_text": "貴様、なぜ我が姿が見える！？私は尸魂界から来た死神だ！",
+      "natural_translation": "You, how can you see my form!? I am a Soul Reaper from the Soul Society!",
+      "thai_translation": "เจ้ามนุษย์ ทำไมเจ้าถึงมองเห็นร่างของข้าได้!? ข้าคือยมทูตที่มาจากโซลโซไซตี้!",
+      "ai_grammar_summary": "なぜ = ทำไม / 〜から来た = มาจากสถานที่...",
+      "tokens_json": [
+        {
+          "surface": "貴様",
+          "word_id": "w-kisama",
+          "lemma": "貴様",
+          "reading_kana": "きさま",
+          "romaji": "kisama",
+          "jlpt_level": "N3",
+          "part_of_speech": "Pronoun",
+          "contextual_meaning": "you (harsh)",
+          "thai_meaning": "หนอย แก / เจ้า"
+        },
+        {
+          "surface": "なぜ",
+          "word_id": "w-naze",
+          "lemma": "なぜ",
+          "reading_kana": "なぜ",
+          "romaji": "naze",
+          "jlpt_level": "N5",
+          "part_of_speech": "Adverb",
+          "contextual_meaning": "why",
+          "thai_meaning": "ทำไม"
+        },
+        {
+          "surface": "見える",
+          "word_id": "w-miru",
+          "lemma": "見る",
+          "reading_kana": "みえる",
+          "romaji": "mieru",
+          "jlpt_level": "N5",
+          "part_of_speech": "Verb",
+          "contextual_meaning": "can see",
+          "thai_meaning": "มองเห็นได้"
+        },
+        {
+          "surface": "死神だ",
+          "word_id": "w-shinigami",
+          "lemma": "死神",
+          "reading_kana": "しにがみだ",
+          "romaji": "shinigami da",
+          "jlpt_level": "N4",
+          "part_of_speech": "Noun + Copula",
+          "contextual_meaning": "am a Soul Reaper",
+          "thai_meaning": "คือยมทูต!"
+        }
+      ]
+    }
   ],
-
-  // === J-POP: Pretender (TQ8WlA2GXbk) ===
-  'vid-n4-pretender': [
+  "vid-anione-chainsaw-01": [
     {
-      id: 'sub-pretender-01',
-      video_id: 'vid-n4-pretender',
-      line_index: 0,
-      start_time_ms: 0,
-      end_time_ms: 8000,
-      speaker: 'Satoshi Fujihara',
-      raw_text: '君とのロマンスは続きはしないことを',
-      natural_translation: "That the romance with you was never going to continue",
-      thai_translation: 'ฉันรู้ดีว่าความรักโรแมนติกกับเธอนั้นไม่มีทางยืนยาวต่อไปได้',
-      ai_grammar_summary: "〜はしない = รูปเน้นย้ำปฏิเสธ \"ไม่มีวันทำ/เกิดขึ้นอย่างแน่นอน\"",
-      tokens_json: [
-        { surface: '君との', word_id: 'w-kimitono', lemma: '君', reading_kana: 'きみとの', romaji: 'kimi to no', jlpt_level: 'N5', part_of_speech: 'Phrase', contextual_meaning: 'with you', thai_meaning: 'กับเธอนั้น', general_meanings: ['with you'] },
-        { surface: 'ロマンスは', word_id: 'w-romansu', lemma: 'ロマンス', reading_kana: 'ろまんすは', romaji: 'romansu wa', jlpt_level: 'N4', part_of_speech: 'Noun + Particle', contextual_meaning: 'romance', thai_meaning: 'เรื่องราวความรัก', general_meanings: ['romance'] },
-        { surface: '続きはしないことを', word_id: 'w-tsuzuki', lemma: '続く', reading_kana: 'つづきはしないことを', romaji: 'tsuzuki wa shinai koto o', jlpt_level: 'N3', part_of_speech: 'Verb phrase', contextual_meaning: 'will not continue', thai_meaning: 'ไม่มีวันจะดำเนินต่อได้', general_meanings: ['won’t continue'] },
-      ],
-    },
-    {
-      id: 'sub-pretender-02',
-      video_id: 'vid-n4-pretender',
-      line_index: 1,
-      start_time_ms: 8100,
-      end_time_ms: 18000,
-      speaker: 'Satoshi Fujihara',
-      raw_text: 'もっと違う設定でもっと違う関係で',
-      natural_translation: "If only in a different setting, with a completely different relationship",
-      thai_translation: 'ถ้าหากเราได้พบกันในบทบาทอื่น และด้วยความสัมพันธ์ที่ต่างออกไปกว่านี้',
-      ai_grammar_summary: "もっと = ยิ่งกว่านี้ / 設定 = การกำหนดบทบาท",
-      tokens_json: [
-        { surface: 'もっと', word_id: 'w-motto', lemma: 'もっと', reading_kana: 'もっと', romaji: 'motto', jlpt_level: 'N5', part_of_speech: 'Adverb', contextual_meaning: 'more', thai_meaning: 'ยิ่งกว่านี้', general_meanings: ['more'] },
-        { surface: '違う設定で', word_id: 'w-chigau', lemma: '違う', reading_kana: 'ちがうせっていでお', romaji: 'chigau settei de', jlpt_level: 'N4', part_of_speech: 'Phrase', contextual_meaning: 'in a different setting', thai_meaning: 'ในบทบาทที่ต่างไป', general_meanings: ['different setting'] },
-        { surface: 'もっと違う関係で', word_id: 'w-kankei', lemma: '関係', reading_kana: 'ちがうかんけいで', romaji: 'chigau kankei de', jlpt_level: 'N3', part_of_speech: 'Phrase', contextual_meaning: 'in different relation', thai_meaning: 'ด้วยความสัมพันธ์ที่ต่างกัน', general_meanings: ['different relationship'] },
-      ],
-    },
-    {
-      id: 'sub-pretender-03',
-      video_id: 'vid-n4-pretender',
-      line_index: 2,
-      start_time_ms: 18100,
-      end_time_ms: 32000,
-      speaker: 'Satoshi Fujihara',
-      raw_text: '出会える世界線選べたらよかった',
-      natural_translation: "How wonderful it would have been if I could have chosen a timeline where we met",
-      thai_translation: 'หากฉันสามารถเลือกเส้นทางโลกคู่ขนานที่ทำให้เราได้พบกันได้ก็คงจะดีเหลือเกิน',
-      ai_grammar_summary: "〜たらよかった = \"ถ้าหากว่า...ได้ก็คงจะดี\" (การเสียดายในสิ่งที่ทำไม่ได้)",
-      tokens_json: [
-        { surface: '出会える', word_id: 'w-deaeru', lemma: '出会う', reading_kana: 'であえる', romaji: 'deaeru', jlpt_level: 'N4', part_of_speech: 'Verb (Potential)', contextual_meaning: 'can meet', thai_meaning: 'สามารถพบเจอกันได้', general_meanings: ['can meet'] },
-        { surface: '世界線', word_id: 'w-sekaisen', lemma: '世界線', reading_kana: 'せかいせん', romaji: 'sekaisen', jlpt_level: 'N3', part_of_speech: 'Noun', contextual_meaning: 'world line / timeline', thai_meaning: 'เส้นโลกคู่ขนาน', general_meanings: ['world line'] },
-        { surface: '選べたらよかった', word_id: 'w-erabetara', lemma: '選ぶ', reading_kana: 'えらべたらよかった', romaji: 'erabetara yokatta', jlpt_level: 'N4', part_of_speech: 'Phrase', contextual_meaning: 'would be good if chosen', thai_meaning: 'ถ้าเลือกได้คงจะดีนะ', general_meanings: ['wish I could choose'] },
-      ],
-    },
-    {
-      id: 'sub-pretender-04',
-      video_id: 'vid-n4-pretender',
-      line_index: 3,
-      start_time_ms: 32100,
-      end_time_ms: 55000,
-      speaker: 'Satoshi Fujihara',
-      raw_text: 'グッバイ君の運命のひとは僕じゃない',
-      natural_translation: "Goodbye, the one destined for you isn’t me",
-      thai_translation: 'ลาก่อนนะ คนที่เป็นเนื้อคู่ในพรหมลิขิตของเธอไม่ใช่ฉันหรอก',
-      ai_grammar_summary: "運命のひと = เนื้อคู่ / 僕じゃない = ไม่ใช่ตัวผม",
-      tokens_json: [
-        { surface: 'グッバイ', word_id: 'w-gubbai', lemma: 'グッバイ', reading_kana: 'ぐっばい', romaji: 'gubbai', jlpt_level: 'N5', part_of_speech: 'Greeting', contextual_meaning: 'goodbye', thai_meaning: 'ลาก่อน', general_meanings: ['goodbye'] },
-        { surface: '君の運命のひとは', word_id: 'w-unmei', lemma: '運命', reading_kana: 'きみのうんめのひとは', romaji: 'kimi no unmei no hito wa', jlpt_level: 'N3', part_of_speech: 'Noun phrase', contextual_meaning: 'person of your destiny', thai_meaning: 'คนที่พรหมลิขิตกำหนดให้เธอ', general_meanings: ['destined one'] },
-        { surface: '僕じゃない', word_id: 'w-bokujanai', lemma: '僕', reading_kana: 'ぼくじゃない', romaji: 'boku ja nai', jlpt_level: 'N5', part_of_speech: 'Phrase', contextual_meaning: 'is not me', thai_meaning: 'ไม่ใช่ฉันหรอกนะ', general_meanings: ['not me'] },
-      ],
-    },
+      "id": "sub-csm-01",
+      "video_id": "vid-anione-chainsaw-01",
+      "line_index": 0,
+      "start_time_ms": 0,
+      "end_time_ms": 7000,
+      "speaker": "デンジ (Denji)",
+      "raw_text": "ポチタ、約束しようぜ。俺の夢を、お前が見せてくれ！",
+      "natural_translation": "Pochita, let us make a promise. Show me my dreams come true!",
+      "thai_translation": "โพชิตะ มาสัญญากันนะ ความฝันของฉันน่ะ นายช่วยทำให้ฉันได้เห็นมันทีเถอะนะ!",
+      "ai_grammar_summary": "〜しようぜ = ชักชวนแบบเป็นกันเอง / 〜てくれ = ขอร้องให้ผู้อื่นทำเพื่อเรา",
+      "tokens_json": [
+        {
+          "surface": "ポチタ",
+          "word_id": "w-pochita",
+          "lemma": "ポチタ",
+          "reading_kana": "ぽちた",
+          "romaji": "pochita",
+          "jlpt_level": "N4",
+          "part_of_speech": "Proper Noun",
+          "contextual_meaning": "Pochita",
+          "thai_meaning": "โพชิตะ"
+        },
+        {
+          "surface": "約束しようぜ",
+          "word_id": "w-yakusoku",
+          "lemma": "約束",
+          "reading_kana": "やくそくしようぜ",
+          "romaji": "yakusoku shiyou ze",
+          "jlpt_level": "N5",
+          "part_of_speech": "Phrase",
+          "contextual_meaning": "let us make a promise",
+          "thai_meaning": "มาสัญญากันนะ"
+        },
+        {
+          "surface": "俺の夢を",
+          "word_id": "w-yume",
+          "lemma": "夢",
+          "reading_kana": "おれのゆめを",
+          "romaji": "ore no yume o",
+          "jlpt_level": "N4",
+          "part_of_speech": "Noun phrase",
+          "contextual_meaning": "my dream",
+          "thai_meaning": "ความฝันของฉัน"
+        },
+        {
+          "surface": "見せてくれ",
+          "word_id": "w-miru",
+          "lemma": "見る",
+          "reading_kana": "みせてくれ",
+          "romaji": "misete kure",
+          "jlpt_level": "N4",
+          "part_of_speech": "Verb phrase",
+          "contextual_meaning": "show me please",
+          "thai_meaning": "ทำให้ฉันได้เห็นที"
+        }
+      ]
+    }
   ],
-
-  // === STREET FOOD: Takoyaki in Nakano (vid-n5-takoyaki) ===
-  'vid-n5-takoyaki': [
+  "vid-anione-bluelock-01": [
     {
-      id: 'sub-tako-01',
-      video_id: 'vid-n5-takoyaki',
-      line_index: 0,
-      start_time_ms: 0,
-      end_time_ms: 6000,
-      speaker: 'Shopkeeper',
-      raw_text: 'いらっしゃい！焼きたてのたこ焼きはいかがですか？',
-      natural_translation: "Welcome! How about some freshly grilled hot takoyaki?",
-      thai_translation: 'ยินดีต้อนรับครับ! ทาโกะยากิย่างร้อนๆ กรอบนอกนุ่มในสักกล่องไหมครับ?',
-      ai_grammar_summary: "〜はいかがですか = รับ...ไหมครับ (ประโยคเสนอขายอย่างสุภาพ)",
-      tokens_json: [
-        { surface: 'いらっしゃい', word_id: 'w-irasshai', lemma: 'いらっしゃい', reading_kana: 'いらっしゃい', romaji: 'irasshai', jlpt_level: 'N5', part_of_speech: 'Greeting', contextual_meaning: 'welcome', thai_meaning: 'ยินดีต้อนรับ', general_meanings: ['welcome'] },
-        { surface: '焼きたての', word_id: 'w-yakitate', lemma: '焼きたて', reading_kana: 'やきたての', romaji: 'yakitate no', jlpt_level: 'N4', part_of_speech: 'Noun phrase', contextual_meaning: 'freshly grilled', thai_meaning: 'ย่างเสร็จใหม่ๆ', general_meanings: ['freshly baked'] },
-        { surface: 'たこ焼きは', word_id: 'w-takoyaki', lemma: 'たこ焼き', reading_kana: 'たこやきは', romaji: 'takoyaki wa', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'takoyaki', thai_meaning: 'ทาโกะยากิ', general_meanings: ['octopus balls'] },
-        { surface: 'いかがですか', word_id: 'w-ikagadesuka', lemma: 'いかが', reading_kana: 'いかがですか', romaji: 'ikaga desu ka', jlpt_level: 'N4', part_of_speech: 'Phrase', contextual_meaning: 'how about?', thai_meaning: 'รับสักหน่อยไหมครับ', general_meanings: ['how about'] },
-      ],
-    },
-    {
-      id: 'sub-tako-02',
-      video_id: 'vid-n5-takoyaki',
-      line_index: 1,
-      start_time_ms: 6100,
-      end_time_ms: 13000,
-      speaker: 'Customer',
-      raw_text: 'ソースとマヨネーズをたっぷりかけてください！',
-      natural_translation: "Please put plenty of sauce and mayonnaise on top!",
-      thai_translation: 'ช่วยราดซอสกับมายองเนสเยอะๆ ให้ด้วยนะครับ!',
-      ai_grammar_summary: "たっぷり = เยอะๆ จุใจ / 〜をかけてください = กรุณาราด...",
-      tokens_json: [
-        { surface: 'ソースと', word_id: 'w-soosuto', lemma: 'ソース', reading_kana: 'そーすと', romaji: 'soosu to', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'sauce and', thai_meaning: 'ซอสกับ', general_meanings: ['sauce'] },
-        { surface: 'マヨネーズを', word_id: 'w-mayoneezuo', lemma: 'マヨネーズ', reading_kana: 'まよねーずを', romaji: 'mayoneezu o', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'mayonnaise', thai_meaning: 'มายองเนส', general_meanings: ['mayonnaise'] },
-        { surface: 'たっぷり', word_id: 'w-tappuri', lemma: 'たっぷり', reading_kana: 'たっぷり', romaji: 'tappuri', jlpt_level: 'N4', part_of_speech: 'Adverb', contextual_meaning: 'plenty', thai_meaning: 'เยอะๆ ชุ่มๆ', general_meanings: ['plentiful'] },
-        { surface: 'かけてください', word_id: 'w-kaketekudasai', lemma: 'かける', reading_kana: 'かけてください', romaji: 'kakete kudasai', jlpt_level: 'N5', part_of_speech: 'Phrase', contextual_meaning: 'please pour on', thai_meaning: 'ช่วยราดให้หน่อยครับ', general_meanings: ['pour over'] },
-      ],
-    },
-    {
-      id: 'sub-tako-03',
-      video_id: 'vid-n5-takoyaki',
-      line_index: 2,
-      start_time_ms: 13100,
-      end_time_ms: 22000,
-      speaker: 'Host',
-      raw_text: '外はカリッと、中はとろとろで熱いですよ。',
-      natural_translation: "The outside is crispy, while the inside is melty and piping hot.",
-      thai_translation: 'ด้านนอกกรอบกรุบ ด้านในนุ่มเยิ้มและร้อนมากเลยนะครับ',
-      ai_grammar_summary: "カリッと...とろとろ = คำบอกเนื้อสัมผัส (Onomatopoeia) \"กรอบนอกนุ่มเยิ้ม\"",
-      tokens_json: [
-        { surface: '外は', word_id: 'w-sotowa', lemma: '外', reading_kana: 'そとは', romaji: 'soto wa', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'outside', thai_meaning: 'ด้านนอก', general_meanings: ['outside'] },
-        { surface: 'カリッと', word_id: 'w-karitto', lemma: 'カリッと', reading_kana: 'かりっと', romaji: 'karitto', jlpt_level: 'N3', part_of_speech: 'Adverb', contextual_meaning: 'crispy', thai_meaning: 'กรอบกรุบ', general_meanings: ['crisp'] },
-        { surface: '中は', word_id: 'w-nakawa', lemma: '中', reading_kana: 'なかは', romaji: 'naka wa', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'inside', thai_meaning: 'ด้านใน', general_meanings: ['inside'] },
-        { surface: 'とろとろで', word_id: 'w-torotoro', lemma: 'とろとろ', reading_kana: 'とろとろで', romaji: 'torotoro de', jlpt_level: 'N3', part_of_speech: 'Adverb', contextual_meaning: 'melty and gooey', thai_meaning: 'นุ่มเยิ้มละมุน', general_meanings: ['gooey'] },
-        { surface: '熱いですよ', word_id: 'w-atsuidesuyo', lemma: '熱い', reading_kana: 'あついですよ', romaji: 'atsui desu yo', jlpt_level: 'N5', part_of_speech: 'Phrase', contextual_meaning: 'very hot!', thai_meaning: 'ร้อนมากเลยนะ', general_meanings: ['hot'] },
-      ],
-    },
-    {
-      id: 'sub-tako-04',
-      video_id: 'vid-n5-takoyaki',
-      line_index: 3,
-      start_time_ms: 22100,
-      end_time_ms: 32000,
-      speaker: 'Shopkeeper',
-      raw_text: 'ふうふう冷ましてから、気をつけて食べてね！',
-      natural_translation: "Blow on it to cool it down, then be careful when eating!",
-      thai_translation: 'เป่าฟู่ๆ ให้คลายร้อนก่อน แล้วค่อยๆ ทานอย่างระวังนะ!',
-      ai_grammar_summary: "〜てから = หลังจากทำ...แล้วค่อย... / 気をつけて = ระมัดระวัง",
-      tokens_json: [
-        { surface: 'ふうふう', word_id: 'w-fuufuu', lemma: 'ふうふう', reading_kana: 'ふうふう', romaji: 'fuufuu', jlpt_level: 'N5', part_of_speech: 'Mimetic word', contextual_meaning: 'blowing on hot food', thai_meaning: 'เป่าฟู่ๆ', general_meanings: ['blow'] },
-        { surface: '冷ましてから', word_id: 'w-samashitekara', lemma: '冷ます', reading_kana: 'さましてから', romaji: 'samashite kara', jlpt_level: 'N4', part_of_speech: 'Verb phrase', contextual_meaning: 'after cooling down', thai_meaning: 'ให้คลายร้อนก่อน', general_meanings: ['cool down'] },
-        { surface: '気をつけて', word_id: 'w-kiotsukete', lemma: '気をつける', reading_kana: 'きをつけて', romaji: 'ki o tsukete', jlpt_level: 'N5', part_of_speech: 'Phrase', contextual_meaning: 'be careful', thai_meaning: 'ระมัดระวัง', general_meanings: ['careful'] },
-        { surface: '食べてね', word_id: 'w-tabetene', lemma: '食べる', reading_kana: 'たべてね', romaji: 'tabete ne', jlpt_level: 'N5', part_of_speech: 'Verb phrase', contextual_meaning: 'eat it', thai_meaning: 'ทานนะจ๊ะ', general_meanings: ['eat'] },
-      ],
-    },
-    {
-      id: 'sub-tako-05',
-      video_id: 'vid-n5-takoyaki',
-      line_index: 4,
-      start_time_ms: 32100,
-      end_time_ms: 45000,
-      speaker: 'Host',
-      raw_text: 'タコが大きくて、本当に美味しいです！',
-      natural_translation: "The octopus piece is huge, truly delicious!",
-      thai_translation: 'ปลาหมึกชิ้นใหญ่มาก อร่อยประทับใจสุดๆ เลยครับ!',
-      ai_grammar_summary: "〜くて = รูปเชื่อมคุณศัพท์い (ใหญ่และอร่อยมาก)",
-      tokens_json: [
-        { surface: 'タコが', word_id: 'w-takoga', lemma: 'タコ', reading_kana: 'たこが', romaji: 'tako ga', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'octopus', thai_meaning: 'ปลาหมึกทาโกะ', general_meanings: ['octopus'] },
-        { surface: '大きくて', word_id: 'w-ookikute', lemma: '大きい', reading_kana: 'おおきくて', romaji: 'ookikute', jlpt_level: 'N5', part_of_speech: 'I-Adjective (Te-form)', contextual_meaning: 'big and', thai_meaning: 'ชิ้นใหญ่ และ...', general_meanings: ['large'] },
-        { surface: '本当に', word_id: 'w-hontouni', lemma: '本当', reading_kana: 'ほんとうに', romaji: 'hontou ni', jlpt_level: 'N5', part_of_speech: 'Adverb', contextual_meaning: 'truly', thai_meaning: 'จริงๆ', general_meanings: ['really'] },
-        { surface: '美味しいです', word_id: 'w-oishiidesu', lemma: '美味しい', reading_kana: 'おいしいです', romaji: 'oishii desu', jlpt_level: 'N5', part_of_speech: 'I-Adjective', contextual_meaning: 'is delicious', thai_meaning: 'อร่อยมากครับ', general_meanings: ['delicious'] },
-      ],
-    },
+      "id": "sub-bl-01",
+      "video_id": "vid-anione-bluelock-01",
+      "line_index": 0,
+      "start_time_ms": 0,
+      "end_time_ms": 7000,
+      "speaker": "潔世一 (Isagi Yoichi)",
+      "raw_text": "俺がゴールを決める！世界一のストライカーになるのは俺だ！",
+      "natural_translation": "I will score the goal! The one who will become the world’s best striker is me!",
+      "thai_translation": "ฉันจะเป็นคนยิงประตูเอง! คนที่จะกลายเป็นสไตรเกอร์อันดับ 1 ของโลกก็คือฉันนี่แหละ!",
+      "ai_grammar_summary": "〜を決める = ทำสำเร็จเด็ดขาด / 〜になるのは = ผู้ที่จะกลายเป็น...",
+      "tokens_json": [
+        {
+          "surface": "ゴールを",
+          "word_id": "w-goal",
+          "lemma": "ゴール",
+          "reading_kana": "ごーるを",
+          "romaji": "gooru o",
+          "jlpt_level": "N5",
+          "part_of_speech": "Noun",
+          "contextual_meaning": "the goal",
+          "thai_meaning": "ประตู / โกล"
+        },
+        {
+          "surface": "決める",
+          "word_id": "w-kimeru",
+          "lemma": "決める",
+          "reading_kana": "きめる",
+          "romaji": "kimeru",
+          "jlpt_level": "N4",
+          "part_of_speech": "Verb",
+          "contextual_meaning": "score / decide",
+          "thai_meaning": "ยิงประตูตัดสิน"
+        },
+        {
+          "surface": "世界一の",
+          "word_id": "w-sekaiichi",
+          "lemma": "世界一",
+          "reading_kana": "せかいいちの",
+          "romaji": "sekaiichi no",
+          "jlpt_level": "N4",
+          "part_of_speech": "Noun",
+          "contextual_meaning": "world’s number one",
+          "thai_meaning": "อันดับหนึ่งของโลก"
+        },
+        {
+          "surface": "俺だ",
+          "word_id": "w-ore",
+          "lemma": "俺",
+          "reading_kana": "おれだ",
+          "romaji": "ore da",
+          "jlpt_level": "N4",
+          "part_of_speech": "Pronoun + Copula",
+          "contextual_meaning": "it is me",
+          "thai_meaning": "คือฉันเอง!"
+        }
+      ]
+    }
   ],
-
-  // === STREET FOOD: Homemade Ramen Cooking (vid-n4-cooking) ===
-  'vid-n4-cooking': [
+  "vid-game-n5-starter": [
     {
-      id: 'sub-ramen-01',
-      video_id: 'vid-n4-cooking',
-      line_index: 0,
-      start_time_ms: 0,
-      end_time_ms: 7000,
-      speaker: 'Shun',
-      raw_text: '今日は家で本格的な醤油ラーメンを作りましょう！',
-      natural_translation: "Today let’s make authentic soy sauce ramen at home!",
-      thai_translation: 'วันนี้เรามาทำโชยุราเมนสูตรต้นตำรับแท้ๆ ทานที่บ้านกันเถอะครับ!',
-      ai_grammar_summary: "本格的な = แท้จริง/ต้นตำรับ / 〜を作りましょう = มาทำ...กันเถอะ",
-      tokens_json: [
-        { surface: '今日は', word_id: 'w-kyouwa', lemma: '今日', reading_kana: 'きょうは', romaji: 'kyou wa', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'today', thai_meaning: 'วันนี้', general_meanings: ['today'] },
-        { surface: '家で', word_id: 'w-iede', lemma: '家', reading_kana: 'いえで', romaji: 'ie de', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'at home', thai_meaning: 'ที่บ้าน', general_meanings: ['at home'] },
-        { surface: '本格的な', word_id: 'w-honkakutekina', lemma: '本格的', reading_kana: 'ほんかくてきな', romaji: 'honkakuteki na', jlpt_level: 'N3', part_of_speech: 'Na-Adjective', contextual_meaning: 'authentic', thai_meaning: 'สูตรต้นตำรับแท้ๆ', general_meanings: ['authentic'] },
-        { surface: '醤油ラーメンを', word_id: 'w-shouyuraamen', lemma: 'ラーメン', reading_kana: 'しょうゆらーめんを', romaji: 'shouyu raamen o', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'soy sauce ramen', thai_meaning: 'โชยุราเมน', general_meanings: ['ramen'] },
-        { surface: '作りましょう', word_id: 'w-tsukurimashou', lemma: '作る', reading_kana: 'つくりましょう', romaji: 'tsukurimashou', jlpt_level: 'N5', part_of_speech: 'Verb phrase', contextual_meaning: 'let’s make', thai_meaning: 'มาลงมือทำกันเถอะ', general_meanings: ['let’s make'] },
-      ],
+      "id": "sub-poke-01",
+      "video_id": "vid-game-n5-starter",
+      "line_index": 0,
+      "start_time_ms": 0,
+      "end_time_ms": 5500,
+      "speaker": "オーキド博士 (Oak)",
+      "raw_text": "ここに 3匹の ポケモンが いるじゃろう！",
+      "natural_translation": "Here are 3 Pokémon, as you can see!",
+      "thai_translation": "ตรงนี้มีโปเกมอนอยู่ 3 ตัวยังไงล่ะ!",
+      "ai_grammar_summary": "〜じゃろう = คำลงท้ายของผู้เฒ่า (รูปโบราณของ でしょう)",
+      "tokens_json": [
+        {
+          "surface": "ここに",
+          "word_id": "w-koko",
+          "lemma": "ここ",
+          "reading_kana": "ここに",
+          "romaji": "koko ni",
+          "jlpt_level": "N5",
+          "part_of_speech": "Pronoun",
+          "contextual_meaning": "right here",
+          "thai_meaning": "ตรงนี้"
+        },
+        {
+          "surface": "3匹の",
+          "word_id": "w-sanbiki",
+          "lemma": "匹",
+          "reading_kana": "さんびきの",
+          "romaji": "sanbiki no",
+          "jlpt_level": "N5",
+          "part_of_speech": "Counter",
+          "contextual_meaning": "three animals",
+          "thai_meaning": "3 ตัว"
+        },
+        {
+          "surface": "ポケモンが",
+          "word_id": "w-pokemon",
+          "lemma": "ポケモン",
+          "reading_kana": "ぽけもんが",
+          "romaji": "pokemon ga",
+          "jlpt_level": "N5",
+          "part_of_speech": "Noun",
+          "contextual_meaning": "Pokémon",
+          "thai_meaning": "โปเกมอน"
+        },
+        {
+          "surface": "いるじゃろう",
+          "word_id": "w-iru",
+          "lemma": "いる",
+          "reading_kana": "いるじゃろう",
+          "romaji": "iru jarou",
+          "jlpt_level": "N5",
+          "part_of_speech": "Verb",
+          "contextual_meaning": "there are, right?",
+          "thai_meaning": "มีอยู่ใช่ไหมล่ะ"
+        }
+      ]
     },
     {
-      id: 'sub-ramen-02',
-      video_id: 'vid-n4-cooking',
-      line_index: 1,
-      start_time_ms: 7100,
-      end_time_ms: 15000,
-      speaker: 'Shun',
-      raw_text: 'まず、お湯を沸かして、スープの出汁をとります。',
-      natural_translation: "First, boil water and extract the savory dashi broth.",
-      thai_translation: 'อันดับแรก ต้มน้ำให้เดือด แล้วเคี่ยวน้ำซุปดาชิให้อูมามิหอมกรุ่น',
-      ai_grammar_summary: "まず = อันดับแรก / お湯を沸かす = ต้มน้ำร้อน",
-      tokens_json: [
-        { surface: 'まず', word_id: 'w-mazu', lemma: 'まず', reading_kana: 'まず', romaji: 'mazu', jlpt_level: 'N5', part_of_speech: 'Adverb', contextual_meaning: 'first of all', thai_meaning: 'อันดับแรก', general_meanings: ['firstly'] },
-        { surface: 'お湯を', word_id: 'w-oyuo', lemma: 'お湯', reading_kana: 'おゆを', romaji: 'oyu o', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'hot water', thai_meaning: 'น้ำร้อน', general_meanings: ['hot water'] },
-        { surface: '沸かして', word_id: 'w-wakashite', lemma: '沸かす', reading_kana: 'わかして', romaji: 'wakashite', jlpt_level: 'N4', part_of_speech: 'Verb (Te-form)', contextual_meaning: 'boil and', thai_meaning: 'ต้มให้เดือดแล้ว', general_meanings: ['bring to boil'] },
-        { surface: '出汁をとります', word_id: 'w-dashio', lemma: '出汁', reading_kana: 'だしをとります', romaji: 'dashi o torimasu', jlpt_level: 'N3', part_of_speech: 'Phrase', contextual_meaning: 'make broth', thai_meaning: 'เคี่ยวน้ำซุปดาชิ', general_meanings: ['prepare broth'] },
-      ],
-    },
-    {
-      id: 'sub-ramen-03',
-      video_id: 'vid-n4-cooking',
-      line_index: 2,
-      start_time_ms: 15100,
-      end_time_ms: 24000,
-      speaker: 'Shun',
-      raw_text: '麺を茹でる時間は、ちょうど1分30秒です。',
-      natural_translation: "The noodle boiling time is exactly 1 minute and 30 seconds.",
-      thai_translation: 'เวลาในการลวกเส้นคือ 1 นาที 30 วินาทีพอดีเป๊ะครับ',
-      ai_grammar_summary: "茹でる (ゆでる) = ลวก/ต้มเส้น / ちょうど = พอดีเป๊ะ",
-      tokens_json: [
-        { surface: '麺を', word_id: 'w-meno', lemma: '麺', reading_kana: 'めんを', romaji: 'men o', jlpt_level: 'N4', part_of_speech: 'Noun + Particle', contextual_meaning: 'noodles', thai_meaning: 'เส้นราเมน', general_meanings: ['noodles'] },
-        { surface: '茹でる時間は', word_id: 'w-yuderujikan', lemma: '茹でる', reading_kana: 'ゆでるじかんは', romaji: 'yuderu jikan wa', jlpt_level: 'N4', part_of_speech: 'Noun phrase', contextual_meaning: 'boiling time', thai_meaning: 'เวลาลวกเส้น', general_meanings: ['cooking time'] },
-        { surface: 'ちょうど', word_id: 'w-choudo', lemma: 'ちょうど', reading_kana: 'ちょうど', romaji: 'choudo', jlpt_level: 'N5', part_of_speech: 'Adverb', contextual_meaning: 'exactly', thai_meaning: 'พอดีเป๊ะ', general_meanings: ['precisely'] },
-        { surface: '1分30秒です', word_id: 'w-funbyou', lemma: '時間', reading_kana: 'いっぷんさんじゅうびょうです', romaji: 'ippun sanjuubyou desu', jlpt_level: 'N5', part_of_speech: 'Phrase', contextual_meaning: '1 min 30 sec', thai_meaning: '1 นาที 30 วินาทีครับ', general_meanings: ['1m 30s'] },
-      ],
-    },
-    {
-      id: 'sub-ramen-04',
-      video_id: 'vid-n4-cooking',
-      line_index: 3,
-      start_time_ms: 24100,
-      end_time_ms: 34000,
-      speaker: 'Shun',
-      raw_text: '煮卵とチャーシューをきれいにトッピングします。',
-      natural_translation: "Carefully top it off with seasoned egg and chashu pork.",
-      thai_translation: 'วางท็อปปิ้งไข่ต้มต้มซีอิ๊วกับหมูชาชูลงไปบนชามอย่างสวยงาม',
-      ai_grammar_summary: "煮卵 (にたまご) = ไข่ต้มยางมะตูมแช่ซอส / きれいに = อย่างสวยงามเรียบร้อย",
-      tokens_json: [
-        { surface: '煮卵と', word_id: 'w-nitamagoto', lemma: '煮卵', reading_kana: 'にたまごと', romaji: 'nitamago to', jlpt_level: 'N4', part_of_speech: 'Noun + Particle', contextual_meaning: 'seasoned egg and', thai_meaning: 'ไข่ต้มซีอิ๊วกับ', general_meanings: ['flavored boiled egg'] },
-        { surface: 'チャーシューを', word_id: 'w-chaashuuo', lemma: 'チャーシュー', reading_kana: 'ちゃーしゅーを', romaji: 'chaashuu o', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'pork chashu', thai_meaning: 'หมูชาชู', general_meanings: ['chashu'] },
-        { surface: 'きれいに', word_id: 'w-kireini', lemma: 'きれい', reading_kana: 'きれいに', romaji: 'kirei ni', jlpt_level: 'N5', part_of_speech: 'Adverb', contextual_meaning: 'neatly', thai_meaning: 'อย่างประณีตสวยงาม', general_meanings: ['beautifully'] },
-        { surface: 'トッピングします', word_id: 'w-toppingushimasu', lemma: 'トッピング', reading_kana: 'とっぴんぐします', romaji: 'toppingu shimasu', jlpt_level: 'N5', part_of_speech: 'Verb phrase', contextual_meaning: 'put toppings', thai_meaning: 'วางท็อปปิ้งลงไป', general_meanings: ['add topping'] },
-      ],
-    },
-    {
-      id: 'sub-ramen-05',
-      video_id: 'vid-n4-cooking',
-      line_index: 4,
-      start_time_ms: 34100,
-      end_time_ms: 48000,
-      speaker: 'Shun',
-      raw_text: '熱々のスープとコシのある麺が最高に合いますね！',
-      natural_translation: "The piping hot soup and chewy noodles pair together wonderfully!",
-      thai_translation: 'น้ำซุปร้อนๆ เข้ากับเส้นราเมนที่เหนียวนุ่มสู้ฟันได้อย่างลงตัวที่สุดเลยครับ!',
-      ai_grammar_summary: "コシのある = เส้นเหนียวนุ่มสู้ฟัน / 最高に合う = เข้ากันได้ดีที่สุด",
-      tokens_json: [
-        { surface: '熱々の', word_id: 'w-atsuatsuno', lemma: '熱い', reading_kana: 'あつあつの', romaji: 'atsuatsu no', jlpt_level: 'N4', part_of_speech: 'Adjective phrase', contextual_meaning: 'piping hot', thai_meaning: 'ร้อนๆ', general_meanings: ['piping hot'] },
-        { surface: 'スープと', word_id: 'w-suuputo', lemma: 'スープ', reading_kana: 'すーぷと', romaji: 'suupu to', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'soup and', thai_meaning: 'น้ำซุปกับ', general_meanings: ['soup'] },
-        { surface: 'コシのある麺が', word_id: 'w-koshinoarumenga', lemma: 'コシ', reading_kana: 'こしのあるめんが', romaji: 'koshi no aru men ga', jlpt_level: 'N3', part_of_speech: 'Noun phrase', contextual_meaning: 'chewy springy noodles', thai_meaning: 'เส้นเหนียวนุ่มหนึบ', general_meanings: ['chewy noodles'] },
-        { surface: '最高に合いますね', word_id: 'w-saikouniaimasune', lemma: '合う', reading_kana: 'さいこうにあいますね', romaji: 'saikou ni aimasu ne', jlpt_level: 'N4', part_of_speech: 'Phrase', contextual_meaning: 'pairs perfectly, right?', thai_meaning: 'เข้ากันดีที่สุดเลยนะ', general_meanings: ['goes great'] },
-      ],
-    },
+      "id": "sub-poke-02",
+      "video_id": "vid-game-n5-starter",
+      "line_index": 1,
+      "start_time_ms": 5600,
+      "end_time_ms": 11000,
+      "speaker": "オーキド博士 (Oak)",
+      "raw_text": "好きな ポケモンを 1匹 選ぶのじゃ！",
+      "natural_translation": "Choose 1 Pokémon that you like!",
+      "thai_translation": "จงเลือกโปเกมอนตัวที่เจ้าชอบมา 1 ตัว!",
+      "ai_grammar_summary": "〜のじゃ = คำสั่งหรือข้อแนะนำที่อ่อนโยนของผู้ใหญ่",
+      "tokens_json": [
+        {
+          "surface": "好きな",
+          "word_id": "w-suki",
+          "lemma": "好き",
+          "reading_kana": "すきな",
+          "romaji": "suki na",
+          "jlpt_level": "N5",
+          "part_of_speech": "Na-Adjective",
+          "contextual_meaning": "liked / favorite",
+          "thai_meaning": "ที่ชอบ"
+        },
+        {
+          "surface": "ポケモンを",
+          "word_id": "w-pokemon",
+          "lemma": "ポケモン",
+          "reading_kana": "ぽけもんを",
+          "romaji": "pokemon o",
+          "jlpt_level": "N5",
+          "part_of_speech": "Noun",
+          "contextual_meaning": "Pokémon (obj)",
+          "thai_meaning": "โปเกมอน"
+        },
+        {
+          "surface": "1匹",
+          "word_id": "w-ippiki",
+          "lemma": "匹",
+          "reading_kana": "いっぴき",
+          "romaji": "ippiki",
+          "jlpt_level": "N5",
+          "part_of_speech": "Counter",
+          "contextual_meaning": "one animal",
+          "thai_meaning": "1 ตัว"
+        },
+        {
+          "surface": "選ぶのじゃ",
+          "word_id": "w-erabu",
+          "lemma": "選ぶ",
+          "reading_kana": "えらぶのじゃ",
+          "romaji": "erabu no ja",
+          "jlpt_level": "N5",
+          "part_of_speech": "Verb",
+          "contextual_meaning": "choose!",
+          "thai_meaning": "จงเลือกสิ"
+        }
+      ]
+    }
   ],
-
-  // === PODCAST: Ep1 Self-Introduction (vid-pod-n5-intro) ===
-  'vid-pod-n5-intro': [
+  "vid-n5-takoyaki": [
     {
-      id: 'sub-pod-01',
-      video_id: 'vid-pod-n5-intro',
-      line_index: 0,
-      start_time_ms: 0,
-      end_time_ms: 6000,
-      speaker: 'Shun',
-      raw_text: '皆さん、こんにちは！Shunの日本語ポッドキャストへようこそ。',
-      natural_translation: "Hello everyone! Welcome to Shun's Japanese Podcast.",
-      thai_translation: 'สวัสดีครับทุกคน! ขอต้อนรับเข้าสู่ Shun Japanese Podcast ครับ',
-      ai_grammar_summary: "〜へようこそ = ยินดีต้อนรับสู่...",
-      tokens_json: [
-        { surface: '皆さん', word_id: 'w-minasan', lemma: '皆さん', reading_kana: 'みなさん', romaji: 'minasan', jlpt_level: 'N5', part_of_speech: 'Noun', contextual_meaning: 'everyone', thai_meaning: 'ทุกคนครับ', general_meanings: ['everyone'] },
-        { surface: 'こんにちは', word_id: 'w-konnichiwa', lemma: 'こんにちは', reading_kana: 'こんにちは', romaji: 'konnichiwa', jlpt_level: 'N5', part_of_speech: 'Greeting', contextual_meaning: 'hello', thai_meaning: 'สวัสดีครับ', general_meanings: ['hello'] },
-        { surface: 'ポッドキャストへ', word_id: 'w-podcast', lemma: 'ポッドキャスト', reading_kana: 'ぽっどきゃすとへ', romaji: 'poddokyasuto e', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'to podcast', thai_meaning: 'สู่พอดแคสต์', general_meanings: ['podcast'] },
-        { surface: 'ようこそ', word_id: 'w-youkoso', lemma: 'ようこそ', reading_kana: 'ようこそ', romaji: 'youkoso', jlpt_level: 'N5', part_of_speech: 'Greeting', contextual_meaning: 'welcome', thai_meaning: 'ยินดีต้อนรับ', general_meanings: ['welcome'] },
-      ],
-    },
-    {
-      id: 'sub-pod-02',
-      video_id: 'vid-pod-n5-intro',
-      line_index: 1,
-      start_time_ms: 6100,
-      end_time_ms: 14000,
-      speaker: 'Shun',
-      raw_text: '第1回目の今日は、簡単に自己紹介をしたいと思います。',
-      natural_translation: "For this very first episode, I would like to briefly introduce myself.",
-      thai_translation: 'สำหรับตอนที่ 1 ในวันนี้ ผมอยากจะขอแนะนำตัวสั้นๆ ง่ายๆ ให้ทุกคนรู้จักครับ',
-      ai_grammar_summary: "簡単に = อย่างง่ายๆ / 〜をしたいと思います = อยากจะขอทำ...",
-      tokens_json: [
-        { surface: '今日は', word_id: 'w-kyouwa', lemma: '今日', reading_kana: 'きょうは', romaji: 'kyou wa', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'today', thai_meaning: 'วันนี้', general_meanings: ['today'] },
-        { surface: '簡単に', word_id: 'w-kantanni', lemma: '簡単', reading_kana: 'かんたんに', romaji: 'kantan ni', jlpt_level: 'N5', part_of_speech: 'Adverb', contextual_meaning: 'briefly/simply', thai_meaning: 'อย่างสั้นๆ ง่ายๆ', general_meanings: ['easily'] },
-        { surface: '自己紹介を', word_id: 'w-shoukai', lemma: '自己紹介', reading_kana: 'じこしょうかいを', romaji: 'jikoshoukai o', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'self-introduction', thai_meaning: 'การแนะนำตัวเอง', general_meanings: ['self-intro'] },
-        { surface: 'したいと思います', word_id: 'w-shitaito', lemma: 'する', reading_kana: 'したいとおもいます', romaji: 'shitai to omoimasu', jlpt_level: 'N4', part_of_speech: 'Phrase', contextual_meaning: 'would like to do', thai_meaning: 'อยากจะขอทำครับ', general_meanings: ['wish to do'] },
-      ],
-    },
-    {
-      id: 'sub-pod-03',
-      video_id: 'vid-pod-n5-intro',
-      line_index: 2,
-      start_time_ms: 14100,
-      end_time_ms: 23000,
-      speaker: 'Shun',
-      raw_text: '私は日本で生まれ育って、今は日本語を教えています。',
-      natural_translation: "I was born and raised in Japan, and currently teach Japanese.",
-      thai_translation: 'ผมเกิดและเติบโตที่ประเทศญี่ปุ่น และปัจจุบันกำลังสอนภาษาญี่ปุ่นอยู่ครับ',
-      ai_grammar_summary: "生まれ育って = เกิดและเติบโต / 〜を教えています = กำลังสอน...",
-      tokens_json: [
-        { surface: '私は', word_id: 'w-watashiwa', lemma: '私', reading_kana: 'わたしは', romaji: 'watashi wa', jlpt_level: 'N5', part_of_speech: 'Pronoun + Particle', contextual_meaning: 'I', thai_meaning: 'ผม', general_meanings: ['I'] },
-        { surface: '日本で', word_id: 'w-nihonde', lemma: '日本', reading_kana: 'にほんで', romaji: 'nihon de', jlpt_level: 'N5', part_of_speech: 'Proper noun', contextual_meaning: 'in Japan', thai_meaning: 'ที่ญี่ปุ่น', general_meanings: ['Japan'] },
-        { surface: '生まれ育って', word_id: 'w-umaresodatte', lemma: '生まれる', reading_kana: 'うまれそだって', romaji: 'umare sodatte', jlpt_level: 'N3', part_of_speech: 'Verb phrase', contextual_meaning: 'born and raised', thai_meaning: 'เกิดและเติบโต', general_meanings: ['born and raised'] },
-        { surface: '日本語を', word_id: 'w-nihongoo', lemma: '日本語', reading_kana: 'にほんごを', romaji: 'nihongo o', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'Japanese language', thai_meaning: 'ภาษาญี่ปุ่น', general_meanings: ['Japanese'] },
-        { surface: '教えています', word_id: 'w-oshieteimasu', lemma: '教える', reading_kana: 'おしえています', romaji: 'oshiete imasu', jlpt_level: 'N5', part_of_speech: 'Verb (Progressive)', contextual_meaning: 'am teaching', thai_meaning: 'กำลังสอนอยู่ครับ', general_meanings: ['teaching'] },
-      ],
-    },
-    {
-      id: 'sub-pod-04',
-      video_id: 'vid-pod-n5-intro',
-      line_index: 3,
-      start_time_ms: 23100,
-      end_time_ms: 32000,
-      speaker: 'Shun',
-      raw_text: '私の趣味は、旅行することと美味しいものを食べることです。',
-      natural_translation: "My hobbies are traveling and eating delicious food.",
-      thai_translation: 'งานอดิเรกของผมคือการท่องเที่ยวและการตระเวนหาของอร่อยๆ ทานครับ',
-      ai_grammar_summary: "〜すること = การทำ... (แปลงคำกริยาเป็นคำนามเพื่อระบุงานอดิเรก)",
-      tokens_json: [
-        { surface: '私の趣味は', word_id: 'w-watashinoshumi', lemma: '趣味', reading_kana: 'わたしのしゅみは', romaji: 'watashi no shumi wa', jlpt_level: 'N5', part_of_speech: 'Noun phrase', contextual_meaning: 'my hobby', thai_meaning: 'งานอดิเรกของผม', general_meanings: ['my hobby'] },
-        { surface: '旅行することと', word_id: 'w-ryokou', lemma: '旅行', reading_kana: 'りょこうすることと', romaji: 'ryokou suru koto to', jlpt_level: 'N5', part_of_speech: 'Noun phrase', contextual_meaning: 'traveling and', thai_meaning: 'การท่องเที่ยว กับ', general_meanings: ['traveling'] },
-        { surface: '美味しいものを', word_id: 'w-oishiimonoo', lemma: '美味しい', reading_kana: 'おいしいものを', romaji: 'oishii mono o', jlpt_level: 'N5', part_of_speech: 'Noun phrase', contextual_meaning: 'delicious things', thai_meaning: 'ของอร่อยๆ', general_meanings: ['delicious food'] },
-        { surface: '食べることです', word_id: 'w-taberukoto', lemma: '食べる', reading_kana: 'たべることです', romaji: 'taberu koto desu', jlpt_level: 'N5', part_of_speech: 'Phrase', contextual_meaning: 'is eating', thai_meaning: 'คือการรับประทานครับ', general_meanings: ['is to eat'] },
-      ],
-    },
-    {
-      id: 'sub-pod-05',
-      video_id: 'vid-pod-n5-intro',
-      line_index: 4,
-      start_time_ms: 32100,
-      end_time_ms: 45000,
-      speaker: 'Shun',
-      raw_text: 'ゆっくり自然な日本語を話しますので、楽しく聴いてくださいね！',
-      natural_translation: "I will speak slow, natural Japanese, so please enjoy listening!",
-      thai_translation: 'ผมจะพูดภาษาญี่ปุ่นอย่างช้าๆ ชัดเจนและเป็นธรรมชาติ ขอให้ฟังอย่างเพลิดเพลินนะครับ!',
-      ai_grammar_summary: "〜ので = เนื่องจาก... / 楽しく聴いてください = ขอให้ฟังอย่างสนุกสนาน",
-      tokens_json: [
-        { surface: 'ゆっくり', word_id: 'w-yukkuri', lemma: 'ゆっくり', reading_kana: 'ゆっくり', romaji: 'yukkuri', jlpt_level: 'N5', part_of_speech: 'Adverb', contextual_meaning: 'slowly', thai_meaning: 'ช้าๆ สบายๆ', general_meanings: ['slowly'] },
-        { surface: '自然な', word_id: 'w-shizenna', lemma: '自然', reading_kana: 'しぜんな', romaji: 'shizen na', jlpt_level: 'N4', part_of_speech: 'Na-Adjective', contextual_meaning: 'natural', thai_meaning: 'ที่เป็นธรรมชาติ', general_meanings: ['natural'] },
-        { surface: '日本語を話します', word_id: 'w-hanashimasu', lemma: '話す', reading_kana: 'にほんごをはなします', romaji: 'nihongo o hanashimasu', jlpt_level: 'N5', part_of_speech: 'Verb phrase', contextual_meaning: 'speak Japanese', thai_meaning: 'พูดภาษาญี่ปุ่น', general_meanings: ['speak Japanese'] },
-        { surface: '聴いてくださいね', word_id: 'w-kiitekudasaine', lemma: '聴く', reading_kana: 'きいてくださいね', romaji: 'kiite kudasai ne', jlpt_level: 'N5', part_of_speech: 'Phrase', contextual_meaning: 'please listen', thai_meaning: 'ขอให้ตั้งใจฟังนะ', general_meanings: ['please listen'] },
-      ],
-    },
+      "id": "sub-tako-01",
+      "video_id": "vid-n5-takoyaki",
+      "line_index": 0,
+      "start_time_ms": 0,
+      "end_time_ms": 6000,
+      "speaker": "店員 (Shopkeeper)",
+      "raw_text": "いらっしゃい！焼きたての熱々たこ焼きはいかがですか？",
+      "natural_translation": "Welcome! How about some freshly grilled, piping-hot takoyaki?",
+      "thai_translation": "ยินดีต้อนรับครับ! ทาโกะยากิร้อนๆ เพิ่งย่างเสร็จใหม่ๆ สักกล่องไหมครับ?",
+      "ai_grammar_summary": "焼きたて = เพิ่งย่างเสร็จสดใหม่ (กริยาตัด ます + たて) / いかがですか = รับสักนิดไหมครับ (สุภาพมาก)",
+      "tokens_json": [
+        {
+          "surface": "いらっしゃい",
+          "word_id": "w-irasshai",
+          "lemma": "いらっしゃる",
+          "reading_kana": "いらっしゃい",
+          "romaji": "irasshai",
+          "jlpt_level": "N5",
+          "part_of_speech": "Greeting",
+          "contextual_meaning": "welcome",
+          "thai_meaning": "ยินดีต้อนรับ"
+        },
+        {
+          "surface": "焼きたての",
+          "word_id": "w-yakitate",
+          "lemma": "焼く",
+          "reading_kana": "やきたての",
+          "romaji": "yakitate no",
+          "jlpt_level": "N4",
+          "part_of_speech": "Noun",
+          "contextual_meaning": "freshly grilled",
+          "thai_meaning": "เพิ่งย่างเสร็จร้อนๆ"
+        },
+        {
+          "surface": "熱々",
+          "word_id": "w-atsui",
+          "lemma": "熱い",
+          "reading_kana": "あつあつ",
+          "romaji": "atsuatsu",
+          "jlpt_level": "N5",
+          "part_of_speech": "Na-Adjective",
+          "contextual_meaning": "piping hot",
+          "thai_meaning": "ร้อนๆ ฉุยๆ"
+        },
+        {
+          "surface": "たこ焼きは",
+          "word_id": "w-takoyaki",
+          "lemma": "たこ焼き",
+          "reading_kana": "たこやきは",
+          "romaji": "takoyaki wa",
+          "jlpt_level": "N5",
+          "part_of_speech": "Noun",
+          "contextual_meaning": "takoyaki",
+          "thai_meaning": "ทาโกะยากิ"
+        }
+      ]
+    }
   ],
-
-  // === VLOG: Tokyo Walking & Cafe (vid-n5-vlog) ===
-  'vid-n5-vlog': [
+  "vid-n4-cooking": [
     {
-      id: 'sub-vlog-01',
-      video_id: 'vid-n5-vlog',
-      line_index: 0,
-      start_time_ms: 0,
-      end_time_ms: 6000,
-      speaker: 'Shun',
-      raw_text: '皆さん、おはようございます！今日はとてもいい天気ですね。',
-      natural_translation: "Good morning everyone! The weather is really lovely today.",
-      thai_translation: 'อรุณสวัสดิ์ครับทุกคน! วันนี้สภาพอากาศแจ่มใสดีมากๆ เลยนะครับ',
-      ai_grammar_summary: "いい天気 = อากาศดี / 〜ですね = ...เลยนะ (ชวนคุยเห็นพ้อง)",
-      tokens_json: [
-        { surface: '皆さん', word_id: 'w-minasan', lemma: '皆さん', reading_kana: 'みなさん', romaji: 'minasan', jlpt_level: 'N5', part_of_speech: 'Noun', contextual_meaning: 'everyone', thai_meaning: 'ทุกคนครับ', general_meanings: ['everyone'] },
-        { surface: 'おはようございます', word_id: 'w-ohayou', lemma: 'おはよう', reading_kana: 'おはようございます', romaji: 'ohayou gozaimasu', jlpt_level: 'N5', part_of_speech: 'Greeting', contextual_meaning: 'good morning', thai_meaning: 'อรุณสวัสดิ์ครับ', general_meanings: ['good morning'] },
-        { surface: 'とても', word_id: 'w-totemo', lemma: 'とても', reading_kana: 'とても', romaji: 'totemo', jlpt_level: 'N5', part_of_speech: 'Adverb', contextual_meaning: 'very', thai_meaning: 'มากๆ', general_meanings: ['very'] },
-        { surface: 'いい天気ですね', word_id: 'w-tenki', lemma: '天気', reading_kana: 'いいてんきですね', romaji: 'ii tenki desu ne', jlpt_level: 'N5', part_of_speech: 'Phrase', contextual_meaning: 'fine weather, isn’t it?', thai_meaning: 'อากาศดีจังเลยนะ', general_meanings: ['nice weather'] },
-      ],
-    },
-    {
-      id: 'sub-vlog-02',
-      video_id: 'vid-n5-vlog',
-      line_index: 1,
-      start_time_ms: 6100,
-      end_time_ms: 14000,
-      speaker: 'Shun',
-      raw_text: '今日は東京の街を散歩して、新しいカフェを探します。',
-      natural_translation: "Today I will take a walk around Tokyo and look for a new cafe.",
-      thai_translation: 'วันนี้ผมจะไปเดินเล่นในโตเกียว และตามหาร้านคาเฟ่เปิดใหม่สวยๆ กันครับ',
-      ai_grammar_summary: "散歩して = เดินเล่นแล้วก็... / 〜を探します = มองหา/ค้นหา",
-      tokens_json: [
-        { surface: '東京の街を', word_id: 'w-toukyou', lemma: '東京', reading_kana: 'とうきょうのまちを', romaji: 'toukyou no machi o', jlpt_level: 'N5', part_of_speech: 'Noun phrase', contextual_meaning: 'streets of Tokyo', thai_meaning: 'ท้องถนนของโตเกียว', general_meanings: ['Tokyo town'] },
-        { surface: '散歩して', word_id: 'w-shun', lemma: '散歩', reading_kana: 'さんぽして', romaji: 'sanpo shite', jlpt_level: 'N5', part_of_speech: 'Verb (Te-form)', contextual_meaning: 'taking a walk and', thai_meaning: 'เดินเล่นแล้วก็', general_meanings: ['take a walk'] },
-        { surface: '新しい', word_id: 'w-atarashii', lemma: '新しい', reading_kana: 'あたらしい', romaji: 'atarashii', jlpt_level: 'N5', part_of_speech: 'I-Adjective', contextual_meaning: 'new', thai_meaning: 'ใหม่ๆ', general_meanings: ['new'] },
-        { surface: 'カフェを', word_id: 'w-kafe', lemma: 'カフェ', reading_kana: 'かふぇを', romaji: 'kafe o', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'cafe', thai_meaning: 'คาเฟ่', general_meanings: ['cafe'] },
-        { surface: '探します', word_id: 'w-sagashimasu', lemma: '探す', reading_kana: 'さがします', romaji: 'sagashimasu', jlpt_level: 'N5', part_of_speech: 'Verb', contextual_meaning: 'search for', thai_meaning: 'ตามหาครับ', general_meanings: ['look for'] },
-      ],
-    },
-    {
-      id: 'sub-vlog-03',
-      video_id: 'vid-n5-vlog',
-      line_index: 2,
-      start_time_ms: 14100,
-      end_time_ms: 23000,
-      speaker: 'Shun',
-      raw_text: '路地裏に入ると、静かでおしゃれなお店を見つけました！',
-      natural_translation: "Stepping into an alleyway, I found a quiet and stylish shop!",
-      thai_translation: 'พอเลี้ยวเข้าตรอกเล็กๆ ก็เจอร้านกาแฟที่เงียบสงบและบรรยากาศเก๋ไก๋ทันที!',
-      ai_grammar_summary: "路地裏 (ろじうら) = ตรอกซอยด้านใน / 〜を見つけました = ค้นพบแล้ว",
-      tokens_json: [
-        { surface: '路地裏に', word_id: 'w-rojiura', lemma: '路地裏', reading_kana: 'ろじうらに', romaji: 'rojiura ni', jlpt_level: 'N3', part_of_speech: 'Noun + Particle', contextual_meaning: 'into the alley', thai_meaning: 'ในตรอกซอย', general_meanings: ['back alley'] },
-        { surface: '入ると', word_id: 'w-hairuto', lemma: '入る', reading_kana: 'はいると', romaji: 'hairu to', jlpt_level: 'N5', part_of_speech: 'Verb + Conditional', contextual_meaning: 'upon entering', thai_meaning: 'พอเดินเข้าไป', general_meanings: ['when entering'] },
-        { surface: '静かで', word_id: 'w-shizukade', lemma: '静か', reading_kana: 'しずかで', romaji: 'shizuka de', jlpt_level: 'N5', part_of_speech: 'Na-Adjective (Te-form)', contextual_meaning: 'quiet and', thai_meaning: 'เงียบสงบ และ...', general_meanings: ['quiet'] },
-        { surface: 'おしゃれな', word_id: 'w-osharena', lemma: 'おしゃれ', reading_kana: 'おしゃれな', romaji: 'oshare na', jlpt_level: 'N4', part_of_speech: 'Na-Adjective', contextual_meaning: 'stylish', thai_meaning: 'เก๋ไก๋ทันสมัย', general_meanings: ['stylish'] },
-        { surface: '見つけました', word_id: 'w-mitsukemashita', lemma: '見つける', reading_kana: 'みつけました', romaji: 'mitsukemashita', jlpt_level: 'N5', part_of_speech: 'Verb', contextual_meaning: 'found it', thai_meaning: 'ค้นพบแล้วครับ', general_meanings: ['found'] },
-      ],
-    },
-    {
-      id: 'sub-vlog-04',
-      video_id: 'vid-n5-vlog',
-      line_index: 3,
-      start_time_ms: 23100,
-      end_time_ms: 33000,
-      speaker: 'Shun',
-      raw_text: '窓側の席に座って、温かいラテを注文しましょう。',
-      natural_translation: "Let's sit at a window seat and order a warm latte.",
-      thai_translation: 'นั่งลงที่โต๊ะริมหน้าต่าง แล้วสั่งลาเต้ร้อนๆ มาดื่มกันดีกว่าครับ',
-      ai_grammar_summary: "窓側 (まどがわ) = ริมหน้าต่าง / 〜を注文しましょう = มาสั่ง...กันเถอะ",
-      tokens_json: [
-        { surface: '窓側の席に', word_id: 'w-madogawa', lemma: '窓側', reading_kana: 'まどがわのせきに', romaji: 'madogawa no seki ni', jlpt_level: 'N4', part_of_speech: 'Noun phrase', contextual_meaning: 'window seat', thai_meaning: 'ที่นั่งริมหน้าต่าง', general_meanings: ['window seat'] },
-        { surface: '座って', word_id: 'w-suwatte', lemma: '座る', reading_kana: 'すわって', romaji: 'suwatte', jlpt_level: 'N5', part_of_speech: 'Verb (Te-form)', contextual_meaning: 'sit down and', thai_meaning: 'นั่งลงแล้ว', general_meanings: ['sit down'] },
-        { surface: '温かい', word_id: 'w-atatakai', lemma: '温かい', reading_kana: 'あたたかい', romaji: 'atatakai', jlpt_level: 'N5', part_of_speech: 'I-Adjective', contextual_meaning: 'warm', thai_meaning: 'อุ่นๆ', general_meanings: ['warm'] },
-        { surface: '注文しましょう', word_id: 'w-chuumonshimashou', lemma: '注文', reading_kana: 'ちゅうもんしましょう', romaji: 'chuumon shimashou', jlpt_level: 'N5', part_of_speech: 'Verb phrase', contextual_meaning: 'let’s order', thai_meaning: 'สั่งกันเถอะ', general_meanings: ['let’s order'] },
-      ],
-    },
-    {
-      id: 'sub-vlog-05',
-      video_id: 'vid-n5-vlog',
-      line_index: 4,
-      start_time_ms: 33100,
-      end_time_ms: 45000,
-      speaker: 'Shun',
-      raw_text: 'コーヒーのいい香りがして、すごくリラックスできます。',
-      natural_translation: "With the wonderful coffee aroma, I can truly relax.",
-      thai_translation: 'มีกลิ่นหอมกรุ่นของกาแฟ รู้สึกผ่อนคลายสบายใจมากๆ เลยครับ',
-      ai_grammar_summary: "香りがする = มีกลิ่นหอมโชยออกมา / リラックスできます = สามารถผ่อนคลายได้",
-      tokens_json: [
-        { surface: 'コーヒーの', word_id: 'w-koohii', lemma: 'コーヒー', reading_kana: 'こーひーの', romaji: 'koohii no', jlpt_level: 'N5', part_of_speech: 'Noun + Particle', contextual_meaning: 'coffee’s', thai_meaning: 'ของกาแฟ', general_meanings: ['coffee'] },
-        { surface: 'いい香りがして', word_id: 'w-iikaori', lemma: '香り', reading_kana: 'いいかおりがして', romaji: 'ii kaori ga shite', jlpt_level: 'N4', part_of_speech: 'Phrase', contextual_meaning: 'nice aroma and', thai_meaning: 'มีกลิ่นหอมดี', general_meanings: ['nice smell'] },
-        { surface: 'すごく', word_id: 'w-sugoku', lemma: 'すごい', reading_kana: 'すごく', romaji: 'sugoku', jlpt_level: 'N5', part_of_speech: 'Adverb', contextual_meaning: 'extremely', thai_meaning: 'อย่างมาก', general_meanings: ['very'] },
-        { surface: 'リラックスできます', word_id: 'w-rirakkusu', lemma: 'リラックス', reading_kana: 'りらっくすできます', romaji: 'rirakkusu dekimasu', jlpt_level: 'N4', part_of_speech: 'Verb phrase', contextual_meaning: 'can relax', thai_meaning: 'ผ่อนคลายได้เลย', general_meanings: ['can relax'] },
-      ],
-    },
+      "id": "sub-ramen-01",
+      "video_id": "vid-n4-cooking",
+      "line_index": 0,
+      "start_time_ms": 0,
+      "end_time_ms": 6500,
+      "speaker": "店主 (Master)",
+      "raw_text": "豚骨を10時間煮込んで、濃厚なスープを作ります。",
+      "natural_translation": "We simmer pork bones for 10 hours to make our rich, flavorful soup.",
+      "thai_translation": "เราเคี่ยวกระดูกหมูอย่างพิถีพิถันนานถึง 10 ชั่วโมง เพื่อทำน้ำซุปเข้มข้นรสเลิศครับ",
+      "ai_grammar_summary": "〜時間 = ระยะเวลาเป็นชั่วโมง / 煮込む = เคี่ยวจนเข้าเนื้อ / 作り = ทำ/ปรุง",
+      "tokens_json": [
+        {
+          "surface": "豚骨を",
+          "word_id": "w-tonkotsu",
+          "lemma": "豚骨",
+          "reading_kana": "とんこつを",
+          "romaji": "tonkotsu o",
+          "jlpt_level": "N4",
+          "part_of_speech": "Noun",
+          "contextual_meaning": "pork bones",
+          "thai_meaning": "กระดูกหมู"
+        },
+        {
+          "surface": "10時間",
+          "word_id": "w-jikan",
+          "lemma": "時間",
+          "reading_kana": "じゅうじかん",
+          "romaji": "juu jikan",
+          "jlpt_level": "N5",
+          "part_of_speech": "Noun",
+          "contextual_meaning": "ten hours",
+          "thai_meaning": "10 ชั่วโมง"
+        },
+        {
+          "surface": "煮込んで",
+          "word_id": "w-nikomu",
+          "lemma": "煮込む",
+          "reading_kana": "にこんで",
+          "romaji": "nikonde",
+          "jlpt_level": "N3",
+          "part_of_speech": "Verb",
+          "contextual_meaning": "simmering",
+          "thai_meaning": "เคี่ยวตุ๋น"
+        },
+        {
+          "surface": "濃厚なスープを",
+          "word_id": "w-suupu",
+          "lemma": "スープ",
+          "reading_kana": "のうこうなすーぷを",
+          "romaji": "noukou na suupu o",
+          "jlpt_level": "N4",
+          "part_of_speech": "Noun phrase",
+          "contextual_meaning": "rich soup",
+          "thai_meaning": "น้ำซุปเข้มข้น"
+        }
+      ]
+    }
   ],
-
-  // === J-POP: Kenshi Yonezu - Lemon (vid-n4-lemon) ===
-  'vid-n4-lemon': [
+  "vid-pod-n5-intro": [
     {
-      id: 'sub-lemon-01',
-      video_id: 'vid-n4-lemon',
-      line_index: 0,
-      start_time_ms: 0,
-      end_time_ms: 8000,
-      speaker: 'Kenshi Yonezu',
-      raw_text: '夢ならばどれほどよかったでしょう',
-      natural_translation: "If only it were a dream, how wonderful that would have been.",
-      thai_translation: 'หากเรื่องราวทั้งหมดนี้เป็นเพียงแค่ความฝัน มันจะดีสักแค่ไหนกันนะ',
-      ai_grammar_summary: "〜ならば = ถ้าหากเป็น... / 〜よかったでしょう = คงจะดีมากแน่ๆ (การรำพึงถึงอดีต)",
-      tokens_json: [
-        { surface: '夢ならば', word_id: 'w-yumenaraba', lemma: '夢', reading_kana: 'ゆめならば', romaji: 'yume naraba', jlpt_level: 'N4', part_of_speech: 'Noun + Conditional', contextual_meaning: 'if it were a dream', thai_meaning: 'หากเป็นความฝัน', general_meanings: ['if a dream'] },
-        { surface: 'どれほど', word_id: 'w-dorehodo', lemma: 'どれほど', reading_kana: 'どれほど', romaji: 'dorehodo', jlpt_level: 'N3', part_of_speech: 'Adverb', contextual_meaning: 'how much', thai_meaning: 'สักเพียงใด', general_meanings: ['how much'] },
-        { surface: 'よかったでしょう', word_id: 'w-yokattadeshou', lemma: 'よい', reading_kana: 'よかったでしょう', romaji: 'yokatta deshou', jlpt_level: 'N4', part_of_speech: 'Phrase', contextual_meaning: 'would have been great', thai_meaning: 'คงจะดีมากนะ', general_meanings: ['how good it would be'] },
-      ],
-    },
-    {
-      id: 'sub-lemon-02',
-      video_id: 'vid-n4-lemon',
-      line_index: 1,
-      start_time_ms: 8100,
-      end_time_ms: 17000,
-      speaker: 'Kenshi Yonezu',
-      raw_text: '未だにあなたのことを夢にみる',
-      natural_translation: "Even now, I still see you in my dreams.",
-      thai_translation: 'แม้จนถึงตอนนี้ ภาพของเธอยังคงปรากฏอยู่ในความฝันของฉันเสมอ',
-      ai_grammar_summary: "未だに (いまだに) = แม้จนบัดนี้ / 夢にみる = ฝันเห็น",
-      tokens_json: [
-        { surface: '未だに', word_id: 'w-imadani', lemma: '未だに', reading_kana: 'いまだに', romaji: 'imada ni', jlpt_level: 'N3', part_of_speech: 'Adverb', contextual_meaning: 'still even now', thai_meaning: 'แม้จนกระทั่งบัดนี้', general_meanings: ['still'] },
-        { surface: 'あなたのことを', word_id: 'w-anatanokoto', lemma: 'あなた', reading_kana: 'あなたのことを', romaji: 'anata no koto o', jlpt_level: 'N5', part_of_speech: 'Phrase', contextual_meaning: 'about you', thai_meaning: 'เรื่องราวของเธอ', general_meanings: ['about you'] },
-        { surface: '夢にみる', word_id: 'w-yumenimiru', lemma: '夢', reading_kana: 'ゆめにみる', romaji: 'yume ni miru', jlpt_level: 'N4', part_of_speech: 'Verb phrase', contextual_meaning: 'see in dream', thai_meaning: 'ฝันเห็น', general_meanings: ['dream of'] },
-      ],
-    },
-    {
-      id: 'sub-lemon-03',
-      video_id: 'vid-n4-lemon',
-      line_index: 2,
-      start_time_ms: 17100,
-      end_time_ms: 27000,
-      speaker: 'Kenshi Yonezu',
-      raw_text: '忘れた物を取りに帰るように',
-      natural_translation: "Just like returning to fetch something left behind.",
-      thai_translation: 'ราวกับว่ากำลังเดินทางย้อนกลับไป เพื่อหยิบสิ่งของที่เคยลืมทิ้งไว้',
-      ai_grammar_summary: "〜ように = ราวกับว่า / 取りに帰る = เดินทางกลับไปเอาของ",
-      tokens_json: [
-        { surface: '忘れた物を', word_id: 'w-wasuretamono', lemma: '忘れる', reading_kana: 'わすれたものを', romaji: 'wasureta mono o', jlpt_level: 'N4', part_of_speech: 'Noun phrase', contextual_meaning: 'forgotten things', thai_meaning: 'สิ่งของที่ลืมไว้', general_meanings: ['forgotten item'] },
-        { surface: '取りに帰る', word_id: 'w-torinikaeru', lemma: '帰る', reading_kana: 'とりにかえる', romaji: 'tori ni kaeru', jlpt_level: 'N4', part_of_speech: 'Verb phrase', contextual_meaning: 'return to fetch', thai_meaning: 'กลับไปหยิบเอา', general_meanings: ['return to take'] },
-        { surface: 'ように', word_id: 'w-youni', lemma: 'よう', reading_kana: 'ように', romaji: 'you ni', jlpt_level: 'N4', part_of_speech: 'Particle phrase', contextual_meaning: 'as if', thai_meaning: 'ราวกับว่า', general_meanings: ['like'] },
-      ],
-    },
-    {
-      id: 'sub-lemon-04',
-      video_id: 'vid-n4-lemon',
-      line_index: 3,
-      start_time_ms: 27100,
-      end_time_ms: 38000,
-      speaker: 'Kenshi Yonezu',
-      raw_text: '古びた思い出の埃を払う',
-      natural_translation: "Dusting off the accumulated dust of old memories.",
-      thai_translation: 'ปัดฝุ่นที่เกาะกุมอยู่บนความทรงจำอันเก่าแก่ให้จางหายไป',
-      ai_grammar_summary: "古びた = ทรุดโทรม/เก่าแก่ / 埃を払う (ほこりをはらう) = ปัดฝุ่นออก",
-      tokens_json: [
-        { surface: '古びた', word_id: 'w-furubita', lemma: '古びる', reading_kana: 'ふるびた', romaji: 'furubita', jlpt_level: 'N2', part_of_speech: 'Verb (Past)', contextual_meaning: 'aged/weathered', thai_meaning: 'เก่าแก่ตามกาลเวลา', general_meanings: ['worn-out'] },
-        { surface: '思い出の', word_id: 'w-omoide', lemma: '思い出', reading_kana: 'おもいでの', romaji: 'omoide no', jlpt_level: 'N4', part_of_speech: 'Noun + Particle', contextual_meaning: 'of memories', thai_meaning: 'ของความทรงจำ', general_meanings: ['memories'] },
-        { surface: '埃を払う', word_id: 'w-hokoioharau', lemma: '払う', reading_kana: 'ほこりをはらう', romaji: 'hokori o harau', jlpt_level: 'N3', part_of_speech: 'Verb phrase', contextual_meaning: 'brush off dust', thai_meaning: 'ปัดฝุ่นออก', general_meanings: ['dust off'] },
-      ],
-    },
-    {
-      id: 'sub-lemon-05',
-      video_id: 'vid-n4-lemon',
-      line_index: 4,
-      start_time_ms: 38100,
-      end_time_ms: 55000,
-      speaker: 'Kenshi Yonezu',
-      raw_text: '今でもあなたはわたしの光',
-      natural_translation: "Even now, you are my guiding light.",
-      thai_translation: 'แม้ในวันนี้ เธอก็ยังคงเป็นแสงสว่างเดียวในใจฉันตลอดกาล',
-      ai_grammar_summary: "今でも = แม้ในตอนนี้ / わたしの光 = แสงสว่างของฉัน",
-      tokens_json: [
-        { surface: '今でも', word_id: 'w-imademo', lemma: '今', reading_kana: 'いまでも', romaji: 'ima demo', jlpt_level: 'N4', part_of_speech: 'Phrase', contextual_meaning: 'even now', thai_meaning: 'แม้ในตอนนี้', general_meanings: ['even now'] },
-        { surface: 'あなたは', word_id: 'w-anatawa', lemma: 'あなた', reading_kana: 'あなたは', romaji: 'anata wa', jlpt_level: 'N5', part_of_speech: 'Pronoun + Particle', contextual_meaning: 'you', thai_meaning: 'เธอนั้น', general_meanings: ['you'] },
-        { surface: 'わたしの', word_id: 'w-watashino', lemma: '私', reading_kana: 'わたしの', romaji: 'watashi no', jlpt_level: 'N5', part_of_speech: 'Pronoun + Particle', contextual_meaning: 'my', thai_meaning: 'ของฉัน', general_meanings: ['my'] },
-        { surface: '光', word_id: 'w-hikari', lemma: '光', reading_kana: 'ひかり', romaji: 'hikari', jlpt_level: 'N4', part_of_speech: 'Noun', contextual_meaning: 'light', thai_meaning: 'แสงสว่าง', general_meanings: ['light'] },
-      ],
-    },
+      "id": "sub-pod-01",
+      "video_id": "vid-pod-n5-intro",
+      "line_index": 0,
+      "start_time_ms": 0,
+      "end_time_ms": 6000,
+      "speaker": "しゅん (Shun)",
+      "raw_text": "皆さんこんにちは！しゅんです。今日も楽しく日本語を勉強しましょう！",
+      "natural_translation": "Hello everyone! I am Shun. Let us enjoy studying Japanese together today too!",
+      "thai_translation": "สวัสดีครับทุกคน! ผมชุนครับ วันนี้เรามาเรียนภาษาญี่ปุ่นอย่างสนุกสนานด้วยกันอีกนะครับ!",
+      "ai_grammar_summary": "楽しく = อย่างสนุกสนาน (คุณศัพท์รูปกริยาวิเศษณ์) / 〜ましょう = รูปชักชวนอย่างสุภาพ",
+      "tokens_json": [
+        {
+          "surface": "皆さん",
+          "word_id": "w-minasan",
+          "lemma": "皆さん",
+          "reading_kana": "みなさん",
+          "romaji": "minasan",
+          "jlpt_level": "N5",
+          "part_of_speech": "Noun",
+          "contextual_meaning": "everyone",
+          "thai_meaning": "ทุกคน"
+        },
+        {
+          "surface": "こんにちは",
+          "word_id": "w-konnichiwa",
+          "lemma": "こんにちは",
+          "reading_kana": "こんにちは",
+          "romaji": "konnichiwa",
+          "jlpt_level": "N5",
+          "part_of_speech": "Greeting",
+          "contextual_meaning": "hello",
+          "thai_meaning": "สวัสดี"
+        },
+        {
+          "surface": "今日も",
+          "word_id": "w-kyou",
+          "lemma": "今日",
+          "reading_kana": "きょうも",
+          "romaji": "kyou mo",
+          "jlpt_level": "N5",
+          "part_of_speech": "Noun + Particle",
+          "contextual_meaning": "today also",
+          "thai_meaning": "วันนี้ด้วย"
+        },
+        {
+          "surface": "日本語を",
+          "word_id": "w-nihongo",
+          "lemma": "日本語",
+          "reading_kana": "にほんごを",
+          "romaji": "nihongo o",
+          "jlpt_level": "N5",
+          "part_of_speech": "Noun",
+          "contextual_meaning": "Japanese language",
+          "thai_meaning": "ภาษาญี่ปุ่น"
+        },
+        {
+          "surface": "勉強しましょう",
+          "word_id": "w-benkyou",
+          "lemma": "勉強する",
+          "reading_kana": "べんきょうしましょう",
+          "romaji": "benkyou shimashou",
+          "jlpt_level": "N5",
+          "part_of_speech": "Verb (Polite volitional)",
+          "contextual_meaning": "let us study",
+          "thai_meaning": "มาเรียนกันเถอะ"
+        }
+      ]
+    }
   ],
+  "vid-n5-vlog": [
+    {
+      "id": "sub-vlog-01",
+      "video_id": "vid-n5-vlog",
+      "line_index": 0,
+      "start_time_ms": 0,
+      "end_time_ms": 6000,
+      "speaker": "Vlogger",
+      "raw_text": "今日は天気がとてもいいので、新宿のカフェへ行きます。",
+      "natural_translation": "The weather is great today, so I am going to a cafe in Shinjuku.",
+      "thai_translation": "วันนี้อากาศดีมากเลยครับ ผมเลยจะไปคาเฟ่ที่ชินจูกุสักหน่อย",
+      "ai_grammar_summary": "〜ので = เนื่องจาก/เพราะว่า (บอกเหตุผลอย่างนุ่มนวล) / へ行きます = เดินทางไปยัง...",
+      "tokens_json": [
+        {
+          "surface": "今日は",
+          "word_id": "w-kyou",
+          "lemma": "今日",
+          "reading_kana": "きょうは",
+          "romaji": "kyou wa",
+          "jlpt_level": "N5",
+          "part_of_speech": "Noun + Particle",
+          "contextual_meaning": "today",
+          "thai_meaning": "วันนี้"
+        },
+        {
+          "surface": "天気が",
+          "word_id": "w-tenki",
+          "lemma": "天気",
+          "reading_kana": "てんきが",
+          "romaji": "tenki ga",
+          "jlpt_level": "N5",
+          "part_of_speech": "Noun + Particle",
+          "contextual_meaning": "the weather",
+          "thai_meaning": "สภาพอากาศ"
+        },
+        {
+          "surface": "とてもいいので",
+          "word_id": "w-ii",
+          "lemma": "良い",
+          "reading_kana": "とてもいいので",
+          "romaji": "totemo ii node",
+          "jlpt_level": "N5",
+          "part_of_speech": "Phrase",
+          "contextual_meaning": "because it is very good",
+          "thai_meaning": "เพราะดีมาก"
+        },
+        {
+          "surface": "カフェへ行きます",
+          "word_id": "w-kafe",
+          "lemma": "カフェ",
+          "reading_kana": "かふぇへいきます",
+          "romaji": "kafe e ikimasu",
+          "jlpt_level": "N5",
+          "part_of_speech": "Phrase",
+          "contextual_meaning": "go to a cafe",
+          "thai_meaning": "ไปที่คาเฟ่"
+        }
+      ]
+    }
+  ],
+  "vid-n4-lemon": [
+    {
+      "id": "sub-lemon-01",
+      "video_id": "vid-n4-lemon",
+      "line_index": 0,
+      "start_time_ms": 0,
+      "end_time_ms": 7000,
+      "speaker": "米津玄師 (Kenshi Yonezu)",
+      "raw_text": "夢ならばどれほどよかったでしょう。未だにあなたのことを夢にみる。",
+      "natural_translation": "If only this were a dream, how wonderful it would have been. Even now, I still dream of you.",
+      "thai_translation": "หากเรื่องทั้งหมดเป็นเพียงความฝัน มันคงจะดีสักเพียงไหนนะ... แม้กระทั่งตอนนี้ ฉันก็ยังคงฝันถึงคุณอยู่เสมอ",
+      "ai_grammar_summary": "〜ならば = หากเป็นเช่นนั้น (สมมติความหวัง) / 〜にみる = ฝันเห็นถึงคนสำคัญ",
+      "tokens_json": [
+        {
+          "surface": "夢ならば",
+          "word_id": "w-yume",
+          "lemma": "夢",
+          "reading_kana": "ゆめならば",
+          "romaji": "yume naraba",
+          "jlpt_level": "N4",
+          "part_of_speech": "Noun + Conditional",
+          "contextual_meaning": "if it were a dream",
+          "thai_meaning": "หากเป็นเพียงความฝัน"
+        },
+        {
+          "surface": "よかったでしょう",
+          "word_id": "w-ii",
+          "lemma": "良い",
+          "reading_kana": "よかったでしょう",
+          "romaji": "yokatta deshou",
+          "jlpt_level": "N5",
+          "part_of_speech": "Phrase",
+          "contextual_meaning": "how nice it would have been",
+          "thai_meaning": "คงจะดีสักเพียงไหน"
+        },
+        {
+          "surface": "あなたのことを",
+          "word_id": "w-anata",
+          "lemma": "あなた",
+          "reading_kana": "あなたのことを",
+          "romaji": "anata no koto o",
+          "jlpt_level": "N5",
+          "part_of_speech": "Pronoun phrase",
+          "contextual_meaning": "about you",
+          "thai_meaning": "เรื่องราวของคุณ"
+        },
+        {
+          "surface": "夢にみる",
+          "word_id": "w-miru",
+          "lemma": "見る",
+          "reading_kana": "ゆめにみる",
+          "romaji": "yume ni miru",
+          "jlpt_level": "N4",
+          "part_of_speech": "Verb phrase",
+          "contextual_meaning": "see in my dreams",
+          "thai_meaning": "ฝันถึงอยู่ตลอด"
+        }
+      ]
+    }
+  ]
 };

@@ -246,7 +246,7 @@ export const ContextualDictionaryModal: React.FC<Props> = ({ data, onClose }) =>
                   ความหมายทั่วไป (Dictionary):
                 </span>
                 <ul className="list-disc list-inside space-y-1 text-sm text-slate-300">
-                  {token.general_meanings.map((gm, idx) => (
+                  {(token.general_meanings || [token.contextual_meaning]).map((gm, idx) => (
                     <li key={idx}>{gm}</li>
                   ))}
                 </ul>

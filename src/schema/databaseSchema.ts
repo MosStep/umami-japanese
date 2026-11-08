@@ -57,7 +57,7 @@ export interface SubtitleTokenJSON {
   part_of_speech: string;     // e.g., "Verb (Ichidan, casual contraction)"
   contextual_meaning: string; // Exact meaning in THIS specific sentence
   thai_meaning?: string;      // Thai contextual meaning
-  general_meanings: string[]; // Core dictionary definitions
+  general_meanings?: string[]; // Core dictionary definitions
   grammar_note?: string;      // Optional note on conjugation/contraction (e.g., てしまう -> ちゃう)
 }
 

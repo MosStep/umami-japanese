@@ -30,14 +30,11 @@ export const CURRENT_APP_VERSION: VersionInfo = {
   build: APP_BUILD,
   releaseDate: APP_RELEASE_DATE,
   releaseNotes: [
-    '⚡ แก้ Crash เมื่อกดขุดประโยค (Mine) พร้อม Guard ป้องกันข้อผิดพลาด',
-    '🎬 แก้ไข Default Video และโหลดซับไตเติลค้าง รีเซ็ตประโยคเริ่มใหม่อย่างราบรื่น',
-    '⚔️ Dojo Mode A: ปรับปรุง Cloze Deletion ปิดคำศัพท์เป้าหมายตรงจุด พร้อมแปลไทยสมบูรณ์',
-    '🎙️ Dojo Mode B: เลือกสลับประโยค Shadowing ได้อิสระ พร้อมระบบตรวจจับไมโครโฟนแม่นยำ',
-    '✨ Furigana Mode: รองรับตัวเลือก "เฉพาะที่เรียน (learning_only)" อย่างถูกต้อง',
-    '🔍 Contextual Dictionary: เชื่อมโยงหน้าต่างวิเคราะห์ไวยากรณ์และถาม AI เชิงลึก',
-    '📁 อัลบั้มคลังคลิป: สร้างและจัดการอัลบั้มใน Video Feed ได้อย่างสะดวก',
-    '📱 Safe Area & Mobile UX: รองรับจอขอบโค้งและปุ่มสัมผัสแตะง่ายยิ่งขึ้น',
+    '⚔️ เพิ่มอนิเมะลิขสิทธิ์แท้จากช่อง Ani-One Asia และ Ani-One Thailand (Jujutsu Kaisen #1 & #2, Bleach #1, Chainsaw Man, Blue Lock)',
+    '📚 ขยายคลังคำศัพท์ (Words Vault) เพิ่มขึ้นเป็น 125+ คำ ครอบคลุม N5, N4, N3 (คำกริยา, คุณศัพท์, คำนาม และศัพท์ต่อสู้อนิเมะ)',
+    '🎬 ซับไตเติลและคำแปลไทยต่อเนื่องสำหรับทุกคลิปในระบบ (Gaming, Anime, Food, Podcasts, Vlogs, J-Pop)',
+    '⚡ อัปเดตสถานะและซิงค์ SRS Flashcards ใน The Dojo ได้อย่างสมบูรณ์แบบ',
+    '📱 รองรับการเรียนรู้เต็มรูปแบบบนมือถือ Android และ iOS',
   ],
 };
 
