@@ -11,6 +11,8 @@ import {
   Github,
 } from 'lucide-react';
 
+import { APP_VERSION_NAME, APP_BUILD, APP_RELEASE_DATE } from '../config/version';
+
 interface Props {
   isOpen: boolean;
   onClose: () => void;
@@ -24,15 +26,18 @@ export interface VersionInfo {
 }
 
 export const CURRENT_APP_VERSION: VersionInfo = {
-  version: '1.0.4',
-  build: 104,
-  releaseDate: '2026-11-06',
+  version: APP_VERSION_NAME,
+  build: APP_BUILD,
+  releaseDate: APP_RELEASE_DATE,
   releaseNotes: [
-    '🎯 แสดงเลขเวอร์ชัน v1.0.4 ชัดเจนบนหน้าจอและปุ่มตรวจอัปเดต',
-    '👁️ โหมดซ่อนเฉลยคำแปลภาษาไทย (แตะเพื่อดูเฉลย) ฝึกฟังก่อนดูคำแปล',
-    '⚔️ เชื่อมโยง The Dojo กับคลังคำศัพท์ (Words Vault) ทบทวนคำศัพท์ที่กำลังเรียนได้ทันที',
-    '🎮 เพิ่มคลิปเกม Pokémon N5/N4, อนิเมะ Shirokuma Cafe และ Vlogs ท่องเที่ยวญี่ปุ่น',
-    '📜 ขยายคำแปลและซับไตเติลครอบคลุมตลอดทั้งคลิปอย่างต่อเนื่อง',
+    '⚡ แก้ Crash เมื่อกดขุดประโยค (Mine) พร้อม Guard ป้องกันข้อผิดพลาด',
+    '🎬 แก้ไข Default Video และโหลดซับไตเติลค้าง รีเซ็ตประโยคเริ่มใหม่อย่างราบรื่น',
+    '⚔️ Dojo Mode A: ปรับปรุง Cloze Deletion ปิดคำศัพท์เป้าหมายตรงจุด พร้อมแปลไทยสมบูรณ์',
+    '🎙️ Dojo Mode B: เลือกสลับประโยค Shadowing ได้อิสระ พร้อมระบบตรวจจับไมโครโฟนแม่นยำ',
+    '✨ Furigana Mode: รองรับตัวเลือก "เฉพาะที่เรียน (learning_only)" อย่างถูกต้อง',
+    '🔍 Contextual Dictionary: เชื่อมโยงหน้าต่างวิเคราะห์ไวยากรณ์และถาม AI เชิงลึก',
+    '📁 อัลบั้มคลังคลิป: สร้างและจัดการอัลบั้มใน Video Feed ได้อย่างสะดวก',
+    '📱 Safe Area & Mobile UX: รองรับจอขอบโค้งและปุ่มสัมผัสแตะง่ายยิ่งขึ้น',
   ],
 };
 

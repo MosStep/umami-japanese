@@ -10,6 +10,7 @@ import {
   Layers,
   Zap,
   RefreshCw,
+  X,
 } from 'lucide-react';
 
 export const VideoFeed: React.FC = () => {
@@ -198,7 +199,7 @@ export const VideoFeed: React.FC = () => {
               <button
                 key={alb.id}
                 onClick={() => setSelectedAlbum(alb.id)}
-                className={`px-3 py-1.5 rounded-lg font-semibold transition-colors ${
+                className={`px-3 py-1.5 rounded-lg font-semibold transition-colors shrink-0 ${
                   selectedAlbum === alb.id
                     ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/40'
                     : 'text-slate-400 hover:bg-slate-800'
@@ -207,6 +208,13 @@ export const VideoFeed: React.FC = () => {
                 {alb.emoji} {alb.name}
               </button>
             ))}
+            <button
+              onClick={() => setShowNewAlbumModal(true)}
+              className="px-3 py-1.5 rounded-lg bg-rose-600/20 text-rose-300 border border-rose-500/40 hover:bg-rose-600/30 font-bold transition-all flex items-center gap-1 active:scale-95 shrink-0"
+              title="สร้างอัลบั้มคอลเลกชันใหม่"
+            >
+              <span>+ สร้างอัลบั้ม</span>
+            </button>
           </div>
         </div>
       </div>
@@ -314,6 +322,94 @@ export const VideoFeed: React.FC = () => {
         })}
       </div>
 
+      {/* Create New Album Modal (BUG-10) */}
+      {showNewAlbumModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
+          <div className="w-full max-w-sm rounded-3xl bg-slate-900 border-2 border-indigo-500/40 p-6 shadow-2xl space-y-5 animate-in zoom-in-95">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
+              <div className="flex items-center gap-2 text-white font-bold text-sm">
+                <FolderHeart className="w-4 h-4 text-rose-400" />
+                <span>สร้างอัลบั้มคอลเลกชันใหม่</span>
+              </div>
+              <button
+                onClick={() => setShowNewAlbumModal(false)}
+                className="p-1 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                if (!newAlbumName.trim()) return;
+                createAlbum(newAlbumName.trim(), newAlbumEmoji || '📁');
+                setNewAlbumName('');
+                setNewAlbumEmoji('📁');
+                setShowNewAlbumModal(false);
+              }}
+              className="space-y-4"
+            >
+              {/* Emoji selector */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-300 block">
+                  เลือกไอคอน Emoji ประจำอัลบั้ม:
+                </label>
+                <div className="flex items-center gap-2 flex-wrap">
+                  {['📁', '🌟', '🍜', '🎮', '🌸', '☕', '⚔️', '🏮', '🎧', '🗼'].map((em) => (
+                    <button
+                      key={em}
+                      type="button"
+                      onClick={() => setNewAlbumEmoji(em)}
+                      className={`w-9 h-9 rounded-xl text-lg flex items-center justify-center transition-all ${
+                        newAlbumEmoji === em
+                          ? 'bg-indigo-600 scale-110 shadow-md ring-2 ring-indigo-400'
+                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                      }`}
+                    >
+                      {em}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Name Input */}
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-slate-300 block">
+                  ชื่ออัลบั้ม:
+                </label>
+                <input
+                  type="text"
+                  placeholder="เช่น คลิปที่ชอบดูซ้ำ, ร้านอาหารโตเกียว..."
+                  value={newAlbumName}
+                  onChange={(e) => setNewAlbumName(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-medium"
+                  autoFocus
+                  required
+                />
+              </div>
+
+              {/* Action buttons */}
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowNewAlbumModal(false)}
+                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800"
+                >
+                  ยกเลิก
+                </button>
+                <button
+                  type="submit"
+                  disabled={!newAlbumName.trim()}
+                  className="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all active:scale-95 disabled:opacity-50"
+                >
+                  สร้างอัลบั้ม
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

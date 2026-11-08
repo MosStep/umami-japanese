@@ -110,13 +110,13 @@ const STORAGE_KEYS = {
 };
 
 const DEFAULT_ALBUMS: Album[] = [
-  { id: 'alb-daily', name: 'Tokyo Everyday Life', emoji: '🗼', video_ids: ['vid-n5-vlog', 'vid-n4-cooking'] },
-  { id: 'alb-favorites', name: 'Must-Watch Anime', emoji: '🌟', video_ids: ['vid-n3-frieren', 'vid-n2-ado', 'vid-n1-beastars'] },
+  { id: 'alb-daily', name: 'Tokyo Everyday Life', emoji: '🗼', video_ids: ['vid-game-n5-starter', 'vid-anime-n4-cafe1', 'vid-vlog-n5-uji'] },
+  { id: 'alb-favorites', name: 'Must-Watch Anime & Gaming', emoji: '🌟', video_ids: ['vid-game-n5-starter', 'vid-anime-n4-cafe1', 'vid-n4-pretender'] },
 ];
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<'feed' | 'player' | 'words' | 'dojo' | 'profile'>('feed');
-  const [activeVideoId, setActiveVideoId] = useState<string>('vid-n5-vlog');
+  const [activeVideoId, setActiveVideoId] = useState<string>('vid-game-n5-starter');
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
 
   // External API Config (Kob AI active by default with user key)
@@ -200,16 +200,42 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [minedSentences, setMinedSentences] = useState<MinedSentenceRecord[]>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.MINED_SENTENCES);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          // Sanitize any stale seed references from previous build
+          return parsed.map((item: MinedSentenceRecord) => {
+            if (item.video_id === 'vid-anime-01') {
+              return {
+                ...item,
+                video_id: 'vid-game-n5-starter',
+                subtitle_line_id: 'sub-poke-01',
+                target_word_id: 'w-pokemon',
+                user_note: 'ตรงนี้มีโปเกมอนอยู่ 3 ตัวยังไงล่ะ! (ポケモン)',
+              };
+            }
+            if (item.video_id === 'vid-izakaya-03') {
+              return {
+                ...item,
+                video_id: 'vid-game-n5-starter',
+                subtitle_line_id: 'sub-poke-02',
+                target_word_id: 'w-erabu',
+                user_note: 'จงเลือกโปเกมอนตัวที่เธอชอบมา 1 ตัวสิ! (選ぶ)',
+              };
+            }
+            return item;
+          });
+        }
+      }
     } catch {}
     return [
       {
         id: 'mined-seed-1',
         user_id: 'local_user',
-        video_id: 'vid-anime-01',
-        subtitle_line_id: 'sub-a-01',
-        target_word_id: 'w-akirameru',
-        user_note: 'Crucial anime resolve line: 決して + 諦めない',
+        video_id: 'vid-game-n5-starter',
+        subtitle_line_id: 'sub-poke-01',
+        target_word_id: 'w-pokemon',
+        user_note: 'ตรงนี้มีโปเกมอนอยู่ 3 ตัวยังไงล่ะ! (ポケモン)',
         album_id: 'alb-favorites',
         srs_interval: 1,
         srs_ease: 2.5,
@@ -220,15 +246,29 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       {
         id: 'mined-seed-2',
         user_id: 'local_user',
-        video_id: 'vid-izakaya-03',
-        subtitle_line_id: 'sub-i-01',
-        target_word_id: 'w-fukitobu',
-        user_note: 'Idiomatic: 疲れが吹き飛ぶ (fatigue vanishes)',
-        album_id: 'alb-daily',
+        video_id: 'vid-game-n5-starter',
+        subtitle_line_id: 'sub-poke-02',
+        target_word_id: 'w-erabu',
+        user_note: 'จงเลือกโปเกมอนตัวที่เธอชอบมา 1 ตัวสิ! (選ぶ)',
+        album_id: 'alb-favorites',
         srs_interval: 2,
         srs_ease: 2.5,
         srs_repetitions: 2,
         next_review_at: new Date(Date.now() + 86400000).toISOString(),
+        created_at: new Date().toISOString(),
+      },
+      {
+        id: 'mined-seed-3',
+        user_id: 'local_user',
+        video_id: 'vid-anime-n4-cafe1',
+        subtitle_line_id: 'sub-kuma-01',
+        target_word_id: 'w-kafe',
+        user_note: 'ยินดีต้อนรับสู่คาเฟ่หมีขาวครับ! (カフェ)',
+        album_id: 'alb-favorites',
+        srs_interval: 1,
+        srs_ease: 2.5,
+        srs_repetitions: 0,
+        next_review_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
       },
     ];
@@ -331,6 +371,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const mineSentence = (line: SubtitleLineRecord, targetWordId?: string, note?: string) => {
+    if (!line || !line.tokens_json) return;
     const target = targetWordId || (line.tokens_json[0] ? line.tokens_json[0].word_id : 'generic');
     const existing = minedSentences.find(
       (m) => m.subtitle_line_id === line.id && m.target_word_id === target

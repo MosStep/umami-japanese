@@ -56,6 +56,12 @@ export const ImmersionPlayer: React.FC = () => {
     return localStorage.getItem('umami_hide_translation') === 'true';
   });
   const [revealedLines, setRevealedLines] = useState<Record<string, boolean>>({});
+  const [showContextualModal, setShowContextualModal] = useState<boolean>(false);
+
+  // Reset line index whenever active video changes
+  useEffect(() => {
+    setCurrentLineIndex(0);
+  }, [activeVideo.id]);
 
   const toggleHideTranslation = () => {
     const next = !hideTranslation;
@@ -250,9 +256,6 @@ export const ImmersionPlayer: React.FC = () => {
         playerRef.current.pauseVideo();
         setIsPlaying(false);
       } else {
-        if (activeLine) {
-          playerRef.current.seekTo(activeLine.start_time_ms / 1000, true);
-        }
         playerRef.current.playVideo();
         setIsPlaying(true);
       }
@@ -386,10 +389,10 @@ export const ImmersionPlayer: React.FC = () => {
                   {/* Reading Guide & Translation Toggle Controls */}
                   <div className="flex items-center gap-1.5 flex-wrap">
                     {/* Reading Guide Toggle Pills: [ 読 ฮิรากานะ ] [ Abc โรมันจิ ] [ ✕ ปิด ] */}
-                    <div className="flex items-center gap-1 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
+                    <div className="flex items-center gap-1.5 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
                       <button
                         onClick={() => setReadingGuideMode('hiragana')}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                        className={`px-3 py-2 min-h-[38px] rounded-lg text-xs font-bold transition-all flex items-center justify-center ${
                           readingGuideMode === 'hiragana'
                             ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                             : 'text-slate-400 hover:text-slate-200'
@@ -400,7 +403,7 @@ export const ImmersionPlayer: React.FC = () => {
                       </button>
                       <button
                         onClick={() => setReadingGuideMode('romaji')}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                        className={`px-3 py-2 min-h-[38px] rounded-lg text-xs font-bold transition-all flex items-center justify-center ${
                           readingGuideMode === 'romaji'
                             ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                             : 'text-slate-400 hover:text-slate-200'
@@ -411,7 +414,7 @@ export const ImmersionPlayer: React.FC = () => {
                       </button>
                       <button
                         onClick={() => setReadingGuideMode('off')}
-                        className={`px-2 py-1 rounded-lg text-xs font-bold transition-all ${
+                        className={`px-2.5 py-2 min-h-[38px] rounded-lg text-xs font-bold transition-all flex items-center justify-center ${
                           readingGuideMode === 'off'
                             ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
                             : 'text-slate-400 hover:text-slate-200'
@@ -425,7 +428,7 @@ export const ImmersionPlayer: React.FC = () => {
                     {/* Translation Spoiler Toggle Button */}
                     <button
                       onClick={toggleHideTranslation}
-                      className={`px-2.5 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
+                      className={`px-3 py-2 min-h-[38px] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
                         hideTranslation
                           ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 hover:bg-amber-500/30'
                           : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/30'
@@ -448,10 +451,10 @@ export const ImmersionPlayer: React.FC = () => {
                       <div
                         key={idx}
                         onClick={() => handleTokenClick(token, activeLine)}
-                        className={`group/token cursor-pointer select-none inline-flex flex-col items-center transition-all ${
+                        className={`group/token cursor-pointer select-none inline-flex flex-col items-center justify-center min-h-[48px] min-w-[36px] transition-all ${
                           isSpokenNow
-                            ? 'bg-indigo-500/30 ring-2 ring-indigo-400 shadow-lg shadow-indigo-500/40 rounded-2xl px-2.5 py-1 scale-105'
-                            : 'hover:scale-105 active:scale-95 px-1 py-0.5'
+                            ? 'bg-indigo-500/30 ring-2 ring-indigo-400 shadow-lg shadow-indigo-500/40 rounded-2xl px-2.5 py-1.5 scale-105'
+                            : 'hover:scale-105 active:scale-95 px-1.5 py-1'
                         }`}
                         title="แตะเพื่อฟังเสียงและดูคำแปลทันที"
                       >
@@ -465,8 +468,10 @@ export const ImmersionPlayer: React.FC = () => {
                         >
                           {token.surface}
                           {readingGuideMode === 'hiragana' &&
+                            furiganaMode !== 'off' &&
                             token.reading_kana &&
-                            token.reading_kana !== token.surface && (
+                            token.reading_kana !== token.surface &&
+                            (furiganaMode === 'all' || getWordStatus(token.word_id) === 'learning') && (
                               <rt className="text-xs sm:text-sm font-jp font-bold text-indigo-300 pb-0.5">
                                 {token.reading_kana}
                               </rt>
@@ -593,6 +598,16 @@ export const ImmersionPlayer: React.FC = () => {
                         </button>
                       </div>
                     </div>
+
+                    {/* Deep grammar & AI inquiry button */}
+                    <button
+                      type="button"
+                      onClick={() => setShowContextualModal(true)}
+                      className="mt-2.5 w-full py-2 px-3 rounded-xl bg-indigo-600/25 hover:bg-indigo-600/40 text-indigo-200 border border-indigo-500/40 text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-98"
+                    >
+                      <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                      <span>🔍 ดูไวยากรณ์เชิงลึก & ถาม AI</span>
+                    </button>
                   </div>
                 )}
 
@@ -729,10 +744,10 @@ export const ImmersionPlayer: React.FC = () => {
             <div>
               <button
                 onClick={() => mineSentence(activeLine)}
-                disabled={isCurrentLineMined}
+                disabled={isCurrentLineMined || !activeLine}
                 className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold shadow-md transition-all active:scale-95 ${
-                  isCurrentLineMined
-                    ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30'
+                  isCurrentLineMined || !activeLine
+                    ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 cursor-not-allowed opacity-80'
                     : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/30'
                 }`}
                 title="ขุดประโยคนี้เข้า The Dojo (M)"
@@ -870,6 +885,14 @@ export const ImmersionPlayer: React.FC = () => {
       )}
 
       {/* Settings Menu Modal */}
+
+      {/* Contextual Dictionary Modal */}
+      {showContextualModal && selectedToken && (
+        <ContextualDictionaryModal
+          data={selectedToken}
+          onClose={() => setShowContextualModal(false)}
+        />
+      )}
     </div>
   );
 };

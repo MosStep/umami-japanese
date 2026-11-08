@@ -146,17 +146,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
               <span className="font-mono font-semibold">{totalXP}</span>
             </div>
 
-            {/* Update / Version Badge */}
-            {onOpenUpdate && (
-              <button
-                onClick={onOpenUpdate}
-                className="p-1.5 sm:px-2 sm:py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs text-rose-400 hover:text-rose-300 hover:border-rose-500/40 transition-colors flex items-center gap-1"
-                title="Check for App Updates"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-rose-400" />
-                <span className="hidden sm:inline font-mono">{APP_VERSION}</span>
-              </button>
-            )}
+
 
             {/* AI Engine & Kob API Settings Button */}
             <button

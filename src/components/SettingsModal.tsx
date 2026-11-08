@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp, AIProvider } from '../context/AppContext';
+import { APP_VERSION, APP_BUILD } from '../config/version';
 import {
   X,
   Key,
@@ -225,7 +226,7 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
                   うまみ App Version
                 </span>
                 <span className="text-[10px] text-slate-500 font-mono">
-                  v1.0.0 (Build 100)
+                  {APP_VERSION} (Build {APP_BUILD})
                 </span>
               </div>
               <button
