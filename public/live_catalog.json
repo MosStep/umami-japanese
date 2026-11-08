@@ -1,6 +1,16 @@
 {
   "version": "1.0.6",
-  "updated_at": "2026-11-08T05:39:58.899Z",
+  "build": 106,
+  "updated_at": "2026-11-08T05:45:00.000Z",
   "words_count": 125,
-  "videos_count": 13
+  "videos_count": 13,
+  "announcement": "⚡ Live In-App Update พร้อมใช้งาน: เพิ่มอนิเมะลิขสิทธิ์ Jujutsu Kaisen, Bleach, คลังคำศัพท์ 125+ คำ และ The Dojo SRS",
+  "release_notes": [
+    "⚡ อัปเดตเนื้อหาในแอปทันที (In-App Live Update) โดยไม่ต้องติดตั้ง APK ใหม่",
+    "⚔️ เพิ่มอนิเมะลิขสิทธิ์แท้จาก Ani-One (Jujutsu Kaisen #1 & #2, Bleach #1, Chainsaw Man, Blue Lock)",
+    "📚 ขยายคลังคำศัพท์ (Words Vault) เพิ่มขึ้นเป็น 125+ คำ ครอบคลุม N5, N4, N3 พร้อม Pitch Accent",
+    "🎬 ซับไตเติลและคำแปลไทยต่อเนื่องสำหรับทุกคลิปในระบบ (Gaming, Anime, Food, Podcasts, Vlogs, J-Pop)",
+    "🥋 ซิงค์สถานะการทบทวน SRS ใน The Dojo ได้อย่างสมบูรณ์แบบ"
+  ],
+  "update_type": "live_ota"
 }
