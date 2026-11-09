@@ -32,7 +32,7 @@ import {
 const resolveSubtitleLine = (
   lines: SubtitleLineRecord[],
   sec: number
-): { index: number; active: boolean } => {
+): { index: number; active: boolean; spoken: number } => {
   let lastPassed = 0;
   let matched = -1;
   for (let i = 0; i < lines.length; i++) {
@@ -44,8 +44,8 @@ const resolveSubtitleLine = (
     if (sec >= start - 0.15 && sec < windowEnd) matched = i;
   }
   return matched !== -1
-    ? { index: matched, active: true }
-    : { index: lastPassed, active: false };
+    ? { index: matched, active: true, spoken: lastPassed }
+    : { index: lastPassed, active: false, spoken: lastPassed };
 };
 
 export const ImmersionPlayer: React.FC = () => {
@@ -99,6 +99,11 @@ export const ImmersionPlayer: React.FC = () => {
   const currentLineIndexRef = useRef<number>(0);
   const pausedLineIdRef = useRef<string | null>(null); // line id we last auto-paused at
   const seekPendingRef = useRef<{ targetSec: number; until: number } | null>(null);
+  // Line being spoken (last line with start <= sec), carried between ticks.
+  // Loop / auto-pause test its end before it advances, so short gaps cannot skip it.
+  const spokenLineRef = useRef<number>(0);
+  // Previous processed playback time; null after a seek so crossing is not inferred from it.
+  const lastSecRef = useRef<number | null>(null);
   const syncRef = useRef({
     lines: activeSubtitleLines,
     loop: loopCurrentLine,
@@ -122,6 +127,8 @@ export const ImmersionPlayer: React.FC = () => {
     applyLineIndex(0);
     pausedLineIdRef.current = null;
     seekPendingRef.current = null;
+    spokenLineRef.current = 0;
+    lastSecRef.current = null;
   }, [activeVideo.id]);
 
   const activeLine = activeSubtitleLines[currentLineIndex] || activeSubtitleLines[0];
@@ -243,28 +250,48 @@ export const ImmersionPlayer: React.FC = () => {
         }
 
         const { lines, loop, autoPause, addXP: xp } = syncRef.current;
-        const { index, active } = resolveSubtitleLine(lines, sec);
+        const { index, active, spoken } = resolveSubtitleLine(lines, sec);
         setIsLineActive(active);
 
         const changed = index !== currentLineIndexRef.current;
         if (changed) applyLineIndex(index);
         if (active && changed) xp('viewing', 2);
 
-        const line = lines[index];
-        if (!line) return;
-        const endSec = line.end_time_ms / 1000;
+        // Test loop / auto-pause against the line that was being spoken BEFORE this tick,
+        // then advance the spoken line.
+        const prevSpoken = spokenLineRef.current;
+        const prevSec = lastSecRef.current;
+        spokenLineRef.current = spoken;
+        lastSecRef.current = sec;
 
-        // Loop sentence: uses the line matched at this moment
-        if (loop && sec >= endSec) {
-          const startSec = line.start_time_ms / 1000;
+        const spokenLine = lines[prevSpoken];
+        if (!spokenLine) return;
+        const endSec = spokenLine.end_time_ms / 1000;
+
+        // Crossing by natural playback only: passed the end since last tick, or just past it.
+        // A seek far past the end (>= 0.5 s) does not count.
+        const crossed =
+          (prevSec !== null && prevSec < endSec && endSec <= sec) ||
+          (sec >= endSec && sec - endSec < 0.5);
+
+        // Re-arm auto-pause once the user has scrubbed back before this line's end
+        if (pausedLineIdRef.current === spokenLine.id && sec < endSec - 0.3) {
+          pausedLineIdRef.current = null;
+        }
+
+        // Loop sentence: seek back to the spoken line's start
+        if (loop && crossed) {
+          const startSec = spokenLine.start_time_ms / 1000;
           seekPendingRef.current = { targetSec: startSec, until: Date.now() + 1500 };
+          spokenLineRef.current = prevSpoken;
+          lastSecRef.current = null;
           player.seekTo(startSec, true);
           return;
         }
 
         // Auto-pause: once per line, so pressing play after a pause does not re-pause
-        if (autoPause && sec >= endSec && pausedLineIdRef.current !== line.id) {
-          pausedLineIdRef.current = line.id;
+        if (autoPause && crossed && pausedLineIdRef.current !== spokenLine.id) {
+          pausedLineIdRef.current = spokenLine.id;
           player.pauseVideo();
           setIsPlaying(false);
         }
@@ -295,6 +322,8 @@ export const ImmersionPlayer: React.FC = () => {
     applyLineIndex(index);
     setIsLineActive(true);
     pausedLineIdRef.current = null; // re-arm auto-pause for this line
+    spokenLineRef.current = index;
+    lastSecRef.current = null;
     const line = activeSubtitleLines[index];
     if (line) {
       const targetSec = line.start_time_ms / 1000;
@@ -432,7 +461,7 @@ export const ImmersionPlayer: React.FC = () => {
           {/* Interactive Japanese Subtitle Dock (Sleek Glassmorphic Panel) */}
           <div
             className={`relative rounded-3xl bg-slate-900/95 border-2 border-slate-800 p-4 sm:p-6 space-y-3.5 shadow-2xl backdrop-blur-md text-center transition-opacity duration-200 ${
-              isLineActive ? 'opacity-100' : 'opacity-0 pointer-events-none'
+              isPlayerReady && !isLineActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
             }`}
           >
             {activeLine ? (
