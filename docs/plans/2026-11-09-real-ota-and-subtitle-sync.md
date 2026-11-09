@@ -269,3 +269,25 @@ dictionary (私, 俺) don't link either — investigate the homograph/reading ch
 5. `src/data/captions/index.ts`: for tokens without a dictionary link, set `thai_meaning` and `general_meanings` from the
    glossary (lazy-load glossary.json once with dynamic import, cached; lines built before it loads may re-render when ready).
 6. `npm run build` passes; report coverage: % of content tokens with a Thai meaning (target ≥ 98%).
+
+## Task 10: General/fun clips + podcasts (user request 2026-11-09) — before Task 9 glossary export
+
+User wants fun general clips like はじめしゃちょー (Hajime Shacho) and Japanese podcasts, and the N5/N4 levels back.
+1. `scripts/find-general.py` (yt_dlp module API only; ≥ 3 s between per-video info requests; on HTTP 429 wait 60 s once,
+   then stop and report what you have). Candidates must be: public, `playable_in_embed` true, not live/shorts,
+   and have a MANUAL Japanese subtitle track (`ja` / `ja-JP` / any `ja*` manual) — auto-only is NOT accepted (YouTuber
+   speech ASR is too noisy). Sources to scan (channel /videos tab, extract_flat newest 150, then info only for plausible ones):
+   - Fun/general (category `Vlogs` or `Variety`): @HajimeSyacho (はじめしゃちょー), plus 2–3 similar big Japanese
+     entertainment YouTubers of your choice if Hajime has too few with manual ja subs. Duration 4–20 min. Pick 5.
+   - Podcasts (category `Podcasts`), learner-friendly with manual ja subs: e.g. Comprehensible Japanese (@cijapanese),
+     YUYUの日本語Podcast, Japanese with Shun, Nihongo con Teppei (if subbed), or similar. Duration 5–30 min. Pick 5, at
+     least 2 beginner (N5/N4) and 2 intermediate (N3).
+   Print a table (youtube_id, channel, title, duration, manual ja track key, other manual tracks) to the report.
+2. Records in `src/data/mockVideos.ts` (template: existing records): ids `vid-gen-<slug>-<n>` / `vid-pod-<slug>-<n>`,
+   Thai title (translate the real title), japanese_title (real title), channel name, 1-sentence Thai description from
+   the real description (no invented content), real duration, category, emoji + gradient, primary JLPT: podcasts by
+   their stated level (N5/N4 beginner, N3 intermediate), YouTuber vlogs N3 (natural speech) unless clearly simpler.
+3. `scripts/fetch-captions.py --ids ...` for the new ids only (manual ja → ja-primary branch; manual en attached if present);
+   then `node scripts/tokenize-captions.mjs` for the new files only. Other caption files must stay byte-identical.
+4. Export Thai batches for the new files with `scripts/export-untranslated.mjs` (they have no manual th) — the controller
+   dispatches translators. `npm run build` passes. Report per-file lines / % ja / batch files.
