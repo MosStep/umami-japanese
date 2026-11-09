@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import type { VideoRecord } from '../schema/databaseSchema';
+import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 import {
   Play,
   Sparkles,
@@ -22,6 +23,7 @@ export const VideoFeed: React.FC = () => {
     setActiveTab,
     getKnownWordPercentage,
     ensureCaptionsLoaded,
+    captionsReady,
     albums,
     createAlbum,
     addVideoToAlbum,
@@ -31,11 +33,14 @@ export const VideoFeed: React.FC = () => {
 
   // User-imported clip waiting for delete confirmation
   const [pendingDelete, setPendingDelete] = useState<VideoRecord | null>(null);
+  // Scroll lock for the two dialogs (counter-based, so they can stack safely).
+  useLockBodyScroll(!!pendingDelete);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedJLPT, setSelectedJLPT] = useState<string>('All');
   const [selectedAlbum, setSelectedAlbum] = useState<string>('All');
   const [comprehensibleOnly, setComprehensibleOnly] = useState<boolean>(false);
   const [showNewAlbumModal, setShowNewAlbumModal] = useState<boolean>(false);
+  useLockBodyScroll(showNewAlbumModal);
   const [newAlbumName, setNewAlbumName] = useState('');
   const [newAlbumEmoji, setNewAlbumEmoji] = useState('📁');
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
@@ -103,6 +108,9 @@ export const VideoFeed: React.FC = () => {
     }
     return true;
   });
+
+  // The "easy to understand" filter cannot judge clips whose captions are still loading.
+  const waitingCaptions = comprehensibleOnly && videos.some((v) => !captionsReady(v.id));
 
   const handleSelectVideo = (videoId: string) => {
     setActiveVideoId(videoId);
@@ -174,11 +182,11 @@ export const VideoFeed: React.FC = () => {
               <button
                 key={lvl}
                 onClick={() => setSelectedJLPT(lvl)}
-                className={`px-3 py-1.5 min-h-9 rounded-xl text-xs font-bold transition-all shrink-0 ${
+                className={`px-3 py-1.5 min-h-11 rounded-xl text-xs font-bold transition-all shrink-0 active:opacity-70 ${
                   selectedJLPT === lvl
                     ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
                     : empty
-                    ? 'bg-slate-900/50 border border-slate-900 text-slate-600 hover:text-slate-400'
+                    ? 'border border-dashed border-slate-700 text-slate-500 hover:text-slate-400'
                     : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200'
                 }`}
               >
@@ -245,6 +253,13 @@ export const VideoFeed: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {waitingCaptions && (
+        <p className="text-xs text-indigo-300 flex items-center gap-2" role="status">
+          <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+          กำลังคำนวณ… (โหลดซับของคลิปทีละคลิป)
+        </p>
+      )}
 
       {/* Video Cards Grid (HayaiLearn Responsive Style) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -367,7 +382,9 @@ export const VideoFeed: React.FC = () => {
         })}
         {filteredVideos.length === 0 && (
           <p className="col-span-full text-center text-sm text-slate-400 py-12">
-            {selectedJLPT !== 'All' && !jlptHasClips(selectedJLPT)
+            {waitingCaptions
+              ? 'กำลังคำนวณ…'
+              : selectedJLPT !== 'All' && !jlptHasClips(selectedJLPT)
               ? 'ยังไม่มีคลิปในระดับนี้'
               : 'ยังไม่มีคลิปในหมวดนี้'}
           </p>
@@ -377,7 +394,7 @@ export const VideoFeed: React.FC = () => {
       {/* Delete confirmation for user-imported clips */}
       {pendingDelete && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-[calc(1rem_+_var(--safe-area-inset-top,0px))] bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-[calc(1rem_+_var(--sat))] bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150"
           onClick={() => setPendingDelete(null)}
         >
           <div
@@ -419,7 +436,7 @@ export const VideoFeed: React.FC = () => {
 
       {/* Create New Album Modal (BUG-10) */}
       {showNewAlbumModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-[calc(1rem_+_var(--sat))] bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
           <div className="w-full max-w-sm rounded-3xl bg-slate-900 border-2 border-indigo-500/40 p-6 shadow-2xl space-y-5 animate-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2 text-white font-bold text-sm">

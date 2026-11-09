@@ -33,7 +33,12 @@ export const ContextualDictionaryModal: React.FC<Props> = ({ data, onClose }) =>
     callAICompletion,
   } = useApp();
 
-  const [activeTab, setActiveTab] = useState<'context' | 'grammar' | 'ai-live'>('context');
+  // A tab is shown only when it has something to show (M1). Empty tabs are hidden, not shown blank.
+  const hasMeanings = (token.general_meanings || [token.contextual_meaning]).some((m) => (m || '').trim().length > 0);
+  const hasGrammar = !!(line.ai_grammar_summary?.trim() || (line.ai_detailed_breakdown?.particles?.length ?? 0) > 0);
+  const [activeTab, setActiveTab] = useState<'context' | 'grammar' | 'ai-live'>(() =>
+    hasMeanings ? 'context' : hasGrammar ? 'grammar' : 'context'
+  );
   const [userNote, setUserNote] = useState('');
   const [liveAIResponse, setLiveAIResponse] = useState<string>('');
   const [isLoadingAI, setIsLoadingAI] = useState<boolean>(false);
@@ -96,7 +101,7 @@ export const ContextualDictionaryModal: React.FC<Props> = ({ data, onClose }) =>
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 pt-[var(--safe-area-inset-top,0px)] bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 pt-[var(--sat)] sm:pt-[calc(1rem_+_var(--sat))] bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
       {/* Mobile Bottom Sheet & Desktop Modal */}
       <div className="w-full sm:max-w-xl rounded-t-3xl sm:rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden flex flex-col max-h-[88vh] sm:max-h-[90vh]">
         {/* Mobile Drag Indicator */}
@@ -220,13 +225,17 @@ export const ContextualDictionaryModal: React.FC<Props> = ({ data, onClose }) =>
 
           {/* Tabs */}
           <div className="flex border-b border-slate-800 px-4 bg-slate-950/40 overflow-x-auto">
-            <button onClick={() => setActiveTab('context')} className={tabClass(activeTab === 'context', 'indigo')}>
-              ความหมายทั่วไป
-            </button>
-            <button onClick={() => setActiveTab('grammar')} className={tabClass(activeTab === 'grammar', 'indigo')}>
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-              วิเคราะห์ไวยากรณ์
-            </button>
+            {hasMeanings && (
+              <button onClick={() => setActiveTab('context')} className={tabClass(activeTab === 'context', 'indigo')}>
+                ความหมายทั่วไป
+              </button>
+            )}
+            {hasGrammar && (
+              <button onClick={() => setActiveTab('grammar')} className={tabClass(activeTab === 'grammar', 'indigo')}>
+                <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                วิเคราะห์ไวยากรณ์
+              </button>
+            )}
             {aiProvider !== 'local' && (
               <button
                 onClick={() => {

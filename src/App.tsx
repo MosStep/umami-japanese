@@ -27,7 +27,7 @@ const OtaReadyToast: React.FC<{ version: string; onRestart: () => void; onDismis
   onRestart,
   onDismiss,
 }) => (
-  <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-md animate-in fade-in slide-in-from-bottom-4 duration-300">
+  <div className="fixed bottom-[calc(5rem_+_var(--sab))] md:bottom-6 left-1/2 -translate-x-1/2 z-40 w-[calc(100%-2rem)] max-w-md animate-in fade-in slide-in-from-bottom-4 duration-300">
     <div className="flex items-center gap-3 rounded-2xl bg-slate-900 border border-indigo-500/40 shadow-2xl shadow-indigo-950/50 px-4 py-3">
       <div className="w-8 h-8 rounded-xl bg-indigo-600 flex items-center justify-center shrink-0">
         <Zap className="w-4 h-4 text-amber-300" />
@@ -56,9 +56,11 @@ export const App: React.FC = () => {
   const [otaReady, setOtaReady] = useState<{ bundle: BundleInfo | null; version: string } | null>(null);
   const launchCheckStarted = useRef(false);
 
-  // First successful mount of the web bundle: confirm it to the updater (rolls back a bundle that crashes on render).
+  // Confirm the bundle to the updater only after it has survived its first data-dependent renders
+  // (~2.5 s after mount), so a crash in the first real re-render still rolls it back.
   useEffect(() => {
-    void markBundleReady();
+    const timer = window.setTimeout(() => void markBundleReady(), 2500);
+    return () => window.clearTimeout(timer);
   }, []);
 
   // Launch check: fetch manifest, then either prompt for APK or silently pre-download the web bundle.
@@ -98,7 +100,7 @@ export const App: React.FC = () => {
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
       <Navbar onOpenUpdate={() => setShowUpdateModal(true)} />
 
-      <main className="flex-1 pb-20 md:pb-16">
+      <main className="flex-1 pb-[calc(5rem_+_var(--sab))] md:pb-16">
         {activeTab === 'feed' && <VideoFeed />}
         {activeTab === 'player' && <ImmersionPlayer />}
         {activeTab === 'words' && <WordsDirectory />}

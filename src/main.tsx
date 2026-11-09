@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { AppProvider } from './context/AppContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { App } from './App';
 import { initOta } from './utils/otaUpdater';
 import './index.css';
@@ -10,8 +11,10 @@ void initOta();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <AppProvider>
-      <App />
-    </AppProvider>
+    <ErrorBoundary>
+      <AppProvider>
+        <App />
+      </AppProvider>
+    </ErrorBoundary>
   </React.StrictMode>
 );

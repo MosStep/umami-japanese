@@ -478,7 +478,7 @@ Output exactly in this JSON format:
       </header>
 
       {/* Mode Switch: sticky segmented control under the app navbar */}
-      <div className="sticky top-[calc(53px_+_var(--safe-area-inset-top,0px))] sm:top-[calc(57px_+_var(--safe-area-inset-top,0px))] z-20 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2 bg-slate-950/90 backdrop-blur-md">
+      <div className="sticky top-[calc(53px_+_var(--sat))] sm:top-[calc(57px_+_var(--sat))] z-20 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2 bg-slate-950/90 backdrop-blur-md">
         <div
           role="tablist"
           aria-label="โหมดฝึก"

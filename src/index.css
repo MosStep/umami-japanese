@@ -10,11 +10,17 @@
   }
 }
 
-/* Capacitor SystemBars (css insets mode) sets --safe-area-inset-* on <html>; env() is the browser fallback. */
+/* Capacitor SystemBars (css insets mode) sets --safe-area-inset-* on <html>; env() is the browser fallback.
+   Use --sat / --sab everywhere in components instead of repeating the fallback chain. */
+:root {
+  --sat: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  --sab: var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px));
+}
+
 .safe-top {
-  padding-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px));
+  padding-top: var(--sat);
 }
 
 .safe-area-bottom {
-  padding-bottom: max(0.75rem, var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px)));
+  padding-bottom: max(0.75rem, var(--sab));
 }

@@ -30,6 +30,8 @@ export interface UserStats {
   xp_shadowing: number;
   // Set by the 1.0.8 migration once its seed subtraction has been written (see utils/migration108.ts).
   migr_108_xp?: boolean;
+  // Local calendar day (YYYY-MM-DD) of the last app use; drives the streak.
+  last_active_day?: string;
 }
 
 export interface Album {
@@ -68,6 +70,7 @@ interface AppContextType {
   getWordStatus: (wordId: string) => WordLearningStatus;
   // null = not computable yet (captions still loading) or no content words.
   getKnownWordPercentage: (videoId: string) => number | null;
+  captionsReady: (videoId: string) => boolean;
   ensureCaptionsLoaded: (videoIds: string[]) => void;
   dictionaryWords: DictionaryWordRecord[];
 
@@ -132,10 +135,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   // External API Config (Kob AI active by default with user key)
   const [apiKey, setApiKeyState] = useState<string>(() => {
-    return (
-      localStorage.getItem(STORAGE_KEYS.API_KEY) ||
-      'kob_zyT6_NOlIFRFot0QXsDf3M7c:K75461thHDcS3IWV1Ao3GKogDgzbUW4aV44pw4pwrX3-0o4N'
-    );
+    // No built-in key: the user enters their own key in Settings; it is stored only on this device.
+    return localStorage.getItem(STORAGE_KEYS.API_KEY) || '';
   });
   const [aiModel, setAiModelState] = useState<string>(() => {
     return localStorage.getItem(STORAGE_KEYS.AI_MODEL) || 'minimax-m3.1-flash';
@@ -290,6 +291,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(STORAGE_KEYS.STATS, JSON.stringify(stats));
   }, [stats]);
 
+  // Once the last-active day is persisted inside the stats object, the legacy separate key is obsolete.
+  useEffect(() => {
+    if (!stats.last_active_day) return;
+    try {
+      localStorage.removeItem(STORAGE_KEYS.LAST_ACTIVE_DAY);
+    } catch {}
+  }, [stats.last_active_day]);
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEYS.ALBUMS, JSON.stringify(albums));
   }, [albums]);
@@ -316,41 +325,86 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Content words exclude particles, auxiliaries and punctuation (Thai POS labels from captions.ts).
   // Linked words are keyed by dictionary id; unlinked ones by lemma. No minimum floor.
   // Returns null when the clip's captions are not loaded yet (never falls back to MOCK lines for real clips).
-  const getKnownWordPercentage = (videoId: string): number | null => {
-    const video = allVideos.find((v) => v.id === videoId);
-    if (!video) return null;
-    const hasRealSource = !!video.youtube_id && !customLines[videoId];
-    if (hasRealSource && !(videoId in realLines)) return null;
-
-    // key -> known. A word counts as known if any occurrence in the clip is known.
-    const words = new Map<string, boolean>();
-    for (const line of allLines[videoId] || []) {
-      for (const t of line.tokens_json) {
-        if (NON_CONTENT_POS.has(t.part_of_speech || '')) continue;
-        const key = DICTIONARY_IDS.has(t.word_id) ? `id:${t.word_id}` : `lemma:${t.lemma || t.surface}`;
-        const known = wordStates[t.word_id] === 'known';
-        words.set(key, (words.get(key) ?? false) || known);
+  // Per clip: content-word key -> dictionary/lemma-linked word_ids (all occurrences in the clip).
+  // Memoized on the line data only, so it is not rebuilt on every render or status change.
+  const clipWordIds = useMemo(() => {
+    const out: Record<string, Map<string, string[]>> = {};
+    for (const [videoId, lines] of Object.entries(allLines)) {
+      const words = new Map<string, string[]>();
+      for (const line of lines) {
+        for (const t of line.tokens_json) {
+          if (NON_CONTENT_POS.has(t.part_of_speech || '')) continue;
+          const key = DICTIONARY_IDS.has(t.word_id) ? `id:${t.word_id}` : `lemma:${t.lemma || t.surface}`;
+          const ids = words.get(key);
+          if (ids) ids.push(t.word_id);
+          else words.set(key, [t.word_id]);
+        }
       }
+      out[videoId] = words;
     }
-    if (words.size === 0) return null;
-    const knownCount = Array.from(words.values()).filter(Boolean).length;
-    return Math.round((knownCount / words.size) * 100);
+    return out;
+  }, [allLines]);
+
+  // Known % per clip, memoized on the word index and the word statuses.
+  // Known = unique content word with any occurrence whose status is 'known'. No floor; null = no content words.
+  const knownPctByVideo = useMemo(() => {
+    const out: Record<string, number | null> = {};
+    for (const [videoId, words] of Object.entries(clipWordIds)) {
+      if (words.size === 0) {
+        out[videoId] = null;
+        continue;
+      }
+      let known = 0;
+      for (const ids of words.values()) {
+        if (ids.some((id) => wordStates[id] === 'known')) known++;
+      }
+      out[videoId] = Math.round((known / words.size) * 100);
+    }
+    return out;
+  }, [clipWordIds, wordStates]);
+
+  // True when the clip can be judged: its real captions are loaded (or it has no real caption source).
+  const captionsReady = (videoId: string): boolean => {
+    const video = allVideos.find((v) => v.id === videoId);
+    if (!video) return false;
+    const hasRealSource = !!video.youtube_id && !customLines[videoId];
+    return !hasRealSource || videoId in realLines;
   };
 
-  // Loads real captions for the given clips (cached per youtube_id). Used by the feed so every card
-  // can show its known %, and by the "easy to understand" filter.
+  // null = captions not loaded yet (shown as "—") or the clip has no content words.
+  const getKnownWordPercentage = (videoId: string): number | null => {
+    if (!captionsReady(videoId)) return null;
+    return knownPctByVideo[videoId] ?? null;
+  };
+
+  // Loads real captions for the given clips one at a time, in idle time (requestIdleCallback, setTimeout
+  // fallback), so opening the feed does not parse every caption file at once. Results are cached per youtube_id.
   const ensureCaptionsLoaded = (videoIds: string[]) => {
-    for (const id of videoIds) {
+    const pending = videoIds.filter((id) => {
       const video = allVideos.find((v) => v.id === id);
-      if (!video || !video.youtube_id || id in realLines) continue;
+      return !!video && !!video.youtube_id && !(id in realLines);
+    });
+    if (pending.length === 0) return;
+    const schedule = (fn: () => void) => {
+      const ric = (window as any).requestIdleCallback;
+      if (typeof ric === 'function') ric(fn, { timeout: 1000 });
+      else setTimeout(fn, 50);
+    };
+    const loadAt = (index: number) => {
+      if (index >= pending.length) return;
+      const id = pending[index];
+      const video = allVideos.find((v) => v.id === id);
+      if (!video || !video.youtube_id) return loadAt(index + 1);
       loadRealCaptions(video.youtube_id).then((file) => {
         setRealLines((prev) =>
           id in prev
             ? prev
             : { ...prev, [id]: file ? buildRealSubtitleLines(file, id, video.primary_jlpt) : null }
         );
+        schedule(() => loadAt(index + 1));
       });
-    }
+    };
+    schedule(() => loadAt(0));
   };
 
   const addXP = (type: 'viewing' | 'reading' | 'listening' | 'shadowing', amount: number) => {
@@ -370,14 +424,24 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   // Counts one day of app use: streak +1 on the next consecutive local day, restart at 1 after a gap.
+  // The last-active day lives inside the stats object (one write with the streak). A legacy separate key
+  // from 1.0.8 test builds is read once when the stats do not have it yet, and removed after it is persisted.
   const recordDailyActivity = () => {
     try {
       const now = new Date();
       const today = localDayKey(now);
-      const last = localStorage.getItem(STORAGE_KEYS.LAST_ACTIVE_DAY);
-      if (last === today) return;
-      localStorage.setItem(STORAGE_KEYS.LAST_ACTIVE_DAY, today);
-      setStats((prev) => ({ ...prev, streak_days: nextStreak(prev.streak_days, last, today, now) }));
+      const legacyLast = localStorage.getItem(STORAGE_KEYS.LAST_ACTIVE_DAY);
+      setStats((prev) => {
+        const last = prev.last_active_day ?? legacyLast;
+        if (last === today) {
+          return prev.last_active_day === today ? prev : { ...prev, last_active_day: today };
+        }
+        return {
+          ...prev,
+          streak_days: nextStreak(prev.streak_days, last ?? null, today, now),
+          last_active_day: today,
+        };
+      });
     } catch {}
   };
 
@@ -508,6 +572,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       return next;
     });
     setMinedSentences((prev) => prev.filter((m) => m.video_id !== id));
+    setAlbums((prev) =>
+      prev.map((alb) =>
+        alb.video_ids.includes(id) ? { ...alb, video_ids: alb.video_ids.filter((vid) => vid !== id) } : alb
+      )
+    );
     if (activeVideoId === id) setActiveVideoId('vid-anione-jjk-01');
   };
 
@@ -639,6 +708,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setWordStatus,
         getWordStatus,
         getKnownWordPercentage,
+        captionsReady,
         ensureCaptionsLoaded,
         dictionaryWords,
         furiganaMode,

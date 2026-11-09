@@ -1,14 +1,19 @@
 import { useEffect } from 'react';
 
-// Locks page scrolling while a modal or bottom sheet is open, so dragging on it
-// does not scroll the page behind. Restores the previous overflow value on close.
+// Counter-based: several overlays can be open at once (e.g. a confirm dialog over a sheet).
+// The page scroll is restored only when the last lock is released.
+let lockCount = 0;
+let savedOverflow = '';
+
 export function useLockBodyScroll(isOpen: boolean): void {
   useEffect(() => {
     if (!isOpen) return;
-    const previous = document.body.style.overflow;
+    if (lockCount === 0) savedOverflow = document.body.style.overflow;
+    lockCount += 1;
     document.body.style.overflow = 'hidden';
     return () => {
-      document.body.style.overflow = previous;
+      lockCount = Math.max(0, lockCount - 1);
+      if (lockCount === 0) document.body.style.overflow = savedOverflow;
     };
   }, [isOpen]);
 }

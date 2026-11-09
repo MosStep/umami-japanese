@@ -50,14 +50,8 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
     }, 700);
   };
 
-  const tenixePresetKeys = [
-    { label: 'Key 1 (Unlimited Nemotron / Monthly)', key: 'txc_345f1910dae8f6d2c6932c85bb6e45cc' },
-    { label: 'Key 2 (Daily Plan)', key: 'txc_a9b58666d7af0a1ef12675757074c61b' },
-    { label: 'Key 3 (Daily Plan / Image quota)', key: 'txc_9fec4ca9adfabf57f99a27fc0161e95a' },
-  ];
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-[calc(1rem_+_var(--safe-area-inset-top,0px))] bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-[calc(1rem_+_var(--sat))] bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
       <div className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
         <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
@@ -88,7 +82,6 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
                 onClick={() => {
                   setProviderChoice('tenixe');
                   setSelectedModel('nemotron-3-ultra');
-                  if (!inputKey) setInputKey('txc_345f1910dae8f6d2c6932c85bb6e45cc');
                 }}
                 className={`p-2.5 rounded-xl border text-left transition-all ${
                   providerChoice === 'tenixe'
@@ -151,34 +144,6 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
               </button>
             </div>
           </div>
-
-          {/* Preset Keys Shortcut for Tenixe */}
-          {providerChoice === 'tenixe' && (
-            <div className="space-y-1.5">
-              <span className="text-[11px] text-slate-400 block font-medium">
-                Quick Preset Keys:
-              </span>
-              <div className="space-y-1">
-                {tenixePresetKeys.map((p, idx) => (
-                  <button
-                    key={idx}
-                    type="button"
-                    onClick={() => setInputKey(p.key)}
-                    className={`w-full text-left px-3 py-1.5 rounded-lg border text-xs flex items-center justify-between transition-colors ${
-                      inputKey === p.key
-                        ? 'bg-rose-500/10 border-rose-500/30 text-rose-300'
-                        : 'bg-slate-950/60 border-slate-800 text-slate-400 hover:text-slate-200'
-                    }`}
-                  >
-                    <span>{p.label}</span>
-                    <span className="font-mono text-[10px] text-slate-500">
-                      {p.key.slice(0, 10)}...
-                    </span>
-                  </button>
-                ))}
-              </div>
-            </div>
-          )}
 
           {/* API Key Input */}
           <div className="space-y-1.5">

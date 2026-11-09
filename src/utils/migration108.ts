@@ -65,6 +65,11 @@ function migrateClips(storage: Storage): void {
   if (storage.getItem(MARKER_CLIPS) === '1') return;
   const videos = readJson<any[]>(storage, STORAGE_KEYS.CUSTOM_VIDEOS);
   const lines = readJson<Record<string, unknown[]>>(storage, STORAGE_KEYS.CUSTOM_LINES);
+  // Corrupt lines store: without it every clip would look like it has no lines, so nothing here is trusted.
+  if (lines === null) {
+    storage.setItem(MARKER_CLIPS, '1');
+    return;
+  }
   if (Array.isArray(videos)) {
     const kept = videos.filter((v) => {
       const hasLines = Array.isArray(lines?.[v?.id]) && (lines![v.id] as unknown[]).length > 0;
@@ -148,7 +153,13 @@ function migrateStats(storage: Storage): void {
 }
 
 export function runMigration108(storage: Storage = localStorage): void {
-  if (storage.getItem(MIGRATION_108_FLAG) === '1') return;
+  let finished = false;
+  try {
+    finished = storage.getItem(MIGRATION_108_FLAG) === '1';
+  } catch (err) {
+    console.warn('Migration 1.0.8: could not read umbrella flag', err);
+  }
+  if (finished) return;
   // Steps run in order and the chain stops at the first failure: a later step (mined) reads the
   // result of an earlier one (clips), so it must not run before that one has finished. Steps that
   // did not run are retried on the next launch because their markers were not set.

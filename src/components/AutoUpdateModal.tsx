@@ -171,7 +171,7 @@ export const AutoUpdateModal: React.FC<Props> = ({ isOpen, onClose }) => {
   const releaseNotes = manifest?.release_notes ?? [];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-[calc(1rem_+_var(--safe-area-inset-top,0px))] bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-[calc(1rem_+_var(--sat))] bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
       <div className="w-full max-w-lg rounded-3xl bg-slate-900 border-2 border-indigo-500/40 shadow-2xl shadow-indigo-950/50 overflow-hidden flex flex-col animate-in zoom-in-95 duration-200 max-h-[92vh]">
         {/* Top Header Banner */}
         <div className="p-5 bg-gradient-to-r from-indigo-950/90 via-slate-900 to-rose-950/90 border-b border-indigo-500/20 flex items-start justify-between">

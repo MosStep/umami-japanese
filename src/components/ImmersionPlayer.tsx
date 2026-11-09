@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 import { useApp, FuriganaMode } from '../context/AppContext';
 import { SubtitleLineRecord, SubtitleTokenJSON } from '../schema/databaseSchema';
 import { ContextualDictionaryModal } from './ContextualDictionaryModal';
@@ -84,6 +85,8 @@ export const ImmersionPlayer: React.FC = () => {
   });
   const [revealedLines, setRevealedLines] = useState<Record<string, boolean>>({});
   const [showContextualModal, setShowContextualModal] = useState<boolean>(false);
+  // Preferences sheet: lock page scroll while it is open (counter-based, see utils/useLockBodyScroll).
+  useLockBodyScroll(showSettingsMenu);
   // true only while playback time is inside a line's window (see resolveSubtitleLine)
   const [isLineActive, setIsLineActive] = useState<boolean>(false);
 
@@ -324,12 +327,21 @@ export const ImmersionPlayer: React.FC = () => {
       pendingImmersionSecRef.current = 0;
       if (pending > 0) addImmersionSeconds(pending);
     };
+    // Count a second only when the page is visible AND the YouTube player reports PLAYING (state 1).
     const tick = window.setInterval(() => {
+      const playerState = playerRef.current?.getPlayerState?.();
+      if (document.visibilityState !== 'visible' || playerState !== 1) return;
       pendingImmersionSecRef.current += 1;
       if (pendingImmersionSecRef.current >= 30) flush();
     }, 1000);
+    // Backgrounding the app stops the count: save what was accumulated right away.
+    const onVisibility = () => {
+      if (document.visibilityState === 'hidden') flush();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
     return () => {
       window.clearInterval(tick);
+      document.removeEventListener('visibilitychange', onVisibility);
       flush();
     };
     // addImmersionSeconds only uses a functional state update, so a stale reference is safe here.
@@ -953,7 +965,7 @@ export const ImmersionPlayer: React.FC = () => {
 
       {/* Subtitle Preferences Modal (Clean, Centered, Never Clipped) */}
       {showSettingsMenu && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-[calc(1rem_+_var(--sat))] bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
           <div className="w-full max-w-sm rounded-3xl bg-slate-900 border-2 border-indigo-500/40 p-5 shadow-2xl space-y-4 animate-in zoom-in-95">
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2 text-white font-bold text-sm">
