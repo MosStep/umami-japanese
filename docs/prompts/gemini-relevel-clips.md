@@ -11,9 +11,27 @@ understand is labelled N3. Some levels were guessed, and all full anime episodes
 **Goal:** re-assign `primary_jlpt`, `jlpt_distribution` and `difficulty_rating` for ALL records with ONE documented,
 reproducible method, so that a learner filtering by N5 gets genuinely easy clips and N1 gets genuinely hard ones.
 
+## Part A (do FIRST) — add 8 more はじめしゃちょー clips
+The user wants more clips from はじめしゃちょー (`https://www.youtube.com/@HajimeSyacho/videos`); the app has only 2.
+Follow the pipeline and rules in `docs/prompts/gemini-add-clips.md` (Steps 1–7: find → records → fetch-captions →
+tokenize → Thai translation per `.superpowers/translate/STYLE.md` → glossary prefill + new glosses → word index + build),
+with these specifics:
+- 8 NEW videos from @HajimeSyacho (not already in mockVideos.ts), 5–20 min, public, embeddable, not Shorts.
+- Auto Japanese captions (`ja-orig`/`ja`) are allowed for this channel (his subtitles are burned into the picture).
+- Prefer clear talk-to-camera videos (reviews, experiments, explanations, challenges with narration) over loud
+  multi-person chaos; check that ≥ 80% of caption lines have Japanese after cleanup, else skip the video.
+- Records: ids `vid-yt-hajime-<n>`, channel "はじめしゃちょー（hajime）", category `Vlogs`, Thai title translated from the
+  real title, 1-sentence Thai description from the real description (no invented content). Leave the level fields as
+  placeholders (`primary_jlpt: "N3"`) — Part B sets them.
+- Thai 100% (`import-translations.mjs --check`) and glossary 100% (`import-glossary.mjs --check`) before Part B.
+Then do Part B below on ALL records (including these 8).
+
+## Part B — re-level every clip
+
 ## Hard rules
-1. Only edit `src/data/mockVideos.ts` fields `primary_jlpt`, `jlpt_distribution`, `difficulty_rating`, plus new files
-   under `scripts/` and `.superpowers/gemini/`. Do NOT touch app code, captions, glossary, versions, `public/`, `android/`.
+1. Part B only edits `src/data/mockVideos.ts` fields `primary_jlpt`, `jlpt_distribution`, `difficulty_rating`, plus new
+   files under `scripts/` and `.superpowers/gemini/` (Part A may also add new caption files, new records, glossary entries
+   and word-index.json as in the add-clips prompt). Never touch app code, existing caption files, versions, `public/`, `android/`.
 2. Do not push, tag, release, bump versions or run `npm run bundle`. Work on a new branch `content/relevel`
    (`git switch -c content/relevel`), stage files explicitly (never `git add -A`), commit locally.
 3. `npm run build` must pass at the end.
