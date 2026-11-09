@@ -467,8 +467,13 @@ export const ImmersionPlayer: React.FC = () => {
       setPopPos(null);
       return;
     }
+    // Measure fresh on every open: the popover's containing block (offset parent) is the row,
+    // and absolute top/left are relative to its padding box (hence the clientTop/clientLeft terms).
+    const parent = (pop.offsetParent as HTMLElement | null) ?? row;
+    const p = parent.getBoundingClientRect();
+    const originX = p.left + parent.clientLeft;
+    const originY = p.top + parent.clientTop;
     const t = tokenEl.getBoundingClientRect();
-    const r = row.getBoundingClientRect();
     const d = dock.getBoundingClientRect();
     const w = pop.offsetWidth;
     const h = pop.offsetHeight;
@@ -477,13 +482,16 @@ export const ImmersionPlayer: React.FC = () => {
     const centerX = t.left + t.width / 2;
     const minL = d.left + margin;
     const maxL = Math.max(minL, d.right - margin - w);
-    const left = Math.min(Math.max(centerX - w / 2, minL), maxL);
+    const left = Math.min(Math.max(centerX - w / 2, minL), maxL); // viewport x, horizontally clamped to dock
     const spaceBelow = d.bottom - t.bottom - margin;
     const spaceAbove = t.top - d.top - margin;
+    // Default: below the token (top = token bottom + 6). Flip above only if it would overflow the dock bottom
+    // (then bottom = token top - 6, i.e. top = token top - 6 - h).
     const above = spaceBelow < h + gap && spaceAbove > spaceBelow;
-    const top = above ? t.top - r.top - h - gap : t.bottom - r.top + gap;
+    const topViewport = above ? t.top - gap - h : t.bottom + gap;
+    const top = topViewport - originY;
     const arrow = Math.min(Math.max(centerX - left, 10), w - 10);
-    setPopPos({ top, left: left - r.left, arrow, above });
+    setPopPos({ top, left: left - originX, arrow, above });
   }, [selectedToken, showContextualModal, activeLine?.id]);
 
   // Global Keyboard Shortcuts
