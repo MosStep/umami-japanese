@@ -253,3 +253,19 @@ D. Profile shows fake seeded stats the user never earned: streak 7 days, 84 imme
    start the body with the 1.0.6 warning (tap "📦 ติดตั้งไฟล์ APK ใหม่", not "⚡ อัปเดตในแอพทันที").
 Verify: `npm run build` passes; dev server at 375x812 with `document.documentElement.style.setProperty('--safe-area-inset-top','32px')`
 shows the bar below the 32 px inset; modal scroll lock works; migration tested by seeding localStorage with the old seed values.
+
+## Task 9: Thai glossary so every tapped word has a meaning (ship in 1.0.8)
+
+After Task 5 only ~5% of caption tokens link to the 125-word dictionary; 5,092 unique content lemmas (18,236
+occurrences) have no meaning, so the tap card is empty (user screenshot: 宣戦). Some common words that ARE in the
+dictionary (私, 俺) don't link either — investigate the homograph/reading check in tokenize-captions.mjs / index.ts.
+1. Fix the linking miss for dictionary words (report before/after link %).
+2. `scripts/export-glossary.mjs`: collect unique (lemma, reading, pos) for content tokens (skip 助詞/助動詞/記号, and
+   lemmas already linked to the dictionary), with 1 example ja line each and occurrence count; write batches of ≤ 500 to
+   `.superpowers/glossary/batch-<n>.json` as `[{ "k": "<lemma>|<reading>", "lemma", "reading", "pos", "ex": "<ja line>" }]`.
+3. Translators write `batch-<n>.th.json` as `[{ "k", "th": "<short Thai gloss, 1–4 meanings separated by ', '>" }]`.
+4. `scripts/import-glossary.mjs` builds `src/data/glossary.json` = `{ "<lemma>|<reading>": "<thai>" }` (compact), validating
+   every key present, non-empty, no Japanese chars in th.
+5. `src/data/captions/index.ts`: for tokens without a dictionary link, set `thai_meaning` and `general_meanings` from the
+   glossary (lazy-load glossary.json once with dynamic import, cached; lines built before it loads may re-render when ready).
+6. `npm run build` passes; report coverage: % of content tokens with a Thai meaning (target ≥ 98%).
