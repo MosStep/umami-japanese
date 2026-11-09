@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 import {
   VideoRecord,
   SubtitleLineRecord,
@@ -12,6 +12,7 @@ import {
   MOCK_SUBTITLE_LINES,
   DICTIONARY_WORDS,
 } from '../data/mockVideos';
+import { buildRealSubtitleLines } from '../data/captions';
 
 export interface UserStats {
   streak_days: number;
@@ -168,7 +169,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   });
 
   const allVideos = [...MOCK_VIDEOS, ...customVideos];
-  const allLines = { ...MOCK_SUBTITLE_LINES, ...customLines };
+  // Precedence: user-made custom lines > real YouTube captions > hand-written MOCK lines.
+  const manualLines = { ...MOCK_SUBTITLE_LINES, ...customLines };
+  const allLines = useMemo(() => {
+    const real: Record<string, SubtitleLineRecord[]> = {};
+    for (const v of [...MOCK_VIDEOS, ...customVideos]) {
+      const lines = buildRealSubtitleLines(v.youtube_id, v.id, v.primary_jlpt);
+      if (lines) real[v.id] = lines;
+    }
+    return { ...MOCK_SUBTITLE_LINES, ...real, ...customLines };
+  }, [customVideos, customLines]);
 
   const activeVideo = allVideos.find((v) => v.id === activeVideoId) || allVideos[0];
   const activeSubtitleLines = allLines[activeVideo.id] || [];
@@ -532,7 +542,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const map = new Map<string, DictionaryWordRecord>();
     DICTIONARY_WORDS.forEach((w) => map.set(w.id, w));
 
-    Object.values(allLines).forEach((lines) => {
+    // Dictionary is derived from manual lines only, not real captions (keeps caption tokens out of the dictionary).
+    Object.values(manualLines).forEach((lines) => {
       lines.forEach((line) => {
         line.tokens_json.forEach((t) => {
           if (!map.has(t.word_id) && t.surface) {
@@ -554,7 +565,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     });
 
     return Array.from(map.values());
-  }, [allLines]);
+  }, [manualLines]);
 
   return (
     <AppContext.Provider
