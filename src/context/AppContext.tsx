@@ -22,10 +22,13 @@ import {
 import { STORAGE_KEYS } from '../config/storageKeys';
 import { runMigration108 } from '../utils/migration108';
 import { localDayKey, nextStreak } from '../utils/streak';
+import { runMigrationAi } from '../utils/migrationAi';
 
 // One-time 1.0.8 cleanup (seeded demo stats/words/cards, broken imported clips). Runs at module load,
 // before any state initializer below reads localStorage.
 runMigration108();
+// Kob AI -> Tenixe settings cleanup (idempotent), also before the AI state initializers.
+runMigrationAi();
 
 export interface UserStats {
   streak_days: number;
@@ -609,6 +612,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const TENIXE_ENDPOINT = 'https://api.tenixe.com/api/v1/chat/completions';
   const KOB_MODELS: string[] = ['nemotron-3-ultra', 'minimax-m3.1-flash', 'deepseek-v4.1-flash'];
 
+  // Short, key-free text for error messages: whitespace collapsed, API key masked, max 120 chars.
+  const snippetOf = (text: string, key: string): string => {
+    const clean = (text || '').replace(/\s+/g, ' ').trim();
+    const masked = key ? clean.split(key).join('***') : clean;
+    return masked.slice(0, 120);
+  };
+
+  const describeAIError = (err: unknown, key: string): string => {
+    if (err instanceof Error) {
+      const msg = snippetOf(err.message, key);
+      return err.name && err.name !== 'Error' ? `${err.name}: ${msg}` : msg;
+    }
+    return snippetOf(String(err), key) || 'unknown error';
+  };
+
   const streamTenixeChat = async (
     key: string,
     model: string,
@@ -629,7 +647,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         stream: true,
       }),
     });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    if (!response.ok) {
+      const body = await response.text().catch(() => '');
+      throw new Error(`HTTP ${response.status}${body ? `: ${snippetOf(body, key)}` : ''}`);
+    }
     if (!response.body) {
       const data = await response.json();
       return data.choices?.[0]?.message?.content?.trim() || '';
@@ -694,21 +715,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
     if (aiProvider === 'tenixe') {
       const primaryModel = aiModel || 'claude-haiku-5-5';
+      const failures: string[] = [];
       try {
         const text = await streamTenixeChat(key, primaryModel, messages, 800);
         if (text) return text;
         throw new Error('empty response');
       } catch (err) {
-        console.warn('Tenixe primary model failed, retrying with deepseek-v4-flash:', err);
+        const detail = describeAIError(err, key);
+        failures.push(`${primaryModel}: ${detail}`);
+        console.warn(`Tenixe primary model ${primaryModel} failed, retrying with deepseek-v4-flash:`, err);
       }
       try {
         // Reasoning model: needs a large max_tokens budget
         const text = await streamTenixeChat(key, 'deepseek-v4-flash', messages, 20000);
         if (text) return text;
+        throw new Error('empty response');
       } catch (err) {
-        console.error('Tenixe fallback model failed:', err);
+        const detail = describeAIError(err, key);
+        failures.push(`deepseek-v4-flash: ${detail}`);
+        console.error('Tenixe fallback model deepseek-v4-flash failed:', err);
       }
-      return 'AI ตอบกลับไม่สำเร็จในตอนนี้ กรุณาลองใหม่อีกครั้ง';
+      return `AI ตอบกลับไม่สำเร็จ (${failures.join('; ')})`;
     }
 
     // Kob AI (non-streaming, unchanged behaviour)
@@ -732,12 +759,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const choice = data.choices?.[0]?.message;
         return choice?.content?.trim() || choice?.reasoning?.trim() || 'AI returned an empty response.';
       }
-      const errorData = await response.json().catch(() => ({}));
-      console.error('API error:', errorData);
+      const errorBody = await response.text().catch(() => '');
+      console.error('API error:', response.status, errorBody);
+      return `AI ตอบกลับไม่สำเร็จ (HTTP ${response.status}${errorBody ? `: ${snippetOf(errorBody, key)}` : ''})`;
     } catch (err: any) {
       console.error('Failed to call AI API:', err);
+      return `AI ตอบกลับไม่สำเร็จ (${describeAIError(err, key)})`;
     }
-    return 'AI ตอบกลับไม่สำเร็จในตอนนี้ กรุณาลองใหม่อีกครั้ง';
   };
 
   // Automatically derive full dictionary from DICTIONARY_WORDS + all video subtitle tokens

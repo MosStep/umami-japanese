@@ -233,7 +233,8 @@ export const TheDojo: React.FC = () => {
         setIsRecording(false);
         setLiveVolume(0);
         setSpeechWarning(msg);
-      }
+      },
+      (warn) => setSpeechWarning(warn)
     );
   };
 
