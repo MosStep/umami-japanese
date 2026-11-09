@@ -155,23 +155,25 @@ BMpzc-gck0c (2 h compilation, auto ja + auto th), nGLVwQuwnfY (manual ja only 33
 Broken: S-zdoi1dv8k (members-only), 6q_3f5mE6E8 / FkL4CjZ12aM / 2OvyA2__Lak (unavailable), 5yx6BWlEVcY (no ja/th track),
 and vid-vlog-n5-uji wrongly reuses the Pokémon video nGLVwQuwnfY. All video records have fake `duration` 60/65.
 
-1. `scripts/find-replacements.py` (yt_dlp module API, never the exe): for each broken record above, search
-   `ytsearch15:<query>` with a topic query matching the record's category/title (e.g. "ブルーロック 第1話 公式",
-   "たこ焼き 大阪 屋台 日本語", "ラーメン 作り方 日本語 字幕", "日本語 ポッドキャスト 初級 自己紹介", "東京 カフェ vlog 日本語字幕",
-   "宇治 抹茶 散歩 vlog"). Accept a candidate only if: availability public, `playable_in_embed` true, not live, duration 3–30 min
-   (anime episodes up to 30 min), and it has a MANUAL `ja*` subtitle track (preferred) or a manual `th` track + auto ja.
-   Print a table of the chosen candidate per record (id, title, channel, duration, sub tracks) to the report.
-2. Update `src/data/mockVideos.ts` records in place (keep each record's `id`, category, emoji, gradient): set the new
-   `youtube_id`, a Thai/Japanese `title` and `description` matching the real video, and the real `duration` (seconds)
-   for ALL videos (also the working ones). Remove the now-unused MOCK_SUBTITLE_LINES entries only for records that have
-   real captions (keep MOCK for any record still without a caption file).
-3. Re-run `scripts/fetch-captions.py` for all ids (Task 3's fixed version).
-4. `scripts/tokenize-captions.mjs` (devDependency `kuromoji`): for every caption JSON line with Japanese text, write
+1. User ruling (2026-11-09): DELETE every video record whose captions cannot be fetched — S-zdoi1dv8k (members-only),
+   6q_3f5mE6E8, FkL4CjZ12aM, 2OvyA2__Lak (unavailable), 5yx6BWlEVcY (no ja/th track), and vid-vlog-n5-uji (wrongly reuses
+   the Pokémon video). Also delete a6JwRs2in0E if Task 3's retry still failed. Remove their MOCK_SUBTITLE_LINES entries and
+   any other references (albums, featured lists, default video id — grep the record ids across src/).
+2. `scripts/find-anione.py` (yt_dlp module API, never the exe): list uploads of the Ani-One Asia channel
+   (`https://www.youtube.com/@AniOneAsia/videos`, extract_flat, newest 200) and pick 8 NEW full episodes (not already in
+   the app) across at least 4 different anime series. Accept a candidate only if: public, `playable_in_embed` true, not live,
+   duration 15–30 min, and it has a MANUAL `th` subtitle track AND a `ja` track (manual or auto). Prefer episode 1 of each series.
+   Print the chosen table (youtube_id, title, series, duration, sub tracks) in the report.
+3. Add one video record per chosen episode to `src/data/mockVideos.ts` following the existing Ani-One records' shape
+   (id `vid-anione-<series-slug>-<ep>`, category `Anime`, a Thai title "<ชื่อเรื่องภาษาไทย> ตอนที่ N (Ani-One Asia)",
+   a short Thai description, the series emoji + gradient). Set the real `duration` (seconds) for ALL video records.
+4. Re-run `scripts/fetch-captions.py` for all ids (Task 3's fixed version).
+5. `scripts/tokenize-captions.mjs` (devDependency `kuromoji`): for every caption JSON line with Japanese text, write
    `tokens: [{ surface, lemma, reading (hiragana), romaji (Hepburn, from a small kana table in the script), pos }]`.
    `src/data/captions/index.ts` builds `tokens_json` from these (reading_kana = reading, romaji, part_of_speech), and
    when a token's lemma equals an existing `dictionaryWords` lemma, use that word's id so the tap card shows its meaning.
    Skip pure punctuation tokens for tap targets but keep them in the rendered text.
-5. `npm run build` passes; report the per-video table: youtube_id, duration, lines, % lines with ja, % lines with th,
+6. `npm run build` passes; report the per-video table: youtube_id, duration, lines, % lines with ja, % lines with th,
    th source (manual/auto/missing).
 
 ## Task 6: Thai translation for every line (content)
