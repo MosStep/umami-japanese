@@ -10,7 +10,6 @@ import {
   MicOff,
   Volume2,
   Sparkles,
-  MessageSquare,
   HelpCircle,
   CheckCircle2,
   AlertCircle,
@@ -19,8 +18,11 @@ import {
   Send,
   Zap,
   Flame,
-  Award,
-  BookOpen,
+  Layers,
+  MessageCircle,
+  X,
+  Minus,
+  Check,
 } from 'lucide-react';
 
 export const TheDojo: React.FC = () => {
@@ -411,430 +413,457 @@ Output exactly in this JSON format:
     }
   };
 
+  // Presentation helpers (layout only)
+  const modeTabs = [
+    { key: 'srs' as const, label: 'แฟลชการ์ด', Icon: Layers },
+    { key: 'shadowing' as const, label: 'พูดตาม', Icon: Mic },
+    { key: 'roleplay' as const, label: 'สนทนา AI', Icon: MessageCircle },
+  ];
+
+  const chipClass = (on: boolean, onCls: string) =>
+    `shrink-0 min-h-11 px-3.5 rounded-full border text-sm font-bold whitespace-nowrap transition-all active:opacity-80 ${
+      on ? onCls : 'bg-slate-900 border-slate-700 text-slate-300 hover:text-white'
+    }`;
+
+  const gradeClass = (tone: 'rose' | 'amber' | 'indigo' | 'emerald') => {
+    const tones = {
+      rose: 'bg-rose-950/40 border-rose-500/40 text-rose-300 hover:bg-rose-950/80',
+      amber: 'bg-amber-950/40 border-amber-500/40 text-amber-300 hover:bg-amber-950/80',
+      indigo: 'bg-indigo-950/40 border-indigo-500/40 text-indigo-300 hover:bg-indigo-950/80',
+      emerald: 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300 hover:bg-emerald-950/80',
+    };
+    return `min-h-12 p-2 rounded-2xl border-2 flex flex-col items-center justify-center gap-0.5 text-sm font-bold text-center leading-tight transition-all active:opacity-80 ${tones[tone]}`;
+  };
+
+  const renderProgress = (label: string, index: number, total: number) => (
+    <div className="space-y-1.5">
+      <div className="font-mono text-xs font-semibold text-rose-300">
+        {label} {index + 1} / {total}
+      </div>
+      <div
+        className="h-1.5 rounded-full bg-slate-800 overflow-hidden"
+        role="progressbar"
+        aria-label={label}
+        aria-valuemin={1}
+        aria-valuemax={Math.max(1, total)}
+        aria-valuenow={index + 1}
+      >
+        <div
+          className="h-full rounded-full bg-gradient-to-r from-rose-600 to-amber-500 transition-all duration-300"
+          style={{ width: `${Math.round(((index + 1) / Math.max(1, total)) * 100)}%` }}
+        />
+      </div>
+    </div>
+  );
+
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6">
-      {/* Dojo Header Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-red-950 via-slate-900 to-amber-950/40 border border-red-500/30 p-6 sm:p-8 shadow-2xl">
-        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none text-9xl font-jp select-none font-black text-rose-500">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8 space-y-4 sm:space-y-6">
+      {/* Compact Dojo Header */}
+      <header className="relative overflow-hidden rounded-2xl bg-gradient-to-r from-red-950 via-slate-900 to-amber-950/40 border border-red-500/30 px-4 py-2 md:p-6 shadow-lg">
+        <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none text-9xl font-jp select-none font-black text-rose-500 hidden md:block">
           道場
         </div>
-        <div className="relative z-10 space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-rose-500/15 text-rose-300 border border-rose-500/30 backdrop-blur-sm">
-            <Swords className="w-3.5 h-3.5 text-rose-400" />
-            <span>うまみ道場 • The Martial Arts of Japanese Fluency</span>
+        <div className="relative z-10 flex items-center gap-3">
+          <Swords className="w-5 h-5 md:w-7 md:h-7 text-rose-400 shrink-0" aria-hidden="true" />
+          <div className="min-w-0">
+            <h1 className="text-xl md:text-3xl font-extrabold text-white leading-tight">โดโจ</h1>
+            <p className="text-xs md:text-sm text-slate-300">ฝึกคำศัพท์ • พูดตาม • สนทนา</p>
           </div>
-          <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-            Master Both Input & Output
-          </h1>
-          <p className="text-sm sm:text-base text-slate-300 max-w-2xl leading-relaxed">
-            Strengthen your memory with spaced-repetition flashcards, hone natural pitch
-            accent through shadowing with real-time waveform grading, and roleplay in Tokyo izakayas.
-          </p>
+        </div>
+      </header>
 
-          {/* Mode Selector Tabs */}
-          <div className="pt-2 flex flex-wrap gap-2.5">
-            <button
-              onClick={() => setActiveMode('srs')}
-              className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${
-                activeMode === 'srs'
-                  ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white shadow-lg shadow-rose-600/40 scale-[1.02]'
-                  : 'bg-slate-900/90 text-slate-400 hover:text-white border border-slate-800'
-              }`}
-            >
-              <Award className="w-4 h-4 text-amber-300" />
-              <span>Mode A: Flashcards ({srsDeckType === 'words' ? dictionaryWords.length : minedSentences.length})</span>
-            </button>
-            <button
-              onClick={() => setActiveMode('shadowing')}
-              className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${
-                activeMode === 'shadowing'
-                  ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white shadow-lg shadow-rose-600/40 scale-[1.02]'
-                  : 'bg-slate-900/90 text-slate-400 hover:text-white border border-slate-800'
-              }`}
-            >
-              <Mic className="w-4 h-4 text-rose-300" />
-              <span>Mode B: Shadowing & Waveform</span>
-            </button>
-            <button
-              onClick={() => setActiveMode('roleplay')}
-              className={`px-4 py-2.5 rounded-2xl text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${
-                activeMode === 'roleplay'
-                  ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white shadow-lg shadow-rose-600/40 scale-[1.02]'
-                  : 'bg-slate-900/90 text-slate-400 hover:text-white border border-slate-800'
-              }`}
-            >
-              <MessageSquare className="w-4 h-4 text-emerald-300" />
-              <span>Mode C: AI Roleplay ({aiProvider})</span>
-            </button>
-          </div>
+      {/* Mode Switch: sticky segmented control under the app navbar */}
+      <div className="sticky top-14 z-20 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2 bg-slate-950/90 backdrop-blur-md">
+        <div
+          role="tablist"
+          aria-label="โหมดฝึก"
+          className="grid grid-cols-3 gap-1 p-1 rounded-2xl bg-slate-900 border border-slate-800"
+        >
+          {modeTabs.map(({ key, label, Icon }) => {
+            const selected = activeMode === key;
+            return (
+              <button
+                key={key}
+                type="button"
+                role="tab"
+                aria-selected={selected}
+                onClick={() => setActiveMode(key)}
+                className={`min-h-11 px-2 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold transition-all active:opacity-80 ${
+                  selected
+                    ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white shadow-md shadow-rose-600/30'
+                    : 'text-slate-300 hover:text-white'
+                }`}
+              >
+                <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
+                <span className="truncate">{label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
       {/* Mode A: Flashcards & SRS Review */}
       {activeMode === 'srs' && (
-        <div className="max-w-2xl mx-auto space-y-4">
-          {/* Deck Switcher: Words Vault vs Mined Sentences */}
-          <div className="flex items-center justify-center p-1 rounded-2xl bg-slate-900/90 border border-slate-800">
+        <div className="max-w-2xl mx-auto space-y-3">
+          {/* Deck + filter chips in one scrollable row */}
+          <div
+            role="group"
+            aria-label="ชุดและตัวกรองการ์ด"
+            className="flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none]"
+          >
             <button
+              type="button"
+              aria-pressed={srsDeckType === 'words'}
               onClick={() => {
                 setSrsDeckType('words');
                 setIsRevealed(false);
               }}
-              className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
-                srsDeckType === 'words'
-                  ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white shadow-md shadow-rose-600/30'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
+              className={chipClass(srsDeckType === 'words', 'bg-rose-600 border-rose-500 text-white')}
             >
-              <BookOpen className="w-4 h-4" />
-              <span>📖 คลังคำศัพท์ (Words Vault: {dictionaryWords.length})</span>
+              คำศัพท์ ({dictionaryWords.length})
             </button>
             <button
+              type="button"
+              aria-pressed={srsDeckType === 'mined'}
               onClick={() => {
                 setSrsDeckType('mined');
                 setIsRevealed(false);
               }}
-              className={`flex-1 py-2.5 px-3 rounded-xl text-xs sm:text-sm font-bold flex items-center justify-center gap-2 transition-all ${
-                srsDeckType === 'mined'
-                  ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white shadow-md shadow-rose-600/30'
-                  : 'text-slate-400 hover:text-slate-200'
-              }`}
+              className={chipClass(srsDeckType === 'mined', 'bg-rose-600 border-rose-500 text-white')}
             >
-              <Swords className="w-4 h-4" />
-              <span>🎬 ประโยคขุด ({minedSentences.length})</span>
+              ประโยคที่บันทึก ({minedSentences.length})
             </button>
+            {srsDeckType === 'words' && (
+              <>
+                <span aria-hidden="true" className="shrink-0 w-px h-6 bg-slate-800 mx-0.5" />
+                <button
+                  type="button"
+                  aria-pressed={wordFilter === 'all'}
+                  onClick={() => {
+                    setWordFilter('all');
+                    setWordIndex(0);
+                    setIsRevealed(false);
+                  }}
+                  className={chipClass(wordFilter === 'all', 'bg-slate-200 border-slate-200 text-slate-900')}
+                >
+                  ทั้งหมด ({dictionaryWords.length})
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={wordFilter === 'learning'}
+                  onClick={() => {
+                    setWordFilter('learning');
+                    setWordIndex(0);
+                    setIsRevealed(false);
+                  }}
+                  className={chipClass(wordFilter === 'learning', 'bg-amber-600 border-amber-500 text-white')}
+                >
+                  กำลังเรียน ({learningCount})
+                </button>
+                <button
+                  type="button"
+                  aria-pressed={wordFilter === 'known'}
+                  onClick={() => {
+                    setWordFilter('known');
+                    setWordIndex(0);
+                    setIsRevealed(false);
+                  }}
+                  className={chipClass(wordFilter === 'known', 'bg-emerald-600 border-emerald-500 text-white')}
+                >
+                  จำได้แล้ว ({knownCount})
+                </button>
+              </>
+            )}
           </div>
 
           {srsDeckType === 'words' ? (
             /* WORDS VAULT DECK */
-            <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 shadow-2xl overflow-hidden space-y-6 p-6 sm:p-8">
-              {/* Words Vault Filter Pills & Meta */}
-              <div className="flex flex-wrap items-center justify-between gap-3 text-xs border-b border-slate-800 pb-4">
-                <div className="flex items-center gap-1.5 overflow-x-auto">
-                  <button
-                    onClick={() => {
-                      setWordFilter('all');
-                      setWordIndex(0);
-                      setIsRevealed(false);
-                    }}
-                    className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
-                      wordFilter === 'all'
-                        ? 'bg-rose-600 text-white shadow'
-                        : 'bg-slate-800 text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    ทั้งหมด ({dictionaryWords.length})
-                  </button>
-                  <button
-                    onClick={() => {
-                      setWordFilter('learning');
-                      setWordIndex(0);
-                      setIsRevealed(false);
-                    }}
-                    className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
-                      wordFilter === 'learning'
-                        ? 'bg-amber-600 text-white shadow'
-                        : 'bg-slate-800 text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    ⚡ กำลังเรียน ({learningCount})
-                  </button>
-                  <button
-                    onClick={() => {
-                      setWordFilter('known');
-                      setWordIndex(0);
-                      setIsRevealed(false);
-                    }}
-                    className={`px-3 py-1.5 rounded-xl font-bold transition-all ${
-                      wordFilter === 'known'
-                        ? 'bg-emerald-600 text-white shadow'
-                        : 'bg-slate-800 text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    ✓ จำได้แล้ว ({knownCount})
-                  </button>
-                </div>
-                <span className="font-mono font-semibold text-rose-400 shrink-0">
-                  คำที่ {wordIndex + 1} / {filteredWords.length}
-                </span>
-              </div>
-
-              {currentWord ? (
-                <>
-                  {/* Flashcard Body */}
-                  <div className="py-6 space-y-4 text-center">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-slate-800/80 text-cyan-300 border border-slate-700">
-                      <span>{currentWord.jlpt_level}</span>
-                      {currentWord.part_of_speech && <span>• {currentWord.part_of_speech}</span>}
-                    </div>
-
-                    <p className="font-jp text-4xl sm:text-5xl font-extrabold text-white leading-relaxed tracking-wider">
-                      {currentWord.lemma}
-                    </p>
-
-                    {isRevealed && (
-                      <div className="space-y-2 pt-2 animate-in fade-in duration-150">
-                        <p className="text-lg font-jp text-indigo-300 font-bold">
-                          {currentWord.reading_kana} {currentWord.romaji ? `(${currentWord.romaji})` : ''}
-                        </p>
-                        <p className="text-xl sm:text-2xl text-emerald-300 font-bold">
-                          🇹🇭 {currentWord.core_meanings?.join(', ') || 'ความหมายภาษาญี่ปุ่น'}
-                        </p>
-                        <div className="inline-block mt-1">
-                          <span
-                            className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
-                              getWordStatus(currentWord.id) === 'known'
-                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                                : getWordStatus(currentWord.id) === 'learning'
-                                ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                                : 'bg-slate-800 text-slate-400 border border-slate-700'
-                            }`}
-                          >
-                            สถานะปัจจุบัน:{' '}
-                            {getWordStatus(currentWord.id) === 'known'
-                              ? '✓ จำได้แล้ว'
-                              : getWordStatus(currentWord.id) === 'learning'
-                              ? '⚡ กำลังเรียน'
-                              : 'ใหม่'}
-                          </span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Reveal / Controls */}
-                  {!isRevealed ? (
-                    <button
-                      onClick={() => {
-                        setIsRevealed(true);
-                        playAudio(currentWord.lemma);
-                      }}
-                      className="w-full py-4 rounded-2xl text-base font-bold bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-xl shadow-rose-600/30 transition-all active:scale-98"
-                    >
-                      แตะเพื่อดูเฉลยคำอ่านและความหมาย
-                    </button>
-                  ) : (
-                    <div className="space-y-4 animate-in fade-in duration-150">
-                      {/* Audio Button */}
-                      <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
-                        <span className="text-xs text-slate-400 flex items-center gap-1.5 font-medium">
-                          <Volume2 className="w-4 h-4 text-rose-400" />
-                          เสียงออกเสียงภาษาญี่ปุ่น
-                        </span>
-                        <button
-                          onClick={() => playAudio(currentWord.lemma)}
-                          className="px-4 py-2 rounded-xl bg-slate-800 text-xs text-slate-100 hover:bg-slate-700 flex items-center gap-1.5 font-semibold transition-colors"
-                        >
-                          <RotateCcw className="w-3.5 h-3.5" />
-                          ฟังอีกครั้ง
-                        </button>
-                      </div>
-
-                      {/* Word Grade Rating Buttons: Again, Good, Easy */}
-                      <div className="grid grid-cols-3 gap-2.5 pt-1">
-                        <button
-                          onClick={() => handleWordGrade('again')}
-                          className="p-3.5 rounded-2xl bg-rose-950/40 border-2 border-rose-500/40 text-rose-300 text-xs sm:text-sm font-bold hover:bg-rose-950/80 active:scale-95 transition-all text-center"
-                        >
-                          ❌ ยังจำไม่ได้
-                          <span className="block text-[10px] text-slate-400 font-normal mt-0.5">
-                            ทบทวนต่อ (กำลังเรียน)
-                          </span>
-                        </button>
-                        <button
-                          onClick={() => handleWordGrade('good')}
-                          className="p-3.5 rounded-2xl bg-amber-950/40 border-2 border-amber-500/40 text-amber-300 text-xs sm:text-sm font-bold hover:bg-amber-950/80 active:scale-95 transition-all text-center"
-                        >
-                          ⚡ พอจำได้ (+5 XP)
-                          <span className="block text-[10px] text-slate-400 font-normal mt-0.5">
-                            กำลังเรียน
-                          </span>
-                        </button>
-                        <button
-                          onClick={() => handleWordGrade('easy')}
-                          className="p-3.5 rounded-2xl bg-emerald-950/40 border-2 border-emerald-500/40 text-emerald-300 text-xs sm:text-sm font-bold hover:bg-emerald-950/80 active:scale-95 transition-all text-center"
-                        >
-                          ✓ จำได้แม่นยำ (+15 XP)
-                          <span className="block text-[10px] text-slate-400 font-normal mt-0.5">
-                            บันทึกเป็น "จำได้แล้ว"
-                          </span>
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </>
-              ) : (
-                <div className="text-center py-8 text-slate-400">ไม่พบคำศัพท์ในตัวกรองนี้</div>
-              )}
-            </div>
-          ) : (
-            /* MINED SENTENCES DECK */
-            minedSentences.length === 0 ? (
-              <div className="text-center py-16 space-y-4 rounded-3xl bg-slate-900/90 border border-slate-800 p-8 shadow-xl">
-                <Swords className="w-12 h-12 text-rose-500/50 mx-auto" />
-                <h3 className="text-xl font-bold text-slate-200">ยังไม่มีประโยคที่ขุดไว้ใน道場</h3>
-                <p className="text-sm text-slate-400 max-w-sm mx-auto leading-relaxed">
-                  ไปที่หน้าเครื่องเล่นวิดีโอ (Player) แล้วแตะปุ่ม "Mine" บนซับไตเติลใดก็ได้เพื่อดึงประโยคเข้ามาฝึกในสำนัก!
-                </p>
-              </div>
-            ) : (
-              <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 shadow-2xl overflow-hidden space-y-6 p-6 sm:p-8">
-                {/* Card Meta & Mode Selector */}
-                <div className="flex items-center justify-between text-xs text-slate-400 border-b border-slate-800 pb-4">
-                  <span className="font-mono font-semibold text-rose-400">
-                    Card {srsIndex + 1} of {minedSentences.length}
-                  </span>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={() => setQuizMode(quizMode === 'cloze' ? 'listening' : 'cloze')}
-                    className="px-3 py-1.5 rounded-xl bg-slate-800 text-slate-300 hover:bg-slate-700 font-medium"
-                  >
-                    Drill: {quizMode === 'cloze' ? 'Cloze Deletion' : 'Listening Drill'}
-                  </button>
-                  <span className="px-2.5 py-1 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 font-mono">
-                    Interval: {currentMined?.srs_interval || 1}d
-                  </span>
-                </div>
-              </div>
-
-              {/* Flashcard Prompt Area */}
-              {(() => {
-                const modeA = getModeAMinedSentence();
-                const clozeText = getClozeSentence(modeA.japanese, modeA.targetLemma, modeA.line);
-
-                return (
+            <div className="space-y-3">
+              {renderProgress('คำที่', wordIndex, filteredWords.length)}
+              <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 shadow-2xl overflow-hidden p-4 sm:p-8 space-y-5">
+                {currentWord ? (
                   <>
-                    <div className="py-6 space-y-4 text-center">
-                      {quizMode === 'listening' && !isRevealed ? (
-                        <div className="space-y-4">
-                          <button
-                            onClick={() => playAudio(modeA.japanese)}
-                            className="w-20 h-20 rounded-full bg-gradient-to-tr from-rose-600 to-amber-600 text-white flex items-center justify-center mx-auto shadow-2xl shadow-rose-600/50 hover:scale-105 active:scale-95 transition-all"
-                          >
-                            <Volume2 className="w-10 h-10" />
-                          </button>
-                          <p className="text-sm text-slate-300 font-medium">
-                            แตะปุ่มฟังเสียงภาษาญี่ปุ่น แล้วนึกความหมายในใจ
+                    {/* Flashcard Body */}
+                    <div className="py-2 sm:py-4 space-y-3 text-center">
+                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-slate-800/80 text-cyan-300 border border-slate-700">
+                        <span>{currentWord.jlpt_level}</span>
+                        {currentWord.part_of_speech && <span>• {currentWord.part_of_speech}</span>}
+                      </div>
+
+                      <p className="font-jp text-4xl sm:text-5xl font-extrabold text-white leading-relaxed tracking-wider">
+                        {currentWord.lemma}
+                      </p>
+
+                      {isRevealed && (
+                        <div className="space-y-2 pt-1 animate-in fade-in duration-150">
+                          <p className="text-lg font-jp text-indigo-300 font-bold">
+                            {currentWord.reading_kana} {currentWord.romaji ? `(${currentWord.romaji})` : ''}
                           </p>
-                        </div>
-                      ) : (
-                        <div className="space-y-3">
-                          <p className="font-jp text-2xl sm:text-3xl font-extrabold text-white leading-relaxed tracking-wide">
-                            {isRevealed ? modeA.japanese : clozeText}
+                          <p className="text-lg sm:text-xl text-emerald-300 font-bold">
+                            🇹🇭 {currentWord.core_meanings?.join(', ') || 'ความหมายภาษาญี่ปุ่น'}
                           </p>
-                          {isRevealed && (
-                            <div className="space-y-2 pt-2 animate-in fade-in duration-150">
-                              <p className="text-lg sm:text-xl text-emerald-300 font-bold">
-                                🇹🇭 {modeA.thai}
-                              </p>
-                              {modeA.targetWord && (
-                                <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-xs font-bold mt-1">
-                                  <span>คำศัพท์เป้าหมาย:</span>
-                                  <span className="font-jp text-white font-extrabold">{modeA.targetWord.lemma}</span>
-                                  <span className="text-slate-300">({modeA.targetWord.reading_kana})</span>
-                                  <span>• {modeA.targetWord.core_meanings?.join(', ')}</span>
-                                </div>
-                              )}
-                            </div>
-                          )}
+                          <div className="inline-block">
+                            <span
+                              className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
+                                getWordStatus(currentWord.id) === 'known'
+                                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                                  : getWordStatus(currentWord.id) === 'learning'
+                                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                                  : 'bg-slate-800 text-slate-300 border border-slate-700'
+                              }`}
+                            >
+                              สถานะ:{' '}
+                              {getWordStatus(currentWord.id) === 'known'
+                                ? 'จำได้แล้ว'
+                                : getWordStatus(currentWord.id) === 'learning'
+                                ? 'กำลังเรียน'
+                                : 'ใหม่'}
+                            </span>
+                          </div>
                         </div>
                       )}
                     </div>
 
-                    {/* Reveal & Audio Controls */}
+                    {/* Reveal / Controls */}
                     {!isRevealed ? (
                       <button
+                        type="button"
                         onClick={() => {
                           setIsRevealed(true);
-                          playAudio(modeA.japanese);
+                          playAudio(currentWord.lemma);
                         }}
-                        className="w-full py-4 rounded-2xl text-base font-bold bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-xl shadow-rose-600/30 transition-all active:scale-98"
+                        className="w-full min-h-12 py-3 rounded-2xl text-base font-bold bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-xl shadow-rose-600/30 transition-all active:opacity-80"
                       >
-                        แตะเพื่อดูเฉลยประโยค & ฟังเสียง
+                        แตะเพื่อดูคำตอบ
                       </button>
                     ) : (
-                      <div className="space-y-5 animate-in fade-in duration-150">
-                        {/* Replay Scene Audio Button */}
-                        <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between">
-                          <span className="text-xs text-slate-400 flex items-center gap-1.5 font-medium">
-                            <Volume2 className="w-4 h-4 text-rose-400" />
-                            เสียงประโยคภาษาญี่ปุ่น
+                      <div className="space-y-4 animate-in fade-in duration-150">
+                        {/* Audio Button */}
+                        <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-2">
+                          <span className="text-sm text-slate-300 flex items-center gap-1.5 font-medium">
+                            <Volume2 className="w-4 h-4 text-rose-400 shrink-0" aria-hidden="true" />
+                            เสียงออกเสียง
                           </span>
                           <button
-                            onClick={() => playAudio(modeA.japanese)}
-                            className="px-4 py-2 rounded-xl bg-slate-800 text-xs text-slate-100 hover:bg-slate-700 flex items-center gap-1.5 font-semibold transition-colors"
+                            type="button"
+                            onClick={() => playAudio(currentWord.lemma)}
+                            className="min-h-11 px-4 rounded-xl bg-slate-800 text-sm text-slate-100 hover:bg-slate-700 flex items-center gap-1.5 font-semibold transition-colors active:opacity-80"
                           >
-                            <RotateCcw className="w-3.5 h-3.5" />
+                            <RotateCcw className="w-4 h-4" aria-hidden="true" />
                             ฟังอีกครั้ง
                           </button>
                         </div>
 
-                        {/* SRS Rating Buttons (Again, Hard, Good, Easy) */}
-                        <div className="grid grid-cols-4 gap-2.5 pt-1">
+                        {/* Word Grade Rating Buttons */}
+                        <div className="grid grid-cols-3 gap-2">
                           <button
-                            onClick={() => handleSRSGrade('again')}
-                            className="p-3 rounded-2xl bg-rose-950/40 border-2 border-rose-500/40 text-rose-300 text-xs font-bold hover:bg-rose-950/80 active:scale-95 transition-all text-center"
+                            type="button"
+                            onClick={() => handleWordGrade('again')}
+                            className={gradeClass('rose')}
                           >
-                            Again
-                            <span className="block text-[10px] text-slate-400 font-normal mt-0.5">
-                              12 hrs
-                            </span>
+                            <X className="w-4 h-4" aria-hidden="true" />
+                            <span>ยังจำไม่ได้</span>
+                            <span className="text-xs font-normal text-slate-300">ทบทวนต่อ</span>
                           </button>
                           <button
-                            onClick={() => handleSRSGrade('hard')}
-                            className="p-3 rounded-2xl bg-amber-950/40 border-2 border-amber-500/40 text-amber-300 text-xs font-bold hover:bg-amber-950/80 active:scale-95 transition-all text-center"
+                            type="button"
+                            onClick={() => handleWordGrade('good')}
+                            className={gradeClass('amber')}
                           >
-                            Hard
-                            <span className="block text-[10px] text-slate-400 font-normal mt-0.5">
-                              1 day
-                            </span>
+                            <Zap className="w-4 h-4" aria-hidden="true" />
+                            <span>พอจำได้</span>
+                            <span className="text-xs font-normal text-slate-300">+5 XP</span>
                           </button>
                           <button
-                            onClick={() => handleSRSGrade('good')}
-                            className="p-3 rounded-2xl bg-indigo-950/40 border-2 border-indigo-500/40 text-indigo-300 text-xs font-bold hover:bg-indigo-950/80 active:scale-95 transition-all text-center"
+                            type="button"
+                            onClick={() => handleWordGrade('easy')}
+                            className={gradeClass('emerald')}
                           >
-                            Good
-                            <span className="block text-[10px] text-slate-400 font-normal mt-0.5">
-                              3 days
-                            </span>
-                          </button>
-                          <button
-                            onClick={() => handleSRSGrade('easy')}
-                            className="p-3 rounded-2xl bg-emerald-950/40 border-2 border-emerald-500/40 text-emerald-300 text-xs font-bold hover:bg-emerald-950/80 active:scale-95 transition-all text-center"
-                          >
-                            Easy
-                            <span className="block text-[10px] text-slate-400 font-normal mt-0.5">
-                              5 days
-                            </span>
+                            <Check className="w-4 h-4" aria-hidden="true" />
+                            <span>จำได้แม่น</span>
+                            <span className="text-xs font-normal text-slate-300">+15 XP</span>
                           </button>
                         </div>
                       </div>
                     )}
                   </>
-                );
-              })()}
+                ) : (
+                  <div className="text-center py-8 text-slate-300">ไม่พบคำศัพท์ในตัวกรองนี้</div>
+                )}
+              </div>
             </div>
-          )
-        )}
-      </div>
-    )}
+          ) : minedSentences.length === 0 ? (
+            /* MINED SENTENCES DECK: empty */
+            <div className="text-center py-12 space-y-4 rounded-3xl bg-slate-900/90 border border-slate-800 p-6 sm:p-8 shadow-xl">
+              <Swords className="w-12 h-12 text-rose-500/60 mx-auto" aria-hidden="true" />
+              <h3 className="text-xl font-bold text-slate-200">ยังไม่มีประโยคที่บันทึกไว้</h3>
+              <p className="text-sm text-slate-300 max-w-sm mx-auto leading-relaxed">
+                ไปที่หน้าเครื่องเล่นวิดีโอ แล้วแตะปุ่ม "Mine" บนซับไตเติลใดก็ได้เพื่อดึงประโยคเข้ามาฝึก
+              </p>
+            </div>
+          ) : (
+            /* MINED SENTENCES DECK */
+            <div className="space-y-3">
+              {renderProgress('ประโยคที่', srsIndex, minedSentences.length)}
+              <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 shadow-2xl overflow-hidden p-4 sm:p-8 space-y-5">
+                {/* Card Meta & Drill Toggle */}
+                <div className="flex items-center justify-between gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setQuizMode(quizMode === 'cloze' ? 'listening' : 'cloze')}
+                    className="min-h-11 px-3.5 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 text-sm font-semibold transition-colors active:opacity-80"
+                  >
+                    โหมด: {quizMode === 'cloze' ? 'เติมคำ' : 'ฟังเสียง'}
+                  </button>
+                  <span className="px-2.5 py-1 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 font-mono text-xs">
+                    ช่วง: {currentMined?.srs_interval || 1} วัน
+                  </span>
+                </div>
+
+                {/* Flashcard Prompt Area */}
+                {(() => {
+                  const modeA = getModeAMinedSentence();
+                  const clozeText = getClozeSentence(modeA.japanese, modeA.targetLemma, modeA.line);
+
+                  return (
+                    <>
+                      <div className="py-2 sm:py-4 space-y-3 text-center">
+                        {quizMode === 'listening' && !isRevealed ? (
+                          <div className="space-y-4">
+                            <button
+                              type="button"
+                              onClick={() => playAudio(modeA.japanese)}
+                              className="w-20 h-20 rounded-full bg-gradient-to-tr from-rose-600 to-amber-600 text-white flex items-center justify-center mx-auto shadow-2xl shadow-rose-600/50 transition-all active:opacity-80"
+                              aria-label="ฟังเสียงประโยค"
+                            >
+                              <Volume2 className="w-10 h-10" aria-hidden="true" />
+                            </button>
+                            <p className="text-sm text-slate-300 font-medium">
+                              แตะปุ่มเพื่อฟังเสียง แล้วนึกความหมายในใจ
+                            </p>
+                          </div>
+                        ) : (
+                          <div className="space-y-3">
+                            <p className="font-jp text-2xl sm:text-3xl font-extrabold text-white leading-relaxed tracking-wide">
+                              {isRevealed ? modeA.japanese : clozeText}
+                            </p>
+                            {isRevealed && (
+                              <div className="space-y-2 pt-1 animate-in fade-in duration-150">
+                                <p className="text-lg text-emerald-300 font-bold">🇹🇭 {modeA.thai}</p>
+                                {modeA.targetWord && (
+                                  <div className="inline-flex flex-wrap items-center justify-center gap-x-2 gap-y-1 px-3 py-1.5 rounded-xl bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 text-sm font-bold mt-1">
+                                    <span>คำศัพท์เป้าหมาย:</span>
+                                    <span className="font-jp text-white font-extrabold">{modeA.targetWord.lemma}</span>
+                                    <span className="text-slate-300">({modeA.targetWord.reading_kana})</span>
+                                    <span>• {modeA.targetWord.core_meanings?.join(', ')}</span>
+                                  </div>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Reveal & Audio Controls */}
+                      {!isRevealed ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsRevealed(true);
+                            playAudio(modeA.japanese);
+                          }}
+                          className="w-full min-h-12 py-3 rounded-2xl text-base font-bold bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-xl shadow-rose-600/30 transition-all active:opacity-80"
+                        >
+                          แตะเพื่อดูคำตอบ
+                        </button>
+                      ) : (
+                        <div className="space-y-4 animate-in fade-in duration-150">
+                          {/* Replay Scene Audio Button */}
+                          <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-2">
+                            <span className="text-sm text-slate-300 flex items-center gap-1.5 font-medium">
+                              <Volume2 className="w-4 h-4 text-rose-400 shrink-0" aria-hidden="true" />
+                              เสียงประโยค
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => playAudio(modeA.japanese)}
+                              className="min-h-11 px-4 rounded-xl bg-slate-800 text-sm text-slate-100 hover:bg-slate-700 flex items-center gap-1.5 font-semibold transition-colors active:opacity-80"
+                            >
+                              <RotateCcw className="w-4 h-4" aria-hidden="true" />
+                              ฟังอีกครั้ง
+                            </button>
+                          </div>
+
+                          {/* SRS Rating Buttons */}
+                          <div className="grid grid-cols-4 gap-2">
+                            <button
+                              type="button"
+                              onClick={() => handleSRSGrade('again')}
+                              className={gradeClass('rose')}
+                            >
+                              <X className="w-4 h-4" aria-hidden="true" />
+                              <span>อีกครั้ง</span>
+                              <span className="text-xs font-normal text-slate-300">12 ชม.</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleSRSGrade('hard')}
+                              className={gradeClass('amber')}
+                            >
+                              <Minus className="w-4 h-4" aria-hidden="true" />
+                              <span>ยาก</span>
+                              <span className="text-xs font-normal text-slate-300">1 วัน</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleSRSGrade('good')}
+                              className={gradeClass('indigo')}
+                            >
+                              <Check className="w-4 h-4" aria-hidden="true" />
+                              <span>ดี</span>
+                              <span className="text-xs font-normal text-slate-300">3 วัน</span>
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => handleSRSGrade('easy')}
+                              className={gradeClass('emerald')}
+                            >
+                              <Zap className="w-4 h-4" aria-hidden="true" />
+                              <span>ง่าย</span>
+                              <span className="text-xs font-normal text-slate-300">5 วัน</span>
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </>
+                  );
+                })()}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Mode B: Shadowing & Live Waveform Grader */}
       {activeMode === 'shadowing' && (
-        <div className="max-w-2xl mx-auto space-y-6">
+        <div className="max-w-2xl mx-auto space-y-4">
           {(() => {
             const modeB = getModeBShadowSentence();
 
             return (
-              <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 p-6 sm:p-8 space-y-6 shadow-2xl">
+              <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 p-4 sm:p-8 space-y-5 shadow-2xl">
                 {/* Sentence Selector Dropdown */}
                 {minedSentences.length > 0 && (
                   <div className="space-y-1.5 pb-2 border-b border-slate-800">
-                    <label className="text-xs font-semibold text-slate-400 flex items-center justify-between">
-                      <span>เลือกประโยคที่ต้องการฝึก Shadowing ({selectedMinedForShadow + 1} / {minedSentences.length}):</span>
-                      <span className="font-mono text-rose-400 text-[11px]">สลับประโยค</span>
+                    <label
+                      htmlFor="shadowing-sentence"
+                      className="text-xs font-semibold text-slate-300 flex items-center justify-between gap-2"
+                    >
+                      <span>เลือกประโยคที่จะฝึก ({selectedMinedForShadow + 1} / {minedSentences.length}):</span>
+                      <span className="font-mono text-rose-300">สลับประโยค</span>
                     </label>
                     <select
+                      id="shadowing-sentence"
                       value={selectedMinedForShadow}
                       onChange={(e) => {
                         setSelectedMinedForShadow(Number(e.target.value));
@@ -843,7 +872,7 @@ Output exactly in this JSON format:
                         setMoraFeedback([]);
                         setSpeechWarning(null);
                       }}
-                      className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-200 focus:outline-none focus:border-rose-500 font-medium cursor-pointer"
+                      className="w-full min-h-11 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-200 focus:outline-none focus:border-rose-500 font-medium cursor-pointer"
                     >
                       {minedSentences.map((m, idx) => {
                         const l = findLine(m.video_id, m.subtitle_line_id);
@@ -858,132 +887,131 @@ Output exactly in this JSON format:
                   </div>
                 )}
 
-                <div className="space-y-1.5">
-                  <span className="text-xs uppercase font-bold text-rose-400 tracking-wider flex items-center gap-1.5">
-                    <Flame className="w-3.5 h-3.5" />
-                    ฟังเสียงต้นฉบับ แล้วฝึกพูดตาม (Shadowing)
+                <div className="space-y-2">
+                  <span className="text-xs uppercase font-bold text-rose-300 tracking-wider flex items-center gap-1.5">
+                    <Flame className="w-3.5 h-3.5" aria-hidden="true" />
+                    ฟังเสียงต้นฉบับ แล้วพูดตาม
                   </span>
-                  <h3 className="font-jp text-2xl sm:text-3xl font-extrabold text-white pt-2 leading-relaxed">
+                  <h3 className="font-jp text-2xl sm:text-3xl font-extrabold text-white pt-1 leading-relaxed">
                     {modeB.japanese}
                   </h3>
-                  {modeB.thai && (
-                    <p className="text-sm font-medium text-emerald-300">
-                      🇹🇭 {modeB.thai}
-                    </p>
-                  )}
+                  {modeB.thai && <p className="text-sm font-medium text-emerald-300">🇹🇭 {modeB.thai}</p>}
                 </div>
 
-                <div className="flex flex-wrap items-center gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <button
+                    type="button"
                     onClick={() => playAudio(modeB.japanese)}
-                    className="inline-flex items-center gap-2 px-5 py-3 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-100 text-xs sm:text-sm font-semibold transition-colors"
+                    className="min-h-11 px-5 rounded-2xl bg-slate-800 hover:bg-slate-700 text-slate-100 text-sm font-semibold inline-flex items-center justify-center gap-2 transition-colors active:opacity-80"
                   >
-                    <Volume2 className="w-4 h-4 text-amber-400" />
-                    ฟังเสียงต้นฉบับ (Native)
+                    <Volume2 className="w-4 h-4 text-amber-400" aria-hidden="true" />
+                    ฟังเสียงต้นฉบับ
                   </button>
 
                   {!isRecording ? (
                     <button
+                      type="button"
                       onClick={startRecording}
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-xs sm:text-sm font-bold bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-xl shadow-rose-600/30 active:scale-95 transition-all"
+                      className="min-h-12 px-6 rounded-2xl text-sm font-bold bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white shadow-xl shadow-rose-600/30 inline-flex items-center justify-center gap-2 transition-all active:opacity-80"
                     >
-                      <Mic className="w-4 h-4" />
-                      <span>กดเพื่อพูด (Record)</span>
+                      <Mic className="w-4 h-4" aria-hidden="true" />
+                      <span>กดเพื่อพูด</span>
                     </button>
                   ) : (
                     <button
+                      type="button"
                       onClick={stopRecording}
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl text-xs sm:text-sm font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-xl shadow-emerald-600/40 animate-pulse transition-all"
+                      className="min-h-12 px-6 rounded-2xl text-sm font-bold bg-emerald-600 hover:bg-emerald-500 text-white shadow-xl shadow-emerald-600/40 animate-pulse inline-flex items-center justify-center gap-2 transition-all active:opacity-80"
                     >
-                      <MicOff className="w-4 h-4" />
+                      <MicOff className="w-4 h-4" aria-hidden="true" />
                       <span>หยุดและตรวจคะแนน</span>
                     </button>
                   )}
                 </div>
 
-                {/* Speech Recognition Warning (BUG-04) */}
+                {/* Speech Recognition Warning */}
                 {speechWarning && (
-                  <div className="p-4 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-300 text-xs font-bold flex items-center gap-2.5 animate-in fade-in">
-                    <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" />
+                  <div className="p-4 rounded-2xl bg-amber-500/15 border border-amber-500/40 text-amber-300 text-sm font-bold flex items-center gap-2.5 animate-in fade-in">
+                    <AlertCircle className="w-4 h-4 text-amber-400 shrink-0" aria-hidden="true" />
                     <span>{speechWarning}</span>
                   </div>
                 )}
 
-            {/* Live Real-Time Microphone Waveform */}
-            {isRecording && (
-              <div className="p-4 rounded-2xl bg-slate-950 border border-rose-500/40 space-y-3">
-                <div className="flex items-center justify-between text-xs font-semibold text-rose-300">
-                  <span className="flex items-center gap-2">
-                    <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping" />
-                    Recording live audio...
-                  </span>
-                  <span className="font-mono text-amber-300">Vol: {liveVolume}%</span>
-                </div>
-                {/* Dynamic EQ bars responding directly to user's voice */}
-                <div className="h-14 flex items-center justify-center gap-1.5 px-2">
-                  {Array.from({ length: 18 }).map((_, i) => {
-                    // Calculate height based on liveVolume with rhythmic spread
-                    const factor = Math.sin((i / 18) * Math.PI);
-                    const barHeight = Math.max(15, Math.min(100, liveVolume * factor * 1.5));
-                    return (
-                      <div
-                        key={i}
-                        className="w-2 bg-gradient-to-t from-rose-600 via-amber-500 to-emerald-400 rounded-full transition-all duration-75"
-                        style={{ height: `${barHeight}%` }}
-                      />
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+                {/* Live Real-Time Microphone Waveform */}
+                {isRecording && (
+                  <div className="p-4 rounded-2xl bg-slate-950 border border-rose-500/40 space-y-3">
+                    <div className="flex items-center justify-between text-xs font-semibold text-rose-300">
+                      <span className="flex items-center gap-2">
+                        <span className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-ping" />
+                        กำลังบันทึกเสียง...
+                      </span>
+                      <span className="font-mono text-amber-300">ระดับเสียง: {liveVolume}%</span>
+                    </div>
+                    {/* Dynamic EQ bars responding directly to user's voice */}
+                    <div className="h-14 flex items-center justify-center gap-1.5 px-2">
+                      {Array.from({ length: 18 }).map((_, i) => {
+                        // Calculate height based on liveVolume with rhythmic spread
+                        const factor = Math.sin((i / 18) * Math.PI);
+                        const barHeight = Math.max(15, Math.min(100, liveVolume * factor * 1.5));
+                        return (
+                          <div
+                            key={i}
+                            className="w-2 bg-gradient-to-t from-rose-600 via-amber-500 to-emerald-400 rounded-full transition-all duration-75"
+                            style={{ height: `${barHeight}%` }}
+                          />
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
-            {/* Pronunciation Grader Output */}
-            {pronunciationScore !== null && (
-              <div className="p-6 rounded-2xl bg-slate-950 border border-slate-800 space-y-5 animate-in fade-in duration-200">
-                <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">
-                    Pronunciation Accuracy Score:
-                  </span>
-                  <span
-                    className={`text-3xl font-extrabold font-mono ${
-                      pronunciationScore >= 80
-                        ? 'text-emerald-400'
-                        : pronunciationScore >= 60
-                        ? 'text-amber-400'
-                        : 'text-rose-400'
-                    }`}
-                  >
-                    {pronunciationScore}%
-                  </span>
-                </div>
-
-                {/* Character / Mora Diffing Feedback */}
-                <div className="space-y-2">
-                  <span className="text-xs text-slate-400 font-medium block">Mora-by-Mora Breakdown:</span>
-                  <div className="flex flex-wrap gap-1.5 font-jp text-xl">
-                    {moraFeedback.map((m, idx) => (
+                {/* Pronunciation Grader Output */}
+                {pronunciationScore !== null && (
+                  <div className="p-4 sm:p-6 rounded-2xl bg-slate-950 border border-slate-800 space-y-5 animate-in fade-in duration-200">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-slate-300 uppercase tracking-wider">
+                        คะแนนความแม่นยำ:
+                      </span>
                       <span
-                        key={idx}
-                        className={`px-2.5 py-1 rounded-xl font-bold transition-transform hover:scale-110 ${
-                          m.correct
-                            ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                            : 'bg-rose-500/20 text-rose-400 border border-rose-500/40'
+                        className={`text-3xl font-extrabold font-mono ${
+                          pronunciationScore >= 80
+                            ? 'text-emerald-400'
+                            : pronunciationScore >= 60
+                            ? 'text-amber-400'
+                            : 'text-rose-400'
                         }`}
                       >
-                        {m.char}
+                        {pronunciationScore}%
                       </span>
-                    ))}
-                  </div>
-                </div>
+                    </div>
 
-                {userTranscript && (
-                  <p className="text-xs text-slate-400">
-                    Detected speech:{' '}
-                    <span className="text-slate-200 font-jp font-semibold">"{userTranscript}"</span>
-                  </p>
+                    {/* Character / Mora Diffing Feedback */}
+                    <div className="space-y-2">
+                      <span className="text-xs text-slate-300 font-medium block">แยกทีละเสียง (โมระ):</span>
+                      <div className="flex flex-wrap gap-1.5 font-jp text-xl">
+                        {moraFeedback.map((m, idx) => (
+                          <span
+                            key={idx}
+                            className={`px-2.5 py-1 rounded-xl font-bold transition-transform hover:scale-110 ${
+                              m.correct
+                                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
+                                : 'bg-rose-500/20 text-rose-300 border border-rose-500/40'
+                            }`}
+                          >
+                            {m.char}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+
+                    {userTranscript && (
+                      <p className="text-xs text-slate-300">
+                        เสียงที่ตรวจพบ:{' '}
+                        <span className="text-slate-200 font-jp font-semibold">"{userTranscript}"</span>
+                      </p>
+                    )}
+                  </div>
                 )}
-              </div>
-            )}
               </div>
             );
           })()}
@@ -992,16 +1020,15 @@ Output exactly in this JSON format:
 
       {/* Mode C: Contextual AI Roleplay */}
       {activeMode === 'roleplay' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
           {/* Scenario Selector & Help Me Say Box */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="rounded-3xl bg-slate-900/90 border border-slate-800 p-5 space-y-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
-                Choose Immersion Scenario
-              </span>
+            <div className="rounded-3xl bg-slate-900/90 border border-slate-800 p-4 sm:p-5 space-y-3">
+              <span className="text-xs font-bold uppercase tracking-wider text-slate-300">เลือกสถานการณ์</span>
               <div className="space-y-2.5">
                 {scenarios.map((sc, idx) => (
-                  <div
+                  <button
+                    type="button"
                     key={idx}
                     onClick={() => {
                       setSelectedScenario(idx);
@@ -1009,87 +1036,82 @@ Output exactly in this JSON format:
                         {
                           sender: 'ai',
                           text: sc.initialBot,
-                          translation: 'Initial scenario greeting.',
+                          translation: 'คำทักทายเริ่มต้นของสถานการณ์',
                         },
                       ]);
                     }}
-                    className={`p-3.5 rounded-2xl cursor-pointer border transition-all ${
+                    className={`w-full text-left p-3.5 rounded-2xl border transition-all active:opacity-80 ${
                       selectedScenario === idx
                         ? 'bg-rose-600/15 border-rose-500/50 text-slate-100 shadow-md'
-                        : 'bg-slate-950/40 border-slate-800 text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                        : 'bg-slate-950/40 border-slate-800 text-slate-300 hover:text-slate-100 hover:bg-slate-800/60'
                     }`}
                   >
                     <div className="flex items-center gap-2.5 font-bold text-sm">
-                      <span className="text-lg">{sc.emoji}</span>
+                      <span className="text-lg" aria-hidden="true">{sc.emoji}</span>
                       <span>{sc.title}</span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-1 line-clamp-2 leading-relaxed">
-                      {sc.desc}
-                    </p>
-                  </div>
+                    <p className="text-sm text-slate-300 mt-1 line-clamp-2 leading-relaxed">{sc.desc}</p>
+                  </button>
                 ))}
               </div>
             </div>
 
             {/* Help Me Say Box */}
-            <div className="rounded-3xl bg-slate-900/90 border border-slate-800 p-5 space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase text-slate-300">
-                <Sparkles className="w-4 h-4 text-amber-400" />
-                <span>"Help Me Say..." Assistant</span>
+            <div className="rounded-3xl bg-slate-900/90 border border-slate-800 p-4 sm:p-5 space-y-3">
+              <div className="flex items-center gap-2 text-xs font-bold uppercase text-slate-200">
+                <Sparkles className="w-4 h-4 text-amber-400" aria-hidden="true" />
+                <span>ช่วยฉันพูด (Help Me Say)</span>
               </div>
-              <p className="text-[11px] text-slate-400 leading-relaxed">
-                Type what you want to express in English or Thai, and get native Japanese in Polite and Casual forms.
+              <p className="text-xs text-slate-300 leading-relaxed">
+                พิมพ์สิ่งที่อยากพูดเป็นไทยหรืออังกฤษ แล้วจะได้ประโยคญี่ปุ่นแบบสุภาพและแบบไม่เป็นทางการ
               </p>
               <form onSubmit={handleHelpMeSay} className="space-y-2">
                 <input
                   type="text"
-                  placeholder="e.g. Can I get a cold beer and the check?"
+                  aria-label="สิ่งที่อยากพูด"
+                  placeholder="เช่น ขอเบียร์เย็นกับเช็คบิลหน่อย"
                   value={helpMeSayInput}
                   onChange={(e) => setHelpMeSayInput(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-xs text-slate-100 focus:outline-none focus:border-rose-500"
+                  className="w-full min-h-11 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-rose-500"
                 />
                 <button
                   type="submit"
                   disabled={isHelpLoading}
-                  className="w-full py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-xs text-slate-200 font-bold transition-colors disabled:opacity-50"
+                  className="w-full min-h-11 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm text-slate-200 font-bold transition-colors active:opacity-80 disabled:opacity-50"
                 >
-                  {isHelpLoading ? 'Generating...' : 'Generate Natural Phrasing'}
+                  {isHelpLoading ? 'กำลังสร้าง...' : 'สร้างประโยค'}
                 </button>
               </form>
 
               {helpMeSayResult && (
-                <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-xs space-y-3 animate-in fade-in">
+                <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-sm space-y-3 animate-in fade-in">
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] uppercase font-bold text-indigo-400">
-                        Polite (丁寧語):
-                      </span>
+                      <span className="text-xs uppercase font-bold text-indigo-300">สุภาพ (丁寧語):</span>
                       <button
+                        type="button"
                         onClick={() => playAudio(helpMeSayResult.polite)}
-                        className="text-slate-400 hover:text-indigo-300"
+                        aria-label="ฟังประโยคสุภาพ"
+                        className="min-h-11 min-w-11 flex items-center justify-center -my-2 -mr-2 text-slate-300 hover:text-indigo-300 active:opacity-80"
                       >
-                        <Volume2 className="w-3.5 h-3.5" />
+                        <Volume2 className="w-4 h-4" aria-hidden="true" />
                       </button>
                     </div>
-                    <span className="font-jp text-slate-100 block font-medium">
-                      {helpMeSayResult.polite}
-                    </span>
+                    <span className="font-jp text-slate-100 block font-medium">{helpMeSayResult.polite}</span>
                   </div>
                   <div className="space-y-1 pt-1 border-t border-slate-800/80">
                     <div className="flex items-center justify-between">
-                      <span className="text-[10px] uppercase font-bold text-amber-400">
-                        Casual (ため口):
-                      </span>
+                      <span className="text-xs uppercase font-bold text-amber-300">ไม่เป็นทางการ (ため口):</span>
                       <button
+                        type="button"
                         onClick={() => playAudio(helpMeSayResult.casual)}
-                        className="text-slate-400 hover:text-amber-300"
+                        aria-label="ฟังประโยคไม่เป็นทางการ"
+                        className="min-h-11 min-w-11 flex items-center justify-center -my-2 -mr-2 text-slate-300 hover:text-amber-300 active:opacity-80"
                       >
-                        <Volume2 className="w-3.5 h-3.5" />
+                        <Volume2 className="w-4 h-4" aria-hidden="true" />
                       </button>
                     </div>
-                    <span className="font-jp text-slate-100 block font-medium">
-                      {helpMeSayResult.casual}
-                    </span>
+                    <span className="font-jp text-slate-100 block font-medium">{helpMeSayResult.casual}</span>
                   </div>
                 </div>
               )}
@@ -1097,16 +1119,11 @@ Output exactly in this JSON format:
           </div>
 
           {/* Interactive Chat Window */}
-          <div className="lg:col-span-8 rounded-3xl bg-slate-900/90 border border-slate-800 flex flex-col h-[620px] overflow-hidden shadow-2xl">
+          <div className="lg:col-span-8 rounded-3xl bg-slate-900/90 border border-slate-800 flex flex-col h-[70vh] min-h-[420px] lg:h-[620px] overflow-hidden shadow-2xl">
             {/* Chat Messages */}
             <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
               {chatMessages.map((msg, idx) => (
-                <div
-                  key={idx}
-                  className={`flex flex-col ${
-                    msg.sender === 'user' ? 'items-end' : 'items-start'
-                  }`}
-                >
+                <div key={idx} className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
                   <div
                     className={`max-w-[85%] rounded-3xl p-4 sm:p-5 space-y-2.5 ${
                       msg.sender === 'user'
@@ -1115,39 +1132,36 @@ Output exactly in this JSON format:
                     }`}
                   >
                     <div className="flex items-center justify-between gap-3">
-                      <p className="font-jp text-base sm:text-lg font-bold leading-relaxed">
-                        {msg.text}
-                      </p>
+                      <p className="font-jp text-base sm:text-lg font-bold leading-relaxed">{msg.text}</p>
                       {msg.sender === 'ai' && (
                         <button
+                          type="button"
                           onClick={() => playAudio(msg.text)}
-                          className="p-1.5 rounded-xl bg-slate-900 text-slate-400 hover:text-white border border-slate-800 hover:bg-slate-800 transition-colors"
-                          title="Speak"
+                          className="min-h-11 min-w-11 shrink-0 flex items-center justify-center rounded-xl text-slate-300 hover:text-white bg-slate-900 border border-slate-800 hover:bg-slate-800 transition-colors active:opacity-80"
+                          aria-label="ฟังเสียง"
                         >
-                          <Volume2 className="w-4 h-4 text-amber-400" />
+                          <Volume2 className="w-4 h-4 text-amber-400" aria-hidden="true" />
                         </button>
                       )}
                     </div>
 
                     {msg.translation && (
-                      <p className="text-xs text-slate-400 pt-1.5 border-t border-slate-800 font-medium">
+                      <p className="text-sm text-slate-300 pt-1.5 border-t border-slate-800 font-medium">
                         {msg.translation}
                       </p>
                     )}
 
                     {msg.explanation && (
-                      <p className="text-[11px] text-amber-300/90 italic">
-                        💡 {msg.explanation}
-                      </p>
+                      <p className="text-xs text-amber-300 italic">💡 {msg.explanation}</p>
                     )}
                   </div>
                 </div>
               ))}
 
               {isAILoading && (
-                <div className="flex items-center gap-2 text-xs text-slate-400 italic p-3">
+                <div className="flex items-center gap-2 text-sm text-slate-300 italic p-3">
                   <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                  AI Partner ({aiModel}) is typing in Japanese...
+                  AI ({aiModel}) กำลังพิมพ์ภาษาญี่ปุ่น...
                 </div>
               )}
             </div>
@@ -1155,22 +1169,23 @@ Output exactly in this JSON format:
             {/* Chat Input */}
             <form
               onSubmit={handleSendRoleplay}
-              className="p-3 sm:p-4 border-t border-slate-800 bg-slate-950/80 flex items-center gap-2.5"
+              className="p-3 sm:p-4 border-t border-slate-800 bg-slate-950/80 flex items-center gap-2"
             >
               <input
                 type="text"
-                placeholder="Reply in Japanese (e.g. 生ビールと焼き鳥をお願いします)..."
+                aria-label="ข้อความที่จะตอบ"
+                placeholder="พิมพ์ตอบเป็นภาษาญี่ปุ่น เช่น 生ビールと焼き鳥をお願いします"
                 value={roleplayInput}
                 onChange={(e) => setRoleplayInput(e.target.value)}
-                className="flex-1 px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-sm font-jp text-slate-100 focus:outline-none focus:border-rose-500"
+                className="flex-1 min-w-0 min-h-11 px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-sm font-jp text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-rose-500"
               />
               <button
                 type="submit"
                 disabled={isAILoading}
-                className="px-5 py-3 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold transition-all flex items-center gap-2 text-xs shadow-lg shadow-rose-600/30 active:scale-95 disabled:opacity-50"
+                className="min-h-11 px-4 sm:px-5 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold transition-all flex items-center gap-2 text-sm shadow-lg shadow-rose-600/30 active:opacity-80 disabled:opacity-50"
               >
-                <Send className="w-4 h-4" />
-                <span>Send</span>
+                <Send className="w-4 h-4" aria-hidden="true" />
+                <span>ส่ง</span>
               </button>
             </form>
           </div>
