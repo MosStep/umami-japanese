@@ -315,3 +315,24 @@ appears below and covers more. In gaps between lines the whole dock fades out (o
 4. The tap-word floating card must not cover the Thai translation: render it as a compact overlay anchored ABOVE the
    dock (or a bottom sheet over the controls), with a close button, max-height and its own scroll.
 Verify: `npm run build`; dev server at 375x812 — a 20-char line + Thai fits in the dock without scrolling the page.
+
+## Task 13: Tiny word popover (user device feedback on 1.0.9) — ship as 1.0.10 OTA (web-only)
+
+Phone screenshot (1.0.9): tapping a word opens the compact definition card as a large overlay anchored above the
+subtitle dock; it covers the video (word header, Thai meaning, two big status buttons, a full-width "ดูไวยากรณ์เชิงลึก & ถาม AI" button).
+User: "just a tiny popup when I tap".
+1. Replace that overlay with a small popover anchored to the tapped token inside the dock (position: absolute relative to
+   the token row; prefer just below the token, flip above if it would overflow the dock bottom; clamp horizontally to the
+   dock with 8 px margin; max-w-[15rem]; small arrow/caret optional). It must never cover the video area.
+2. Content (compact): line 1 = word (text-lg) + reading in kana (text-sm, indigo) ; line 2 = Thai meaning (text-sm, wraps,
+   max 2 lines then ellipsis) ; line 3 = a row of 4 small icon buttons (each 36×36 visual inside a ≥ 44×44 hit area via
+   padding/negative margin is NOT allowed — use h-11 w-11 rounded-full icon buttons, gap-1): Volume2 (listen), Check
+   (จำได้แล้ว, highlighted when known), Zap (กำลังเรียน, highlighted when learning), MoreHorizontal (opens the full
+   ContextualDictionaryModal as before). aria-labels in Thai.
+3. Dismiss: tap outside, tap the same token again, Escape, or when the active line changes. Only one popover at a time.
+4. Keep everything else in the dock as in Task 12 (Thai translation fully visible; the popover may overlap the Thai
+   line temporarily — acceptable — but not the video).
+5. Bump to 1.0.10 web-only: src/config/version.ts APP_VERSION_NAME '1.0.10', APP_VERSION_BASE 'v1.0.10', APP_BUILD 110,
+   NATIVE_BUILD stays 109; android/ untouched; public/live_catalog.json min_native_build stays 109, apk_url stays the v1.0.9
+   APK, release_notes = new first entry "💬 แตะคำแล้วขึ้นป๊อปอัปเล็กๆ ข้างคำ ไม่บังวิดีโอ" + "⚡ อัปเดตนี้ติดตั้งในแอปทันที ไม่ต้องลง APK", keep the rest;
+   then `npm run bundle` (writes version/bundle_url/checksum). Verify compareVersions('1.0.10','1.0.9') > 0 (semantic, not string).
