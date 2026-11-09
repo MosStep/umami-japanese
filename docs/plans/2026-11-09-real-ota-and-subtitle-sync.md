@@ -291,3 +291,7 @@ User wants fun general clips like はじめしゃちょー (Hajime Shacho) and J
    then `node scripts/tokenize-captions.mjs` for the new files only. Other caption files must stay byte-identical.
 4. Export Thai batches for the new files with `scripts/export-untranslated.mjs` (they have no manual th) — the controller
    dispatches translators. `npm run build` passes. Report per-file lines / % ja / batch files.
+7. (added after Task 8 review) Build-time word index: `scripts/tokenize-captions.mjs` (or a small new script run after it)
+   emits `src/data/captions/word-index.json` = `{ "<youtube_id>": ["<lemma>|<reading>", ...unique content keys] }`; the feed's
+   known-% uses it instead of loading every caption file (resolve dictionary ids at runtime from lemma+reading, so the
+   index cannot drift from dictionary changes). Then remove the idle sequential loading of all captions from the feed.
