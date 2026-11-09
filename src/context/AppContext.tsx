@@ -146,7 +146,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return localStorage.getItem(STORAGE_KEYS.API_KEY) || '';
   });
   const [aiModel, setAiModelState] = useState<string>(() => {
-    return localStorage.getItem(STORAGE_KEYS.AI_MODEL) || 'claude-haiku-5-5';
+    // nemotron-3-ultra takes minutes per reply; migrate saved Tenixe choices to claude-haiku-5-5.
+    let saved = localStorage.getItem(STORAGE_KEYS.AI_MODEL) || '';
+    const savedProvider = localStorage.getItem(STORAGE_KEYS.AI_PROVIDER) || 'tenixe';
+    if (savedProvider === 'tenixe' && (!saved || saved === 'nemotron-3-ultra')) {
+      saved = 'claude-haiku-5-5';
+      try {
+        localStorage.setItem(STORAGE_KEYS.AI_MODEL, saved);
+      } catch {
+        // storage unavailable: the in-memory default still applies
+      }
+    }
+    return saved || 'claude-haiku-5-5';
   });
   const [aiProvider, setAiProviderState] = useState<AIProvider>(() => {
     return (localStorage.getItem(STORAGE_KEYS.AI_PROVIDER) as AIProvider) || 'tenixe';

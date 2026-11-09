@@ -983,7 +983,19 @@ Output exactly in this JSON format:
                 )}
 
                 {/* Live Real-Time Microphone Waveform */}
-                {isRecording && (
+                {isRecording && isNativeSpeech() && (
+                  <div className="p-4 rounded-2xl bg-slate-950 border border-rose-500/40 flex flex-col items-center gap-3">
+                    <div className="h-16 w-16 rounded-full bg-rose-600 flex items-center justify-center animate-pulse shadow-lg shadow-rose-600/40">
+                      <Mic className="w-7 h-7 text-white" aria-hidden="true" />
+                    </div>
+                    <p className="text-sm font-bold text-rose-300">กำลังฟัง… พูดตามประโยคด้านบน</p>
+                    <p className="text-base text-slate-100 text-center min-h-[1.5rem] break-words w-full">
+                      {userTranscript}
+                    </p>
+                  </div>
+                )}
+
+                {isRecording && !isNativeSpeech() && (
                   <div className="p-4 rounded-2xl bg-slate-950 border border-rose-500/40 space-y-3">
                     <div className="flex items-center justify-between text-xs font-semibold text-rose-300">
                       <span className="flex items-center gap-2">
