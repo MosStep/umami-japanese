@@ -112,8 +112,51 @@ function tokenFor(t) {
   };
 }
 
+const isPunctToken = (t) => t.pos === '記号' || !/[\p{L}\p{N}]/u.test(t.surface);
+
+// Compact token for JSON: lemma and reading are omitted when they equal the surface.
+// Punctuation (記号) is not stored as its own token; it is appended to the surface of the
+// neighbouring token (or prefixed to the next one at the start of a line), so text is kept.
+function compactTokens(tokens) {
+  const out = [];
+  let prefix = '';
+  for (const t of tokens) {
+    if (isPunctToken(t)) {
+      if (out.length) out[out.length - 1].surface += t.surface;
+      else prefix += t.surface;
+      continue;
+    }
+    const c = { surface: prefix + t.surface, romaji: t.romaji, pos: t.pos };
+    prefix = '';
+    if (t.lemma !== t.surface) c.lemma = t.lemma;
+    if (t.reading && t.reading !== t.surface) c.reading = t.reading;
+    out.push(c);
+  }
+  if (prefix && out.length) out[out.length - 1].surface += prefix;
+  return out;
+}
+
+// kuromoji splits 待っ+てる into 待っ and てる. A reading ending in っ is the first half of a
+// geminate: the consonant comes from the next token's romaji ('t' before 'ch'), or 't' at the end.
+function fixSokuon(tokens) {
+  for (let i = 0; i < tokens.length; i++) {
+    const t = tokens[i];
+    const reading = t.reading ?? t.surface;
+    if (!/[っッ]$/.test(reading) || /[^aiueo]$/.test(t.romaji)) continue;
+    const next = tokens[i + 1];
+    const nr = next?.romaji ?? '';
+    if (nr && !/^[aiueon]/.test(nr) ) {
+      t.romaji += nr.startsWith('ch') ? 't' : nr[0];
+    } else {
+      t.romaji += 't';
+    }
+  }
+  return tokens;
+}
+
 function tokenizeLine(tokenizer, text) {
-  return tokenizer.tokenize(text).map(tokenFor).filter((t) => t.surface.length > 0);
+  const raw = tokenizer.tokenize(text).map(tokenFor).filter((t) => t.surface.length > 0);
+  return compactTokens(fixSokuon(raw));
 }
 
 function build() {

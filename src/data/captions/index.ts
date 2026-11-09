@@ -1,5 +1,5 @@
 /// <reference types="vite/client" />
-import { JLPTLevel, SubtitleLineRecord, SubtitleTokenJSON } from '../../schema/databaseSchema';
+import { DictionaryWordRecord, JLPTLevel, SubtitleLineRecord, SubtitleTokenJSON } from '../../schema/databaseSchema';
 import { DICTIONARY_WORDS } from '../mockVideos';
 
 /**
@@ -9,10 +9,10 @@ import { DICTIONARY_WORDS } from '../mockVideos';
  */
 export interface RawCaptionToken {
   surface: string;
-  lemma: string;
-  reading: string; // hiragana
-  romaji: string; // Hepburn
-  pos: string;
+  lemma?: string; // omitted in the JSON when equal to surface
+  reading?: string; // hiragana; omitted when equal to surface or when there is no reading
+  romaji: string; // Hepburn; '' when there is no reading
+  pos: string; // IPA part of speech, e.g. 名詞
 }
 
 export interface CaptionLine {
@@ -46,20 +46,37 @@ export const loadRealCaptions = (youtubeId: string): Promise<CaptionFile | undef
   return p;
 };
 
-// First dictionary word id for each lemma, so a token shares its word id with the dictionary.
-let lemmaToWordId: Map<string, string> | null = null;
-const dictionaryIdFor = (lemma: string): string | undefined => {
-  if (!lemmaToWordId) {
-    lemmaToWordId = new Map();
+// First dictionary entry per lemma.
+let dictByLemma: Map<string, DictionaryWordRecord> | null = null;
+const dictionaryEntryFor = (lemma: string): DictionaryWordRecord | undefined => {
+  if (!dictByLemma) {
+    dictByLemma = new Map();
     for (const w of DICTIONARY_WORDS) {
-      if (!lemmaToWordId.has(w.lemma)) lemmaToWordId.set(w.lemma, w.id);
+      if (!dictByLemma.has(w.lemma)) dictByLemma.set(w.lemma, w);
     }
   }
-  return lemmaToWordId.get(lemma);
+  return dictByLemma.get(lemma);
 };
+
+// Thai labels for IPA part-of-speech tags shown on the tap card.
+const POS_THAI: Record<string, string> = {
+  名詞: 'คำนาม',
+  動詞: 'คำกริยา',
+  形容詞: 'คำคุณศัพท์',
+  副詞: 'คำวิเศษณ์',
+  助詞: 'คำช่วย',
+  助動詞: 'คำช่วยกริยา',
+  連体詞: 'คำขยายนาม',
+  接続詞: 'คำเชื่อม',
+  感動詞: 'คำอุทาน',
+  接頭詞: 'คำนำหน้า',
+  記号: 'เครื่องหมาย',
+};
+const posThai = (pos: string): string => POS_THAI[pos] ?? (pos ? 'อื่นๆ' : '');
 
 // Pure punctuation / symbols (no letters, digits, kana or kanji).
 const isPunctuation = (text: string): boolean => !/[\p{L}\p{N}]/u.test(text);
+const isKanaOnly = (text: string): boolean => /^[぀-ゟ]+$/.test(text);
 
 // Fallback for lines without kuromoji tokens: split on whitespace and punctuation.
 const splitJapanese = (text: string): string[] =>
@@ -72,7 +89,7 @@ const fallbackTokens = (lineId: string, ja: string, jlpt: JLPTLevel): SubtitleTo
     surface,
     word_id: `${lineId}-${tokenIndex}`,
     lemma: surface,
-    reading_kana: surface,
+    reading_kana: isKanaOnly(surface) ? surface : '',
     romaji: '',
     jlpt_level: jlpt,
     part_of_speech: '',
@@ -80,32 +97,72 @@ const fallbackTokens = (lineId: string, ja: string, jlpt: JLPTLevel): SubtitleTo
   }));
 
 /**
+ * A token links to a dictionary entry only when the lemma matches AND the reading agrees,
+ * which keeps homographs such as 人 (ひと vs じん), 今 (いま vs こん) and 力 apart.
+ * Uninflected tokens must match the whole reading; inflected ones (待っ -> 待つ) must match the
+ * first kana, since the token reading is the inflected stem.
+ * Affix tags (接頭詞/接尾) never link.
+ */
+const linkedEntry = (t: RawCaptionToken, lemma: string, reading: string): DictionaryWordRecord | undefined => {
+  if (t.pos.startsWith('接頭') || t.pos.startsWith('接尾')) return undefined;
+  const entry = dictionaryEntryFor(lemma);
+  if (!entry || !reading) return undefined;
+  const uninflected = t.surface === lemma;
+  const agrees = uninflected
+    ? reading === entry.reading_kana
+    : entry.reading_kana.length > 0 && reading[0] === entry.reading_kana[0];
+  return agrees ? entry : undefined;
+};
+
+/**
  * Tokens from kuromoji. Punctuation is not a tap target: it is appended to the previous
  * token's surface (or prefixed to the next one at the start of a line), so the rendered
- * text keeps it. A token whose lemma matches a dictionary word uses that word's id.
+ * text keeps it.
  */
 const tokensFromRaw = (lineId: string, raw: RawCaptionToken[], jlpt: JLPTLevel): SubtitleTokenJSON[] => {
-  const folded: { surface: string; lemma: string; reading: string; romaji: string; pos: string }[] = [];
+  const folded: RawCaptionToken[] = [];
   let pendingPrefix = '';
   for (const t of raw) {
     if (isPunctuation(t.surface)) {
-      if (folded.length > 0) folded[folded.length - 1].surface += t.surface;
+      if (folded.length > 0) folded[folded.length - 1] = { ...folded[folded.length - 1], surface: folded[folded.length - 1].surface + t.surface };
       else pendingPrefix += t.surface;
       continue;
     }
     folded.push({ ...t, surface: pendingPrefix + t.surface });
     pendingPrefix = '';
   }
-  return folded.map((t, tokenIndex) => ({
-    surface: t.surface,
-    word_id: dictionaryIdFor(t.lemma) ?? `${lineId}-${tokenIndex}`,
-    lemma: t.lemma,
-    reading_kana: t.reading || t.surface,
-    romaji: t.romaji,
-    jlpt_level: jlpt,
-    part_of_speech: t.pos,
-    contextual_meaning: '',
-  }));
+  return folded.map((t, tokenIndex) => {
+    const lemma = t.lemma ?? t.surface;
+    const reading = t.reading ?? (isKanaOnly(t.surface) ? t.surface : '');
+    const romaji = t.romaji ?? '';
+    const entry = linkedEntry(t, lemma, reading);
+    const base = {
+      surface: t.surface,
+      lemma,
+      part_of_speech: posThai(t.pos),
+      contextual_meaning: '',
+    };
+    if (!entry) {
+      return {
+        ...base,
+        word_id: `${lineId}-${tokenIndex}`,
+        reading_kana: reading,
+        romaji,
+        jlpt_level: jlpt,
+      };
+    }
+    // Linked: the card shows the dictionary meaning and level.
+    const sameAsLemma = t.surface === lemma;
+    return {
+      ...base,
+      word_id: entry.id,
+      reading_kana: sameAsLemma ? entry.reading_kana : reading,
+      romaji: sameAsLemma ? entry.romaji : romaji,
+      jlpt_level: entry.jlpt_level,
+      thai_meaning: entry.core_meanings[0],
+      general_meanings: entry.core_meanings,
+    };
+  });
 };
 
 const buildTokens = (lineId: string, line: CaptionLine, ja: string, jlpt: JLPTLevel): SubtitleTokenJSON[] =>

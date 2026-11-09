@@ -34,7 +34,7 @@ export const VideoFeed: React.FC = () => {
   const [isSyncing, setIsSyncing] = useState<boolean>(false);
   const [syncToast, setSyncToast] = useState<string | null>(null);
 
-  const categories = [
+  const categoryDefs = [
     { id: 'All', label: 'ทั้งหมด' },
     { id: 'Podcasts', label: '🎙️ พอดแคสต์' },
     { id: 'Gaming', label: '🎮 เกม & แคสเกม' },
@@ -44,7 +44,13 @@ export const VideoFeed: React.FC = () => {
     { id: 'J-Pop', label: '🎵 เพลง J-Pop' },
     { id: 'Daily Conversation', label: '💬 สนทนา' },
   ];
-  const jlptLevels = ['All', 'N5', 'N4', 'N3', 'N2', 'N1'];
+  // Chips only for categories and levels that have at least one video record.
+  const categories = categoryDefs.filter(
+    (c) => c.id === 'All' || videos.some((v) => v.category === c.id)
+  );
+  const jlptLevels = ['All', 'N5', 'N4', 'N3', 'N2', 'N1'].filter(
+    (lvl) => lvl === 'All' || videos.some((v) => v.primary_jlpt === lvl)
+  );
 
   const handleLiveSync = async () => {
     setIsSyncing(true);
@@ -320,6 +326,9 @@ export const VideoFeed: React.FC = () => {
             </div>
           );
         })}
+        {filteredVideos.length === 0 && (
+          <p className="col-span-full text-center text-sm text-slate-400 py-12">ยังไม่มีคลิปในหมวดนี้</p>
+        )}
       </div>
 
       {/* Create New Album Modal (BUG-10) */}

@@ -127,7 +127,9 @@ export const TheDojo: React.FC = () => {
     if (!mined) return { japanese: 'ここに 3匹の ポケモンが いるじゃろう！', thai: 'ตรงนี้มีโปเกมอนอยู่ 3 ตัวยังไงล่ะ!', targetWord: null, targetLemma: '', line: undefined, mined: undefined };
     const line = findLine(mined.video_id, mined.subtitle_line_id);
     const targetWord = dictionaryWords.find((w) => w.id === mined.target_word_id);
-    const targetLemma = targetWord?.lemma || (line?.tokens_json?.find((t) => t.word_id === mined.target_word_id)?.surface) || '';
+    // Prefer the inflected surface as it appears in the line (待ってる), then the dictionary lemma.
+    const targetLemma =
+      line?.tokens_json?.find((t) => t.word_id === mined.target_word_id)?.surface || targetWord?.lemma || '';
     // Never use the Thai user_note as the Japanese text; fall back to the target lemma.
     const japanese = line?.raw_text || targetLemma || '';
     const missing = !japanese;

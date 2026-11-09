@@ -642,9 +642,11 @@ export const ImmersionPlayer: React.FC = () => {
                         <span className="text-xl sm:text-2xl font-jp font-extrabold text-white tracking-wide">
                           {selectedToken.token.surface}
                         </span>
-                        <span className="text-sm font-jp text-indigo-300 font-bold">
-                          ({selectedToken.token.reading_kana})
-                        </span>
+                        {selectedToken.token.reading_kana && (
+                          <span className="text-sm font-jp text-indigo-300 font-bold">
+                            ({selectedToken.token.reading_kana})
+                          </span>
+                        )}
                         {selectedToken.token.romaji && (
                           <span className="text-xs font-mono text-cyan-300">
                             [{selectedToken.token.romaji}]

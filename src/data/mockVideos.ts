@@ -3593,48 +3593,6 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "description": "Official classic anime from Ani-One Asia: Ichigo Kurosaki encounters Soul Reaper Rukia Kuchiki and awakens his dormant spirit power."
   },
   {
-    "id": "vid-game-n5-starter",
-    "youtube_id": "nGLVwQuwnfY",
-    "title": "Pokémon FireRed/LeafGreen: Choose Starter Pokémon (N5)",
-    "japanese_title": "ポケモンで学ぶ日本語！最初の3匹を選ぼう (N5)",
-    "channel": "Game Gengo ゲーム言語",
-    "category": "Gaming",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "jlpt_distribution": {
-      "N5": 85,
-      "N4": 15,
-      "N3": 0,
-      "N2": 0,
-      "N1": 0
-    },
-    "duration": 1716,
-    "thumbnail_gradient": "from-red-600 via-orange-600 to-slate-900",
-    "scene_emoji": "🎮",
-    "description": "Beginner gaming Japanese: learning basic vocabulary, commands, choosing your partner Pokémon, and starting your adventure."
-  },
-  {
-    "id": "vid-game-n5-letgo",
-    "youtube_id": "a6JwRs2in0E",
-    "title": "Pokémon Let’s Go Pikachu: 100 Beginner Words (N5)",
-    "japanese_title": "ピカチュウと冒険！超重要100単語でゲーム攻略 (N5)",
-    "channel": "Game Gengo ゲーム言語",
-    "category": "Gaming",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "jlpt_distribution": {
-      "N5": 80,
-      "N4": 20,
-      "N3": 0,
-      "N2": 0,
-      "N1": 0
-    },
-    "duration": 5508,
-    "thumbnail_gradient": "from-yellow-500 via-amber-600 to-stone-900",
-    "scene_emoji": "⚡",
-    "description": "Essential RPG and gaming vocabulary: items, monster balls, catching Pokémon, and basic battle menu interactions."
-  },
-  {
     "id": "vid-n4-lemon",
     "youtube_id": "SX_ViT4Ra7k",
     "title": "Lemon - Kenshi Yonezu: Learn Japanese Through Music (N4)",
@@ -3663,39 +3621,39 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 45,
-      "N3": 20,
+      "N5": 67,
+      "N4": 30,
+      "N3": 2,
       "N2": 0,
       "N1": 0
     },
     "duration": 1470,
     "thumbnail_gradient": "from-green-900 via-emerald-950 to-slate-900",
     "scene_emoji": "⚽",
-    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+    "description": "ตัวเอกย้ายจากเอฮิเมะเข้าร่วมทีมเยาวชนของสโมสรฟุตบอลในโตเกียว และต้องฝ่าการแข่งขันที่เข้มข้น"
   },
   {
     "id": "vid-anione-battlespirits-01",
     "youtube_id": "3umS7qVj2kg",
     "title": "แบทเทิลสปิริตส์ [Re] ตอนที่ 1 (Ani-One Asia)",
-    "japanese_title": "【バトルスピリッツ】[Re] 絶界の空 第1話 (Ani-One Asia)",
+    "japanese_title": "Battle Spirits [Re] ZEKKAI NO KU",
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 45,
-      "N3": 20,
+      "N5": 47,
+      "N4": 30,
+      "N3": 1,
       "N2": 0,
       "N1": 0
     },
     "duration": 1426,
     "thumbnail_gradient": "from-sky-900 via-blue-950 to-slate-900",
     "scene_emoji": "🎴",
-    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+    "description": "เรื่องราวในยุคบากูมัตสึของญี่ปุ่น ที่มีการดวลบัตร Battle Spirits แบบ Eternal ของซามูไรและแบบ Standard Battle ของสามัญชน"
   },
   {
     "id": "vid-anione-darkmachine-01",
@@ -3705,81 +3663,81 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 45,
-      "N3": 20,
+      "N5": 55,
+      "N4": 25,
+      "N3": 0,
       "N2": 0,
       "N1": 0
     },
     "duration": 1370,
     "thumbnail_gradient": "from-neutral-900 via-stone-950 to-slate-900",
     "scene_emoji": "🌑",
-    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+    "description": "ตัวเอกชื่อไคริได้รับคำสั่งจากปู่ให้ไปตามหาผู้เล่น DARK MACHINE ที่เมืองโคงาเนะทานิ ซึ่งเศรษฐกิจผูกอยู่กับเกมนี้"
   },
   {
     "id": "vid-anione-kurumi-01",
     "youtube_id": "LKiQ70L4IGQ",
     "title": "FX ไฟเตอร์ คุรุมิจัง ตอนที่ 1 (Ani-One Asia)",
-    "japanese_title": "【FXファイター久留美ちゃん】第1話 (Ani-One Asia)",
+    "japanese_title": "FX戦士くるみちゃん",
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 45,
-      "N3": 20,
+      "N5": 82,
+      "N4": 6,
+      "N3": 0,
       "N2": 0,
       "N1": 0
     },
     "duration": 1425,
     "thumbnail_gradient": "from-pink-700 via-rose-900 to-slate-900",
     "scene_emoji": "🎀",
-    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+    "description": "นักศึกษาชื่อคุรุมิเริ่มอาชีพเทรด FX ตามเป้าหมายของเธอ (เรื่องแต่งทั้งหมด ไม่ใช่คำแนะนำการลงทุน)"
   },
   {
     "id": "vid-anione-rayearth-01",
     "youtube_id": "t0rFFd8BtvA",
-    "title": "แมจิกไนท์ เรย์เอิร์ธ ตอนที่ 1 (Ani-One Asia)",
+    "title": "เมจิกไนท์ เรย์เอิร์ธ ตอนที่ 1 (Ani-One Asia)",
     "japanese_title": "【魔法騎士レイアース】第1話 (Ani-One Asia)",
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 45,
-      "N3": 20,
+      "N5": 75,
+      "N4": 23,
+      "N3": 0,
       "N2": 0,
       "N1": 0
     },
     "duration": 1404,
     "thumbnail_gradient": "from-fuchsia-800 via-violet-950 to-slate-900",
     "scene_emoji": "🧙",
-    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+    "description": "ฮิคารุ อุมิ และฟู สามสาวนักเรียนถูกเรียกตัวไปยังโลกต่างมิติ เซเฟียโร เพื่อช่วยกอบกู้โลกและเจ้าหญิง"
   },
   {
     "id": "vid-anione-mgrp-01",
     "youtube_id": "lHAh8nfXB1k",
-    "title": "โปรเจกต์เลี้ยงเด็กสาวเวทมนตร์ Restart ตอนที่ 1 (Ani-One Asia)",
+    "title": "แผนพัฒนาสาวน้อยเวทมนตร์ รีสตาร์ท ตอนที่ 1 (Ani-One Asia)",
     "japanese_title": "【魔法少女育成計画 restart】第1話 (Ani-One Asia)",
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 45,
-      "N3": 20,
+      "N5": 80,
+      "N4": 20,
+      "N3": 0,
       "N2": 0,
       "N1": 0
     },
     "duration": 1430,
     "thumbnail_gradient": "from-rose-800 via-purple-950 to-slate-900",
     "scene_emoji": "🔮",
-    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+    "description": "เบ็ตติกาและเด็กสาวเวทมนตร์อีกหลายคนถูกบังคับเข้าร่วมเกมจำลองลึกลับที่ซ่อนอันตรายไว้"
   },
   {
     "id": "vid-anione-sword-s2-01",
@@ -3789,18 +3747,18 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 45,
-      "N3": 20,
+      "N5": 52,
+      "N4": 15,
+      "N3": 0,
       "N2": 0,
       "N1": 0
     },
     "duration": 1420,
     "thumbnail_gradient": "from-slate-700 via-slate-900 to-zinc-950",
     "scene_emoji": "🗡️",
-    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+    "description": "ฟลัน สาวเผ่าแมวดำที่เคยถูกกดขี่ ฝึกวิชากับดาบอัจฉริยะ และออกผจญภัยในสมาคมนักผจญภัย"
   },
   {
     "id": "vid-anione-goblin-01",
@@ -3810,18 +3768,18 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 45,
-      "N3": 20,
+      "N5": 65,
+      "N4": 26,
+      "N3": 0,
       "N2": 0,
       "N1": 0
     },
     "duration": 1420,
     "thumbnail_gradient": "from-lime-900 via-green-950 to-slate-900",
     "scene_emoji": "👺",
-    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+    "description": "ยากามิ อากิระ พนักงานบริษัทที่เสียชีวิตขณะช่วยเด็ก เกิดใหม่เป็นก็อบลินและสืบทอดสกิลจากก็อบลินที่จากไป"
   }
 ];
 
@@ -4256,124 +4214,6 @@ export const MOCK_SUBTITLE_LINES: Record<string, SubtitleLineRecord[]> = {
           "part_of_speech": "Noun + Copula",
           "contextual_meaning": "am a Soul Reaper",
           "thai_meaning": "คือยมทูต!"
-        }
-      ]
-    }
-  ],
-  "vid-game-n5-starter": [
-    {
-      "id": "sub-poke-01",
-      "video_id": "vid-game-n5-starter",
-      "line_index": 0,
-      "start_time_ms": 0,
-      "end_time_ms": 5500,
-      "speaker": "オーキド博士 (Oak)",
-      "raw_text": "ここに 3匹の ポケモンが いるじゃろう！",
-      "natural_translation": "Here are 3 Pokémon, as you can see!",
-      "thai_translation": "ตรงนี้มีโปเกมอนอยู่ 3 ตัวยังไงล่ะ!",
-      "ai_grammar_summary": "〜じゃろう = คำลงท้ายของผู้เฒ่า (รูปโบราณของ でしょう)",
-      "tokens_json": [
-        {
-          "surface": "ここに",
-          "word_id": "w-koko",
-          "lemma": "ここ",
-          "reading_kana": "ここに",
-          "romaji": "koko ni",
-          "jlpt_level": "N5",
-          "part_of_speech": "Pronoun",
-          "contextual_meaning": "right here",
-          "thai_meaning": "ตรงนี้"
-        },
-        {
-          "surface": "3匹の",
-          "word_id": "w-sanbiki",
-          "lemma": "匹",
-          "reading_kana": "さんびきの",
-          "romaji": "sanbiki no",
-          "jlpt_level": "N5",
-          "part_of_speech": "Counter",
-          "contextual_meaning": "three animals",
-          "thai_meaning": "3 ตัว"
-        },
-        {
-          "surface": "ポケモンが",
-          "word_id": "w-pokemon",
-          "lemma": "ポケモン",
-          "reading_kana": "ぽけもんが",
-          "romaji": "pokemon ga",
-          "jlpt_level": "N5",
-          "part_of_speech": "Noun",
-          "contextual_meaning": "Pokémon",
-          "thai_meaning": "โปเกมอน"
-        },
-        {
-          "surface": "いるじゃろう",
-          "word_id": "w-iru",
-          "lemma": "いる",
-          "reading_kana": "いるじゃろう",
-          "romaji": "iru jarou",
-          "jlpt_level": "N5",
-          "part_of_speech": "Verb",
-          "contextual_meaning": "there are, right?",
-          "thai_meaning": "มีอยู่ใช่ไหมล่ะ"
-        }
-      ]
-    },
-    {
-      "id": "sub-poke-02",
-      "video_id": "vid-game-n5-starter",
-      "line_index": 1,
-      "start_time_ms": 5600,
-      "end_time_ms": 11000,
-      "speaker": "オーキド博士 (Oak)",
-      "raw_text": "好きな ポケモンを 1匹 選ぶのじゃ！",
-      "natural_translation": "Choose 1 Pokémon that you like!",
-      "thai_translation": "จงเลือกโปเกมอนตัวที่เจ้าชอบมา 1 ตัว!",
-      "ai_grammar_summary": "〜のじゃ = คำสั่งหรือข้อแนะนำที่อ่อนโยนของผู้ใหญ่",
-      "tokens_json": [
-        {
-          "surface": "好きな",
-          "word_id": "w-suki",
-          "lemma": "好き",
-          "reading_kana": "すきな",
-          "romaji": "suki na",
-          "jlpt_level": "N5",
-          "part_of_speech": "Na-Adjective",
-          "contextual_meaning": "liked / favorite",
-          "thai_meaning": "ที่ชอบ"
-        },
-        {
-          "surface": "ポケモンを",
-          "word_id": "w-pokemon",
-          "lemma": "ポケモン",
-          "reading_kana": "ぽけもんを",
-          "romaji": "pokemon o",
-          "jlpt_level": "N5",
-          "part_of_speech": "Noun",
-          "contextual_meaning": "Pokémon (obj)",
-          "thai_meaning": "โปเกมอน"
-        },
-        {
-          "surface": "1匹",
-          "word_id": "w-ippiki",
-          "lemma": "匹",
-          "reading_kana": "いっぴき",
-          "romaji": "ippiki",
-          "jlpt_level": "N5",
-          "part_of_speech": "Counter",
-          "contextual_meaning": "one animal",
-          "thai_meaning": "1 ตัว"
-        },
-        {
-          "surface": "選ぶのじゃ",
-          "word_id": "w-erabu",
-          "lemma": "選ぶ",
-          "reading_kana": "えらぶのじゃ",
-          "romaji": "erabu no ja",
-          "jlpt_level": "N5",
-          "part_of_speech": "Verb",
-          "contextual_meaning": "choose!",
-          "thai_meaning": "จงเลือกสิ"
         }
       ]
     }

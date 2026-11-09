@@ -114,13 +114,13 @@ const STORAGE_KEYS = {
 };
 
 const DEFAULT_ALBUMS: Album[] = [
-  { id: 'alb-daily', name: 'Tokyo Everyday Life', emoji: '🗼', video_ids: ['vid-game-n5-starter', 'vid-anime-n4-cafe1'] },
-  { id: 'alb-favorites', name: 'Must-Watch Anime & Gaming', emoji: '🌟', video_ids: ['vid-game-n5-starter', 'vid-anime-n4-cafe1', 'vid-n4-pretender'] },
+  { id: 'alb-daily', name: 'Anime Starter Episodes', emoji: '⚔️', video_ids: ['vid-anione-jjk-01', 'vid-anione-bleach-01', 'vid-anione-aoashi-s2-01'] },
+  { id: 'alb-favorites', name: 'Must-Watch Anime', emoji: '🌟', video_ids: ['vid-anione-jjk-01', 'vid-anione-jjk-02', 'vid-anione-bleach-01'] },
 ];
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<'feed' | 'player' | 'words' | 'dojo' | 'profile'>('feed');
-  const [activeVideoId, setActiveVideoId] = useState<string>('vid-game-n5-starter');
+  const [activeVideoId, setActiveVideoId] = useState<string>('vid-anione-jjk-01');
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
 
   // External API Config (Kob AI active by default with user key)
@@ -231,29 +231,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const saved = localStorage.getItem(STORAGE_KEYS.MINED_SENTENCES);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
-          // Sanitize any stale seed references from previous build
-          return parsed.map((item: MinedSentenceRecord) => {
-            if (item.video_id === 'vid-anime-01') {
-              return {
-                ...item,
-                video_id: 'vid-game-n5-starter',
-                subtitle_line_id: 'sub-poke-01',
-                target_word_id: 'w-pokemon',
-                user_note: 'ตรงนี้มีโปเกมอนอยู่ 3 ตัวยังไงล่ะ! (ポケモン)',
-              };
-            }
-            if (item.video_id === 'vid-izakaya-03') {
-              return {
-                ...item,
-                video_id: 'vid-game-n5-starter',
-                subtitle_line_id: 'sub-poke-02',
-                target_word_id: 'w-erabu',
-                user_note: 'จงเลือกโปเกมอนตัวที่เธอชอบมา 1 ตัวสิ! (選ぶ)',
-              };
-            }
-            return item;
-          });
+        if (Array.isArray(parsed)) {
+          // Drop persisted sentences whose video no longer exists (deleted records or stale seeds).
+          const knownVideoIds = new Set([...MOCK_VIDEOS, ...customVideos].map((v) => v.id));
+          const kept = parsed.filter((item: MinedSentenceRecord) => knownVideoIds.has(item.video_id));
+          if (kept.length > 0) return kept;
         }
       }
     } catch {}
@@ -261,10 +243,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       {
         id: 'mined-seed-1',
         user_id: 'local_user',
-        video_id: 'vid-game-n5-starter',
-        subtitle_line_id: 'sub-poke-01',
-        target_word_id: 'w-pokemon',
-        user_note: 'ตรงนี้มีโปเกมอนอยู่ 3 ตัวยังไงล่ะ! (ポケモン)',
+        video_id: 'vid-anione-jjk-01',
+        subtitle_line_id: 'cap-vid-anione-jjk-01-162836',
+        target_word_id: 'w-matsu',
+        user_note: 'รอ (待つ)',
         album_id: 'alb-favorites',
         srs_interval: 1,
         srs_ease: 2.5,
@@ -275,29 +257,15 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       {
         id: 'mined-seed-2',
         user_id: 'local_user',
-        video_id: 'vid-game-n5-starter',
-        subtitle_line_id: 'sub-poke-02',
-        target_word_id: 'w-erabu',
-        user_note: 'จงเลือกโปเกมอนตัวที่เธอชอบมา 1 ตัวสิ! (選ぶ)',
+        video_id: 'vid-anione-jjk-01',
+        subtitle_line_id: 'cap-vid-anione-jjk-01-126479',
+        target_word_id: 'w-hashiru',
+        user_note: 'วิ่ง (走る)',
         album_id: 'alb-favorites',
         srs_interval: 2,
         srs_ease: 2.5,
         srs_repetitions: 2,
         next_review_at: new Date(Date.now() + 86400000).toISOString(),
-        created_at: new Date().toISOString(),
-      },
-      {
-        id: 'mined-seed-3',
-        user_id: 'local_user',
-        video_id: 'vid-anime-n4-cafe1',
-        subtitle_line_id: 'sub-kuma-01',
-        target_word_id: 'w-kafe',
-        user_note: 'ยินดีต้อนรับสู่คาเฟ่หมีขาวครับ! (カフェ)',
-        album_id: 'alb-favorites',
-        srs_interval: 1,
-        srs_ease: 2.5,
-        srs_repetitions: 0,
-        next_review_at: new Date().toISOString(),
         created_at: new Date().toISOString(),
       },
     ];

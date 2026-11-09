@@ -97,12 +97,16 @@ export const ContextualDictionaryModal: React.FC<Props> = ({ data, onClose }) =>
                 <h2 className="text-2xl sm:text-3xl font-bold font-jp text-white tracking-wide">
                   {token.lemma}
                 </h2>
-                <span className="text-sm sm:text-base text-indigo-300 font-jp">
-                  【{token.reading_kana}】
-                </span>
-                <span className="text-xs text-slate-400 font-mono">
-                  {token.romaji}
-                </span>
+                {token.reading_kana && (
+                  <span className="text-sm sm:text-base text-indigo-300 font-jp">
+                    【{token.reading_kana}】
+                  </span>
+                )}
+                {token.romaji && (
+                  <span className="text-xs text-slate-400 font-mono">
+                    {token.romaji}
+                  </span>
+                )}
                 <button
                   onClick={() => playAudio(token.surface)}
                   className="p-1.5 rounded-lg bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/30 transition-colors min-w-[36px] min-h-[36px] flex items-center justify-center"
