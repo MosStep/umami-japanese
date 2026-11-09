@@ -204,3 +204,52 @@ YouTube AUTO translation are re-translated from the Japanese. Official manual Th
 3. `scripts/import-translations.mjs` merges them back into `src/data/captions/*.json` with `th_source: "ai"`;
    `source.th` becomes `"manual+ai"` / `"ai"` accordingly.
 4. Verify: 100% of ja lines have th; spot-check table of 10 random lines per video in the report; `npm run build` passes.
+
+## Task 8: Device-test fixes from 1.0.7 (user, 2026-11-09) — ship in 1.0.8 OTA (web-only, no native changes)
+
+Screenshots from the user's Android phone running 1.0.7:
+A. Top bar sits under the status bar / camera cutout (app is edge-to-edge; Capacitor 8 SystemBars runs in default
+   "css" insets mode and injects `--safe-area-inset-top/right/bottom/left` CSS variables on <html>).
+B. Contextual dictionary sheet (ContextualDictionaryModal.tsx) for an unlinked token (e.g. 宣戦): "ความหมายในประโยคนี้" shows
+   `""`, the dictionary list shows one empty bullet, the source sentence's 🇹🇭 line is empty (Code Geass Thai ships in 1.0.8),
+   and the page behind the sheet scrolls when the user drags. User: hard to use, meaning hard to find.
+C. Videos feed still shows two "User Imported" clips ("Codeguass", "Codeguess", 0:10, no subtitles) that the user once
+   added by hand (custom videos in localStorage `umami_custom_videos_v1`); user wants them gone.
+D. Profile shows fake seeded stats the user never earned: streak 7 days, 84 immersion mins, XP 1951 (seeded
+   xp_viewing 450 / reading 380 / listening 520 / shadowing 290 in AppContext ~:277-290), Known Words 10 (seeded word
+   states), Mined Cards 2 (mined-seed-1/2 seeded in Task 5). User: these are not my stats.
+
+1. Safe areas: a shared CSS utility `.safe-top { padding-top: var(--safe-area-inset-top, env(safe-area-inset-top, 0px)); }`
+   applied to the top app bar (Navbar.tsx; also make sure sticky offsets that assumed the bar height — e.g. TheDojo's
+   `top-[53px] sm:top-[57px]` — add the inset: `top-[calc(53px+var(--safe-area-inset-top,0px))]`); bottom nav and
+   bottom sheets use `var(--safe-area-inset-bottom, env(safe-area-inset-bottom, 0px))` (update `.safe-area-bottom` in index.css).
+   Full-screen modals (AutoUpdateModal, SettingsModal, ContextualDictionaryModal) must not be clipped by the cutout.
+2. Dictionary sheet usability:
+   - Lock background scroll while any modal/sheet is open (`document.body.style.overflow='hidden'` + restore on close,
+     via a small `useLockBodyScroll(isOpen)` hook in src/utils/, used by all three modals); `overscroll-behavior: contain` on the sheet body.
+   - Never render empty quotes/bullets: if a token has no meaning, show "ยังไม่มีความหมายในคลัง — แตะ 'วิเคราะห์ไวยากรณ์' เพื่อให้ AI อธิบาย"
+     (muted) and hide the empty dictionary list; hide the 🇹🇭 row when the line has no Thai.
+   - Put the most useful info first: word + reading + Thai meaning (large) + the line's Thai translation, then the
+     status buttons, then the rest. Thai UI labels only (drop the English "(Context)", "(DICTIONARY)", "CONTEXTUAL DICTIONARY",
+     "(SOURCE SENTENCE)", "(Optional note)" suffixes). Keep the existing actions/handlers.
+   - Tap targets ≥ 44px, text ≥ 12px (ui-ux-pro-max rules from Task 4).
+3. Custom (user-imported) videos: add a delete action on user-imported feed cards (trash icon button, confirm dialog in
+   Thai "ลบคลิปนี้ออกจากแอป?"), wired to a new `removeCustomVideo(id)` in AppContext that also removes its custom lines and
+   any mined sentences on it. Plus a one-time migration (flag `umami_migr_108_v1`) that removes custom videos whose
+   subtitle line list is empty or whose duration ≤ 15 s (the broken "Codeguass/Codeguess" imports).
+4. Real stats only: new installs start at zero — streak 0, immersion 0, all XP 0, no seeded word states, no seeded mined
+   sentences. One-time migration (same flag) for existing users: subtract the exact seed values from stats (floor at 0)
+   — streak/immersion: reset to 0 then track for real; XP: xp_x = max(0, xp_x − seed_x); remove mined sentences with ids
+   starting `mined-seed-`; remove word states that exactly match the seeded set (only if they still equal the seed status).
+   Verify streak and immersion are actually tracked: streak = consecutive local days with app use (store last-active date),
+   immersion minutes = real playing time from the player (accumulate while YT state is playing). Implement if missing.
+   Known Words / Mined Cards on the profile must be computed from real wordStates / minedSentences.
+   Also: the "viewing" XP (+2 per line change, ~400 lines per episode) inflates XP — cap at +2 per line only the first time
+   that line becomes active per video session.
+5. OTA robustness (final-review Important): move `CapacitorUpdater.notifyAppReady()` from before render to a `useEffect`
+   in App after first mount, so a bundle that crashes while rendering gets rolled back.
+6. docs/RELEASE.md: add (a) a failed version is blocked forever on devices — ship fixes under a NEW version string,
+   never re-upload; (b) while 1.0.6 installs exist, attach `umami-app-debug.apk` (the latest native APK) to EVERY release and
+   start the body with the 1.0.6 warning (tap "📦 ติดตั้งไฟล์ APK ใหม่", not "⚡ อัปเดตในแอพทันที").
+Verify: `npm run build` passes; dev server at 375x812 with `document.documentElement.style.setProperty('--safe-area-inset-top','32px')`
+shows the bar below the 32 px inset; modal scroll lock works; migration tested by seeding localStorage with the old seed values.
