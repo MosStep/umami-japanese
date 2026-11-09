@@ -12,7 +12,13 @@ import {
   MOCK_SUBTITLE_LINES,
   DICTIONARY_WORDS,
 } from '../data/mockVideos';
-import { buildRealSubtitleLines, loadRealCaptions } from '../data/captions';
+import {
+  buildRealSubtitleLines,
+  linkWordIndexKey,
+  loadCaptionFile,
+  loadWordIndex,
+  type WordIndex,
+} from '../data/captions';
 import { STORAGE_KEYS } from '../config/storageKeys';
 import { runMigration108 } from '../utils/migration108';
 import { localDayKey, nextStreak } from '../utils/streak';
@@ -70,8 +76,9 @@ interface AppContextType {
   getWordStatus: (wordId: string) => WordLearningStatus;
   // null = not computable yet (captions still loading) or no content words.
   getKnownWordPercentage: (videoId: string) => number | null;
-  captionsReady: (videoId: string) => boolean;
-  ensureCaptionsLoaded: (videoIds: string[]) => void;
+  // Word index (src/data/captions/word-index.json) that gives the feed's known %; loaded on demand.
+  wordIndexStatus: 'idle' | 'loading' | 'ready' | 'failed';
+  ensureWordIndexLoaded: () => void;
   dictionaryWords: DictionaryWordRecord[];
 
   // Subtitles & Player UI Preferences
@@ -184,6 +191,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const manualLines = { ...MOCK_SUBTITLE_LINES, ...customLines };
   // Real captions per video record id, loaded on demand. null = no caption file (MOCK fallback).
   const [realLines, setRealLines] = useState<Record<string, SubtitleLineRecord[] | null>>({});
+  const [wordIndex, setWordIndex] = useState<WordIndex | null>(null);
+  const [wordIndexStatus, setWordIndexStatus] = useState<'idle' | 'loading' | 'ready' | 'failed'>('idle');
   const allLines = useMemo(() => {
     const real: Record<string, SubtitleLineRecord[]> = {};
     for (const [id, lines] of Object.entries(realLines)) {
@@ -345,7 +354,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return out;
   }, [allLines]);
 
-  // Known % per clip, memoized on the word index and the word statuses.
+  // Known % per clip with real captions, from the word index (no caption file is loaded for it).
+  // Each index key resolves to a dictionary id (linked) or to its lemma (unlinked, never known).
+  // Unique resolved keys / unique content words, known = linked id whose status is 'known'.
+  const knownPctByYoutubeId = useMemo(() => {
+    const out: Record<string, number | null> = {};
+    if (!wordIndex) return out;
+    for (const [youtubeId, keys] of Object.entries(wordIndex)) {
+      const resolved = new Map<string, boolean>(); // resolved key -> known
+      for (const key of keys) {
+        const entry = linkWordIndexKey(key);
+        const rk = entry ? `id:${entry.id}` : `lemma:${key.slice(0, key.indexOf('|'))}`;
+        resolved.set(rk, entry ? wordStates[entry.id] === 'known' : false);
+      }
+      if (resolved.size === 0) {
+        out[youtubeId] = null;
+        continue;
+      }
+      let known = 0;
+      for (const isKnown of resolved.values()) if (isKnown) known++;
+      out[youtubeId] = Math.round((known / resolved.size) * 100);
+    }
+    return out;
+  }, [wordIndex, wordStates]);
+
+  // Known % per clip with custom (non-YouTube) lines, from their tokens.
   // Known = unique content word with any occurrence whose status is 'known'. No floor; null = no content words.
   const knownPctByVideo = useMemo(() => {
     const out: Record<string, number | null> = {};
@@ -363,48 +396,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return out;
   }, [clipWordIds, wordStates]);
 
-  // True when the clip can be judged: its real captions are loaded (or it has no real caption source).
-  const captionsReady = (videoId: string): boolean => {
-    const video = allVideos.find((v) => v.id === videoId);
-    if (!video) return false;
-    const hasRealSource = !!video.youtube_id && !customLines[videoId];
-    return !hasRealSource || videoId in realLines;
-  };
-
-  // null = captions not loaded yet (shown as "—") or the clip has no content words.
+  // null = not known yet ("…" while the index loads, "—" when it failed or the clip has no content words).
   const getKnownWordPercentage = (videoId: string): number | null => {
-    if (!captionsReady(videoId)) return null;
+    const video = allVideos.find((v) => v.id === videoId);
+    if (!video) return null;
+    if (video.youtube_id && !customLines[videoId]) {
+      return knownPctByYoutubeId[video.youtube_id] ?? null;
+    }
     return knownPctByVideo[videoId] ?? null;
   };
 
-  // Loads real captions for the given clips one at a time, in idle time (requestIdleCallback, setTimeout
-  // fallback), so opening the feed does not parse every caption file at once. Results are cached per youtube_id.
-  const ensureCaptionsLoaded = (videoIds: string[]) => {
-    const pending = videoIds.filter((id) => {
-      const video = allVideos.find((v) => v.id === id);
-      return !!video && !!video.youtube_id && !(id in realLines);
+  // Loads the word index once (a single small JSON, not the caption files). Called by the feed.
+  const ensureWordIndexLoaded = () => {
+    if (wordIndexStatus !== 'idle') return;
+    setWordIndexStatus('loading');
+    loadWordIndex().then((idx) => {
+      if (idx) {
+        setWordIndex(idx);
+        setWordIndexStatus('ready');
+      } else {
+        setWordIndexStatus('failed');
+      }
     });
-    if (pending.length === 0) return;
-    const schedule = (fn: () => void) => {
-      const ric = (window as any).requestIdleCallback;
-      if (typeof ric === 'function') ric(fn, { timeout: 1000 });
-      else setTimeout(fn, 50);
-    };
-    const loadAt = (index: number) => {
-      if (index >= pending.length) return;
-      const id = pending[index];
-      const video = allVideos.find((v) => v.id === id);
-      if (!video || !video.youtube_id) return loadAt(index + 1);
-      loadRealCaptions(video.youtube_id).then((file) => {
-        setRealLines((prev) =>
-          id in prev
-            ? prev
-            : { ...prev, [id]: file ? buildRealSubtitleLines(file, id, video.primary_jlpt) : null }
-        );
-        schedule(() => loadAt(index + 1));
-      });
-    };
-    schedule(() => loadAt(0));
   };
 
   const addXP = (type: 'viewing' | 'reading' | 'listening' | 'shadowing', amount: number) => {
@@ -672,7 +685,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     neededVideoKey.split('|').forEach((videoId) => {
       const video = allVideos.find((v) => v.id === videoId);
       if (!video || !video.youtube_id) return;
-      loadRealCaptions(video.youtube_id).then((file) => {
+      loadCaptionFile(video.youtube_id).then((file) => {
         if (cancelled) return;
         setRealLines((prev) =>
           videoId in prev
@@ -708,8 +721,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setWordStatus,
         getWordStatus,
         getKnownWordPercentage,
-        captionsReady,
-        ensureCaptionsLoaded,
+        wordIndexStatus,
+        ensureWordIndexLoaded,
         dictionaryWords,
         furiganaMode,
         setFuriganaMode,

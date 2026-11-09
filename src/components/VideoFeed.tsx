@@ -22,8 +22,8 @@ export const VideoFeed: React.FC = () => {
     setActiveVideoId,
     setActiveTab,
     getKnownWordPercentage,
-    ensureCaptionsLoaded,
-    captionsReady,
+    ensureWordIndexLoaded,
+    wordIndexStatus,
     albums,
     createAlbum,
     addVideoToAlbum,
@@ -64,13 +64,12 @@ export const VideoFeed: React.FC = () => {
   const jlptLevels = ['All', 'N5', 'N4', 'N3', 'N2', 'N1'];
   const jlptHasClips = (lvl: string) => videos.some((v) => v.primary_jlpt === lvl);
 
-  // Load captions for every clip so each card can show its known %. Cached per youtube_id.
-  const videoIdsKey = videos.map((v) => v.id).join('|');
+  // Known % of every card comes from the word index (one small JSON), not from the caption files.
   useEffect(() => {
-    ensureCaptionsLoaded(videoIdsKey.split('|'));
-    // videoIdsKey captures the clip list; ensureCaptionsLoaded itself is recreated each render.
+    ensureWordIndexLoaded();
+    // ensureWordIndexLoaded is recreated each render; it does nothing after the first call.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videoIdsKey]);
+  }, []);
 
   const handleLiveSync = async () => {
     setIsSyncing(true);
@@ -109,8 +108,9 @@ export const VideoFeed: React.FC = () => {
     return true;
   });
 
-  // The "easy to understand" filter cannot judge clips whose captions are still loading.
-  const waitingCaptions = comprehensibleOnly && videos.some((v) => !captionsReady(v.id));
+  // The "easy to understand" filter cannot judge clips until the word index has loaded.
+  const waitingCaptions =
+    comprehensibleOnly && (wordIndexStatus === 'idle' || wordIndexStatus === 'loading');
 
   const handleSelectVideo = (videoId: string) => {
     setActiveVideoId(videoId);
@@ -360,7 +360,11 @@ export const VideoFeed: React.FC = () => {
                           : 'text-slate-400'
                       }`}
                     >
-                      {knownPct === null ? '—' : `${knownPct}%`}
+                      {knownPct !== null
+                        ? `${knownPct}%`
+                        : wordIndexStatus === 'idle' || wordIndexStatus === 'loading'
+                        ? '…'
+                        : '—'}
                     </span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">

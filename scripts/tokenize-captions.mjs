@@ -167,7 +167,7 @@ function build() {
 
 const only = process.argv.slice(2);
 const tokenizer = await build();
-const files = readdirSync(CAPTION_DIR).filter((f) => f.endsWith('.json'))
+const files = readdirSync(CAPTION_DIR).filter((f) => f.endsWith('.json') && f !== 'word-index.json')
   .filter((f) => only.length === 0 || only.includes(f.replace(/\.json$/, '')));
 let totalLines = 0, totalTokens = 0;
 for (const f of files) {
