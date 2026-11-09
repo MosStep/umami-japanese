@@ -645,9 +645,8 @@ export const ImmersionPlayer: React.FC = () => {
                       const status = getWordStatus(token.word_id);
                       const isSpokenNow = isPlaying && idx === activeTokenIndex;
                       const isTapped = selectedToken?.token === token;
-                      const gloss = token.thai_meaning || token.contextual_meaning;
-                      // Per-token gloss only for the spoken or tapped token (setting: showMicroGloss)
-                      const showGloss = showMicroGloss && !!gloss && (isSpokenNow || isTapped);
+                      // Selection uses only background + ring (no padding/border/text-size change), so tapping never reflows the line
+                      const isSelected = isSpokenNow || isTapped;
 
                       return (
                         <div
@@ -655,7 +654,7 @@ export const ImmersionPlayer: React.FC = () => {
                           data-token
                           onClick={(e) => handleTokenClick(token, activeLine, e.currentTarget)}
                           className={`cursor-pointer select-none inline-flex flex-col items-center min-w-8 min-h-8 px-0.5 py-0.5 rounded-lg transition-colors active:opacity-70 ${
-                            isSpokenNow ? 'bg-indigo-500/30 ring-1 ring-indigo-400' : ''
+                            isSelected ? 'bg-indigo-500/25 ring-1 ring-indigo-400' : ''
                           }`}
                           title="แตะเพื่อฟังเสียงและดูคำแปลทันที"
                         >
@@ -679,7 +678,7 @@ export const ImmersionPlayer: React.FC = () => {
                           </ruby>
 
                           {/* Pitch accent contour (optional setting) */}
-                          {showPitchAccent && token.pitch_morae && !isSpokenNow && (
+                          {showPitchAccent && token.pitch_morae && (
                             <div className="w-full flex items-center justify-center gap-0.5 h-1 mt-0.5">
                               {token.pitch_morae.map((m, mIdx) => (
                                 <div
@@ -700,11 +699,6 @@ export const ImmersionPlayer: React.FC = () => {
                                 : 'border-b border-dotted border-slate-500'
                             }`}
                           />
-
-                          {/* Gloss slot: fixed height so showing it never shifts the layout */}
-                          <span className="h-4 mt-0.5 max-w-[5.5rem] truncate text-xs leading-4 font-medium font-sans text-amber-300">
-                            {showGloss ? gloss : ''}
-                          </span>
                         </div>
                       );
                     })}
