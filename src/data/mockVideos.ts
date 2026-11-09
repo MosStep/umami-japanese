@@ -3843,6 +3843,195 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "thumbnail_gradient": "from-purple-950 via-red-950 to-slate-900",
     "scene_emoji": "♟️",
     "description": "ตอนที่ 3 (เพื่อนร่วมชั้นปลอมตัว) ของ Code Geass: Lelouch of the Rebellion ฉบับทางการจาก Ani-One Asia (เสียงญี่ปุ่น)"
+  },
+  {
+    "id": "vid-gen-oreo-01",
+    "youtube_id": "4d4vbcJy4sM",
+    "title": "วล็อกเที่ยวคนเดียว: ชิมาเนะ และ ทตโตริ",
+    "japanese_title": "日本VLOG｜山陰 島根、鳥取 女子一人旅｜搭寢台列車 京都-出雲 ｜山陽＆山陰地區鐵路周遊券",
+    "channel": "OREO’s Vlog",
+    "category": "Vlogs",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 10,
+      "N4": 30,
+      "N3": 40,
+      "N2": 15,
+      "N1": 5
+    },
+    "duration": 818,
+    "thumbnail_gradient": "from-teal-800 via-cyan-950 to-slate-900",
+    "scene_emoji": "🚃",
+    "description": "วล็อกเที่ยวคนเดียวที่ชิมาเนะและทตโตริ พร้อมแชร์เส้นทาง 6 คืน 7 วัน และการใช้ตั๋วรถไฟ Sanyo-San'in Pass"
+  },
+  {
+    "id": "vid-gen-mei-01",
+    "youtube_id": "8RYAGvs1Q-0",
+    "title": "วล็อกเที่ยวชนบท: มุโร่ นารา ฤดูร้อน",
+    "japanese_title": "Summer escape to the Japanese countryside: Murou, #Nara 🌿 | Japan Travel Vlog",
+    "channel": "Mei Time",
+    "category": "Vlogs",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 10,
+      "N4": 30,
+      "N3": 40,
+      "N2": 15,
+      "N1": 5
+    },
+    "duration": 1082,
+    "thumbnail_gradient": "from-lime-900 via-green-950 to-slate-900",
+    "scene_emoji": "🌿",
+    "description": "วล็อกไปเยือนหมู่บ้านชนบทมุโร่ในนารา ซึ่งผู้จัดทำบอกว่าเป็นหนึ่งในจุดโปรดของปีนี้"
+  },
+  {
+    "id": "vid-gen-namnam-01",
+    "youtube_id": "t9NicxjU4fo",
+    "title": "วล็อกโตเกียว 3 คืน 4 วัน: คาเฟ่และช้อปปิ้ง",
+    "japanese_title": "東京vlog🗼アラサー独身女の3泊4日ひとり旅｜雑貨とカフェ巡り☕️🥐ちいかわベーカリー｜スキズ国立ヲタ活｜吉祥寺・浅草・渋谷",
+    "channel": "namnam's vlog",
+    "category": "Vlogs",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 10,
+      "N4": 30,
+      "N3": 40,
+      "N2": 15,
+      "N1": 5
+    },
+    "duration": 1130,
+    "thumbnail_gradient": "from-sky-900 via-blue-950 to-slate-900",
+    "scene_emoji": "🗼",
+    "description": "ทริปโตเกียว 3 คืน 4 วัน ไปอาซากายะ คิจิโจจิ อาซากุสะ และชิบูย่า พร้อมวิดีโอแพ็กกระเป๋า"
+  },
+  {
+    "id": "vid-gen-hima-01",
+    "youtube_id": "-WzINbpXbqA",
+    "title": "วล็อกเกาหลี: เที่ยวโซล 1 คืน 2 วัน",
+    "japanese_title": "【韓国旅Vlog】弾丸1泊2日だってちゃんと楽しいソウルの過ごし方🇰🇷",
+    "channel": "HIMA HIMA CHANNEL",
+    "category": "Vlogs",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 10,
+      "N4": 30,
+      "N3": 40,
+      "N2": 15,
+      "N1": 5
+    },
+    "duration": 859,
+    "thumbnail_gradient": "from-fuchsia-800 via-violet-950 to-slate-900",
+    "scene_emoji": "🇰🇷",
+    "description": "วล็อกทริปสั้นที่โซล 1 คืน 2 วัน เน้นการกิน การช้อปปิ้ง และการเที่ยวในเวลาจำกัด"
+  },
+  {
+    "id": "vid-pod-immersion-01",
+    "youtube_id": "oKTHD2Wi0zU",
+    "title": "พอดแคสต์ภาษาญี่ปุ่นสำหรับผู้เริ่มต้น: ฝึกพูดตาม",
+    "japanese_title": "はじめての日本語【N6】日本語へようこそ！｜Shadowing for Absolute Beginners",
+    "channel": "Japanese super immersion",
+    "category": "Podcasts",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 60,
+      "N4": 30,
+      "N3": 10,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 1717,
+    "thumbnail_gradient": "from-blue-900 via-indigo-900 to-slate-900",
+    "scene_emoji": "🎙️",
+    "description": "บทฝึกพูดตาม (shadowing) สำหรับผู้เริ่มต้นสุด ๆ โดยระบุระดับในชื่อคลิปว่า N6"
+  },
+  {
+    "id": "vid-pod-immersion-02",
+    "youtube_id": "6bnE6j_bL4c",
+    "title": "ฝึกฟังสนทนา: กริยา 10 คำที่ขึ้นต้นด้วย せ",
+    "japanese_title": "「せ」から始まる10動詞で日本語会話【N5】Japanese Listening practice",
+    "channel": "Japanese super immersion",
+    "category": "Podcasts",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 60,
+      "N4": 30,
+      "N3": 10,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 1718,
+    "thumbnail_gradient": "from-indigo-900 via-violet-950 to-slate-900",
+    "scene_emoji": "🎧",
+    "description": "ฝึกฟังสนทนาจากกริยา 10 คำที่ขึ้นต้นด้วยเสียง せ พร้อมไทม์สแตมป์ของแต่ละคำ"
+  },
+  {
+    "id": "vid-pod-immersion-03",
+    "youtube_id": "8WAo1muNsMg",
+    "title": "คำนาม JLPT N4 ที่คนส่วนใหญ่มักใช้ผิด",
+    "japanese_title": "90%が間違える？JLPT N4の名詞｜Most People Fail These JLPT N4 Nouns",
+    "channel": "Japanese super immersion",
+    "category": "Podcasts",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 30,
+      "N4": 50,
+      "N3": 20,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 1787,
+    "thumbnail_gradient": "from-purple-900 via-indigo-950 to-slate-900",
+    "scene_emoji": "📝",
+    "description": "คำนามระดับ JLPT N4 ที่ผู้เรียนส่วนใหญ่มักทำผิด ตามหัวข้อในชื่อคลิป"
+  },
+  {
+    "id": "vid-pod-immersion-04",
+    "youtube_id": "YjUbwUcZuu0",
+    "title": "ฟังเข้าใจแต่พูดไม่ได้? พอดแคสต์ระดับ N3",
+    "japanese_title": "聞けるのに話せない？｜I Can Understand Japanese… But Still Can't Speak?",
+    "channel": "Japanese super immersion",
+    "category": "Podcasts",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 10,
+      "N4": 25,
+      "N3": 45,
+      "N2": 15,
+      "N1": 5
+    },
+    "duration": 1356,
+    "thumbnail_gradient": "from-blue-950 via-slate-900 to-zinc-950",
+    "scene_emoji": "🗣️",
+    "description": "พอดแคสต์ภาษาญี่ปุ่นเรื่องการฟังเข้าใจแต่พูดไม่ออก ตามหัวข้อในชื่อคลิป"
+  },
+  {
+    "id": "vid-pod-immersion-05",
+    "youtube_id": "VNizFBWVYuk",
+    "title": "เรียนมา 1 ปีแล้วทำไมยังพูดไม่ได้? (N3)",
+    "japanese_title": "1年も勉強したのに話せない？｜You've Studied Japanese for 1 Year… But Still Can't Speak?",
+    "channel": "Japanese super immersion",
+    "category": "Podcasts",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 10,
+      "N4": 25,
+      "N3": 45,
+      "N2": 15,
+      "N1": 5
+    },
+    "duration": 1596,
+    "thumbnail_gradient": "from-violet-900 via-purple-950 to-slate-900",
+    "scene_emoji": "💬",
+    "description": "พอดแคสต์ภาษาญี่ปุ่นว่าด้วยการเรียนมาหนึ่งปีแต่ยังพูดไม่ได้ ตามหัวข้อในชื่อคลิป"
   }
 ];
 

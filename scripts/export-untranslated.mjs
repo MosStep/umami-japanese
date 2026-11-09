@@ -1,5 +1,5 @@
 // Exports caption lines that still need a Thai translation into translator batches.
-//   node scripts/export-untranslated.mjs
+//   node scripts/export-untranslated.mjs [youtube_id ...]   (no ids = all caption files)
 // A line needs Thai when it has Japanese text AND (th is empty or the file's source.th is "auto").
 // Manual Thai is never exported. Output (clears old batches first):
 //   .superpowers/translate/<youtube_id>-<n>.json  up to 150 entries each: [{ key, ja, en?, prev, next }]
@@ -36,7 +36,10 @@ for (const name of readdirSync(OUT_DIR)) {
   if (name.endsWith('.json') || name === 'INDEX.md') rmSync(join(OUT_DIR, name));
 }
 
-const captionFiles = readdirSync(CAPTION_DIR).filter((f) => f.endsWith('.json')).sort();
+// Optional ids: node scripts/export-untranslated.mjs <youtube_id> ... exports only those files.
+const only = process.argv.slice(2);
+const captionFiles = readdirSync(CAPTION_DIR).filter((f) => f.endsWith('.json'))
+  .filter((f) => only.length === 0 || only.includes(f.replace(/\.json$/, ''))).sort();
 const batchRows = [];
 let totalLines = 0;
 
