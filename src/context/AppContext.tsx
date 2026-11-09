@@ -28,6 +28,8 @@ export interface UserStats {
   xp_reading: number;
   xp_listening: number;
   xp_shadowing: number;
+  // Set by the 1.0.8 migration once its seed subtraction has been written (see utils/migration108.ts).
+  migr_108_xp?: boolean;
 }
 
 export interface Album {
@@ -64,7 +66,9 @@ interface AppContextType {
   wordStates: Record<string, WordLearningStatus>;
   setWordStatus: (wordId: string, status: WordLearningStatus) => void;
   getWordStatus: (wordId: string) => WordLearningStatus;
-  getKnownWordPercentage: (videoId: string) => number;
+  // null = not computable yet (captions still loading) or no content words.
+  getKnownWordPercentage: (videoId: string) => number | null;
+  ensureCaptionsLoaded: (videoIds: string[]) => void;
   dictionaryWords: DictionaryWordRecord[];
 
   // Subtitles & Player UI Preferences
@@ -110,6 +114,11 @@ interface AppContextType {
 }
 
 const AppContext = createContext<AppContextType | null>(null);
+
+// Part-of-speech labels (Thai, from captions.ts POS_THAI) that are not content words.
+const NON_CONTENT_POS = new Set(['คำช่วย', 'คำช่วยกริยา', 'เครื่องหมาย']);
+// Dictionary ids: a token whose word_id is here is linked to a dictionary entry.
+const DICTIONARY_IDS = new Set(DICTIONARY_WORDS.map((w) => w.id));
 
 const DEFAULT_ALBUMS: Album[] = [
   { id: 'alb-daily', name: 'Anime Starter Episodes', emoji: '⚔️', video_ids: ['vid-anione-jjk-01', 'vid-anione-bleach-01', 'vid-anione-aoashi-s2-01'] },
@@ -303,15 +312,45 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return wordStates[wordId] || 'new';
   };
 
-  const getKnownWordPercentage = (videoId: string): number => {
-    const lines = allLines[videoId] || [];
-    if (!lines.length) return 70;
-    const allTokens = lines.flatMap((line) => line.tokens_json);
-    if (!allTokens.length) return 70;
-    const knownCount = allTokens.filter(
-      (t) => (wordStates[t.word_id] || 'new') === 'known'
-    ).length;
-    return Math.min(100, Math.max(15, Math.round((knownCount / allTokens.length) * 100)));
+  // Known % of a clip = unique content words whose status is 'known' / unique content words.
+  // Content words exclude particles, auxiliaries and punctuation (Thai POS labels from captions.ts).
+  // Linked words are keyed by dictionary id; unlinked ones by lemma. No minimum floor.
+  // Returns null when the clip's captions are not loaded yet (never falls back to MOCK lines for real clips).
+  const getKnownWordPercentage = (videoId: string): number | null => {
+    const video = allVideos.find((v) => v.id === videoId);
+    if (!video) return null;
+    const hasRealSource = !!video.youtube_id && !customLines[videoId];
+    if (hasRealSource && !(videoId in realLines)) return null;
+
+    // key -> known. A word counts as known if any occurrence in the clip is known.
+    const words = new Map<string, boolean>();
+    for (const line of allLines[videoId] || []) {
+      for (const t of line.tokens_json) {
+        if (NON_CONTENT_POS.has(t.part_of_speech || '')) continue;
+        const key = DICTIONARY_IDS.has(t.word_id) ? `id:${t.word_id}` : `lemma:${t.lemma || t.surface}`;
+        const known = wordStates[t.word_id] === 'known';
+        words.set(key, (words.get(key) ?? false) || known);
+      }
+    }
+    if (words.size === 0) return null;
+    const knownCount = Array.from(words.values()).filter(Boolean).length;
+    return Math.round((knownCount / words.size) * 100);
+  };
+
+  // Loads real captions for the given clips (cached per youtube_id). Used by the feed so every card
+  // can show its known %, and by the "easy to understand" filter.
+  const ensureCaptionsLoaded = (videoIds: string[]) => {
+    for (const id of videoIds) {
+      const video = allVideos.find((v) => v.id === id);
+      if (!video || !video.youtube_id || id in realLines) continue;
+      loadRealCaptions(video.youtube_id).then((file) => {
+        setRealLines((prev) =>
+          id in prev
+            ? prev
+            : { ...prev, [id]: file ? buildRealSubtitleLines(file, id, video.primary_jlpt) : null }
+        );
+      });
+    }
   };
 
   const addXP = (type: 'viewing' | 'reading' | 'listening' | 'shadowing', amount: number) => {
@@ -600,6 +639,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setWordStatus,
         getWordStatus,
         getKnownWordPercentage,
+        ensureCaptionsLoaded,
         dictionaryWords,
         furiganaMode,
         setFuriganaMode,

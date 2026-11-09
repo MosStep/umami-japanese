@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import type { VideoRecord } from '../schema/databaseSchema';
 import {
@@ -21,6 +21,7 @@ export const VideoFeed: React.FC = () => {
     setActiveVideoId,
     setActiveTab,
     getKnownWordPercentage,
+    ensureCaptionsLoaded,
     albums,
     createAlbum,
     addVideoToAlbum,
@@ -54,9 +55,17 @@ export const VideoFeed: React.FC = () => {
   const categories = categoryDefs.filter(
     (c) => c.id === 'All' || videos.some((v) => v.category === c.id)
   );
-  const jlptLevels = ['All', 'N5', 'N4', 'N3', 'N2', 'N1'].filter(
-    (lvl) => lvl === 'All' || videos.some((v) => v.primary_jlpt === lvl)
-  );
+  // JLPT chips always shown. A level with no clips yet stays visible (muted) and shows an empty state.
+  const jlptLevels = ['All', 'N5', 'N4', 'N3', 'N2', 'N1'];
+  const jlptHasClips = (lvl: string) => videos.some((v) => v.primary_jlpt === lvl);
+
+  // Load captions for every clip so each card can show its known %. Cached per youtube_id.
+  const videoIdsKey = videos.map((v) => v.id).join('|');
+  useEffect(() => {
+    ensureCaptionsLoaded(videoIdsKey.split('|'));
+    // videoIdsKey captures the clip list; ensureCaptionsLoaded itself is recreated each render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoIdsKey]);
 
   const handleLiveSync = async () => {
     setIsSyncing(true);
@@ -88,8 +97,9 @@ export const VideoFeed: React.FC = () => {
       if (alb && !alb.video_ids.includes(v.id)) return false;
     }
     if (comprehensibleOnly) {
+      // Same function as the card. Not-yet-loaded (null) clips are excluded until their captions arrive.
       const knownPct = getKnownWordPercentage(v.id);
-      if (knownPct < 60) return false;
+      if (knownPct === null || knownPct < 60) return false;
     }
     return true;
   });
@@ -158,19 +168,24 @@ export const VideoFeed: React.FC = () => {
         {/* JLPT Level Quick Filter */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
           <span className="text-xs font-bold text-slate-400 mr-2 shrink-0">ระดับ JLPT:</span>
-          {jlptLevels.map((lvl) => (
-            <button
-              key={lvl}
-              onClick={() => setSelectedJLPT(lvl)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
-                selectedJLPT === lvl
-                  ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
-                  : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200'
-              }`}
-            >
-              {lvl === 'All' ? 'ทุกระดับ (All)' : lvl}
-            </button>
-          ))}
+          {jlptLevels.map((lvl) => {
+            const empty = lvl !== 'All' && !jlptHasClips(lvl);
+            return (
+              <button
+                key={lvl}
+                onClick={() => setSelectedJLPT(lvl)}
+                className={`px-3 py-1.5 min-h-9 rounded-xl text-xs font-bold transition-all shrink-0 ${
+                  selectedJLPT === lvl
+                    ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
+                    : empty
+                    ? 'bg-slate-900/50 border border-slate-900 text-slate-600 hover:text-slate-400'
+                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200'
+                }`}
+              >
+                {lvl === 'All' ? 'ทุกระดับ (All)' : lvl}
+              </button>
+            );
+          })}
         </div>
 
         {/* Category Tabs & Albums */}
@@ -321,26 +336,28 @@ export const VideoFeed: React.FC = () => {
                     </span>
                     <span
                       className={`font-mono font-bold ${
-                        knownPct >= 70
+                        knownPct === null
+                          ? 'text-slate-500'
+                          : knownPct >= 70
                           ? 'text-emerald-400'
                           : knownPct >= 50
                           ? 'text-amber-400'
                           : 'text-slate-400'
                       }`}
                     >
-                      {knownPct}%
+                      {knownPct === null ? '—' : `${knownPct}%`}
                     </span>
                   </div>
                   <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
                     <div
                       className={`h-full transition-all duration-300 ${
-                        knownPct >= 70
+                        knownPct !== null && knownPct >= 70
                           ? 'bg-gradient-to-r from-emerald-500 to-teal-400'
-                          : knownPct >= 50
+                          : knownPct !== null && knownPct >= 50
                           ? 'bg-gradient-to-r from-amber-500 to-yellow-400'
                           : 'bg-slate-600'
                       }`}
-                      style={{ width: `${Math.max(8, knownPct)}%` }}
+                      style={{ width: `${knownPct ?? 0}%` }}
                     />
                   </div>
                 </div>
@@ -349,7 +366,11 @@ export const VideoFeed: React.FC = () => {
           );
         })}
         {filteredVideos.length === 0 && (
-          <p className="col-span-full text-center text-sm text-slate-400 py-12">ยังไม่มีคลิปในหมวดนี้</p>
+          <p className="col-span-full text-center text-sm text-slate-400 py-12">
+            {selectedJLPT !== 'All' && !jlptHasClips(selectedJLPT)
+              ? 'ยังไม่มีคลิปในระดับนี้'
+              : 'ยังไม่มีคลิปในหมวดนี้'}
+          </p>
         )}
       </div>
 

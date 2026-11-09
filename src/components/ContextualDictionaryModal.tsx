@@ -29,6 +29,7 @@ export const ContextualDictionaryModal: React.FC<Props> = ({ data, onClose }) =>
     minedSentences,
     aiProvider,
     aiModel,
+    apiKey,
     callAICompletion,
   } = useApp();
 
@@ -182,7 +183,9 @@ export const ContextualDictionaryModal: React.FC<Props> = ({ data, onClose }) =>
                 </>
               ) : (
                 <p className="text-sm text-slate-400">
-                  ยังไม่มีความหมายในคลัง — แตะ 'วิเคราะห์ไวยากรณ์' เพื่อให้ AI อธิบาย
+                  ยังไม่มีความหมายในคลัง
+                  {/* The hint only appears when the Live AI tab exists and an API key is set. */}
+                  {aiProvider !== 'local' && apiKey.trim() ? ' — กดแท็บ "Live AI" เพื่อให้ AI อธิบาย' : ''}
                 </p>
               )}
             </div>
