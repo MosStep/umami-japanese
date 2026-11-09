@@ -39,9 +39,14 @@
 
 ขั้นตอน:
 
-1. เพิ่ม `NATIVE_BUILD` และ `APP_BUILD` ใน `src/config/version.ts`
-2. ตั้ง `min_native_build` ใน `public/live_catalog.json` เป็นค่า `NATIVE_BUILD` ใหม่ เพื่อบังคับให้ผู้ใช้ติดตั้ง APK
-3. ปล่อย APK (`umami-app-debug.apk`) ใน GitHub Release `v<version>` ถ้าไม่ระบุ `apk_url` ในแมนิเฟสต์ แอปจะใช้ URL มาตรฐานตามเวอร์ชันนั้น
-4. ผู้ใช้ที่มีแอปเวอร์ชัน native เก่าจะเห็นข้อความ "ต้องติดตั้ง APK ครั้งเดียว" และปุ่มติดตั้ง APK ในหน้าอัปเดต
+1. เพิ่มเลขเวอร์ชันใน `src/config/version.ts`
+   - `APP_VERSION_NAME` และ `APP_VERSION_BASE` เช่น `'1.0.8'` / `'v1.0.8'`
+   - `APP_BUILD` และ `NATIVE_BUILD` เพิ่มขึ้น เช่น `108`
+2. เพิ่ม `versionCode` และ `versionName` ใน `android/app/build.gradle` ทุกครั้งที่ปล่อย APK
+   - `versionCode` ต้องเท่ากับ `NATIVE_BUILD` (เช่น `108`) เพราะ `resetWhenUpdate` ของ plugin อาศัยการเปลี่ยนแปลงของเวอร์ชัน native
+   - `versionName` ต้องเท่ากับ `APP_VERSION_NAME` (เช่น `"1.0.8"`)
+3. ตั้ง `min_native_build` ใน `public/live_catalog.json` เป็นค่า `NATIVE_BUILD` ใหม่ เพื่อบังคับให้ผู้ใช้ติดตั้ง APK
+4. ปล่อย APK (`umami-app-debug.apk`) ใน GitHub Release `v<version>` ถ้าไม่ระบุ `apk_url` ในแมนิเฟสต์ แอปจะใช้ URL มาตรฐานตามเวอร์ชันนั้น
+5. ผู้ใช้ที่มีแอปเวอร์ชัน native เก่าจะเห็นข้อความ "ต้องติดตั้ง APK ครั้งเดียว" และปุ่มติดตั้ง APK ในหน้าอัปเดต
 
 หมายเหตุ: ถ้า `min_native_build` มากกว่า `NATIVE_BUILD` ของแอปที่ผู้ใช้ลงอยู่ ระบบจะไม่ดาวน์โหลด OTA bundle และจะให้ติดตั้ง APK แทน เพื่อป้องกันเว็บกับโค้ด native ไม่ตรงกัน

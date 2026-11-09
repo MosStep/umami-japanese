@@ -30,18 +30,97 @@ export type UpdateKind = 'none' | 'ota' | 'apk';
 
 export const isNative = (): boolean => Capacitor.isNativePlatform();
 
-export async function initOta(): Promise<void> {
+// Versions whose OTA bundle failed to install or to pass notifyAppReady. The plugin rolls these back
+// and deletes them, so without this list every launch would download and apply the same bad zip again.
+const FAILED_VERSIONS_KEY = 'umami_ota_failed_versions';
+// Version passed to next() on the previous launch. If the app still runs an older version on the
+// next launch and the manifest still offers this version, the activation did not stick: mark it failed.
+const LAST_ATTEMPT_KEY = 'umami_ota_last_attempt';
+
+function readFailedVersions(): string[] {
+  try {
+    const raw = localStorage.getItem(FAILED_VERSIONS_KEY);
+    const list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list.filter((v) => typeof v === 'string') : [];
+  } catch {
+    return [];
+  }
+}
+
+function addFailedVersion(version: string): void {
+  try {
+    const list = readFailedVersions();
+    if (!list.includes(version)) {
+      list.push(version);
+      localStorage.setItem(FAILED_VERSIONS_KEY, JSON.stringify(list));
+    }
+  } catch {}
+}
+
+function readLastAttempt(): string | null {
+  try {
+    return localStorage.getItem(LAST_ATTEMPT_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function writeLastAttempt(version: string | null): void {
+  try {
+    if (version) localStorage.setItem(LAST_ATTEMPT_KEY, version);
+    else localStorage.removeItem(LAST_ATTEMPT_KEY);
+  } catch {}
+}
+
+let initPromise: Promise<void> | null = null;
+
+// Memoized: main.tsx calls it without awaiting, the launch check awaits the same promise.
+export function initOta(): Promise<void> {
+  if (!initPromise) initPromise = runOtaInit();
+  return initPromise;
+}
+
+async function runOtaInit(): Promise<void> {
   try {
     for (const key of LEGACY_OTA_KEYS) localStorage.removeItem(key);
   } catch {}
 
-  if (isNative()) {
-    try {
-      await CapacitorUpdater.notifyAppReady();
-    } catch (err) {
-      console.warn('notifyAppReady failed:', err);
+  if (!isNative()) return;
+
+  try {
+    await CapacitorUpdater.addListener('updateFailed', (e) => addFailedVersion(e.bundle.version));
+  } catch (err) {
+    console.warn('updateFailed listener failed:', err);
+  }
+
+  try {
+    // Returns the failed update only once, so store it here.
+    const failed = await CapacitorUpdater.getFailedUpdate();
+    if (failed?.bundle?.version) addFailedVersion(failed.bundle.version);
+  } catch (err) {
+    console.warn('getFailedUpdate failed:', err);
+  }
+
+  try {
+    await CapacitorUpdater.notifyAppReady();
+  } catch (err) {
+    console.warn('notifyAppReady failed:', err);
+  }
+}
+
+// Background path only (manual modal retry is always allowed). Returns true when this manifest version
+// must not be downloaded automatically: it previously failed, or the last activation attempt did not stick.
+export function shouldSkipBackgroundOta(m: Manifest): boolean {
+  const last = readLastAttempt();
+  if (last) {
+    if (compareVersions(APP_VERSION_NAME, last) >= 0) {
+      writeLastAttempt(null); // activation worked
+    } else if (compareVersions(m.version, last) === 0) {
+      addFailedVersion(last);
+      writeLastAttempt(null);
     }
   }
+  return readFailedVersions().includes(m.version);
 }
 
 export async function fetchManifest(): Promise<Manifest> {
@@ -108,5 +187,6 @@ export async function applyNow(bundle: BundleInfo | null): Promise<void> {
 export async function applyOnNextLaunch(bundle: BundleInfo | null): Promise<void> {
   if (isNative() && bundle) {
     await CapacitorUpdater.next({ id: bundle.id });
+    writeLastAttempt(bundle.version);
   }
 }

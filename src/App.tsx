@@ -16,7 +16,9 @@ import {
   downloadOta,
   fetchManifest,
   getUpdateKind,
+  initOta,
   isNative,
+  shouldSkipBackgroundOta,
 } from './utils/otaUpdater';
 
 const OtaReadyToast: React.FC<{ version: string; onRestart: () => void; onDismiss: () => void }> = ({
@@ -71,6 +73,9 @@ export const App: React.FC = () => {
         }
 
         // OTA on native: download in background, activate on next launch, offer instant restart.
+        await initOta(); // ensures failed-update state from the plugin is loaded first
+        if (shouldSkipBackgroundOta(manifest)) return;
+
         const bundle = await downloadOta(manifest, () => {});
         if (!bundle) return;
         await applyOnNextLaunch(bundle);
