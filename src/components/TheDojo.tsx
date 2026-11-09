@@ -5,7 +5,6 @@ import { MOCK_SUBTITLE_LINES } from '../data/mockVideos';
 import { audioService } from '../utils/audioService';
 import {
   Swords,
-  RotateCcw,
   Mic,
   MicOff,
   Volume2,
@@ -129,9 +128,11 @@ export const TheDojo: React.FC = () => {
     const line = findLine(mined.video_id, mined.subtitle_line_id);
     const targetWord = dictionaryWords.find((w) => w.id === mined.target_word_id);
     const targetLemma = targetWord?.lemma || (line?.tokens_json?.find((t) => t.word_id === mined.target_word_id)?.surface) || '';
-    const japanese = line?.raw_text || mined.user_note || targetLemma || 'ここに 3匹の ポケモンが いるじゃろう！';
+    // Never use the Thai user_note as the Japanese text; fall back to the target lemma.
+    const japanese = line?.raw_text || targetLemma || '';
+    const missing = !japanese;
     const thai = line?.thai_translation || line?.natural_translation || mined.user_note || 'คำแปลประโยคภาษาไทย';
-    return { japanese, thai, targetWord, targetLemma, line, mined };
+    return { japanese, thai, targetWord, targetLemma, line, mined, missing };
   };
 
   // [BUG-03] Proper Cloze Deletion replacer: blanks out the target word or token
@@ -163,9 +164,11 @@ export const TheDojo: React.FC = () => {
     const line = findLine(mined.video_id, mined.subtitle_line_id);
     const targetWord = dictionaryWords.find((w) => w.id === mined.target_word_id);
     const targetLemma = targetWord?.lemma || '';
-    const japanese = line?.raw_text || mined.user_note || targetLemma || 'ここに 3匹の ポケモンが いるじゃろう！';
+    // Never use the Thai user_note as the Japanese text; fall back to the target lemma.
+    const japanese = line?.raw_text || targetLemma || '';
+    const missing = !japanese;
     const thai = line?.thai_translation || line?.natural_translation || mined.user_note || '';
-    return { japanese, thai, targetWord, targetLemma, line, mined };
+    return { japanese, thai, targetWord, targetLemma, line, mined, missing };
   };
 
   // Start Real Microphone Recording with Live Volume Waveform
@@ -421,7 +424,7 @@ Output exactly in this JSON format:
   ];
 
   const chipClass = (on: boolean, onCls: string) =>
-    `shrink-0 min-h-11 px-3.5 rounded-full border text-sm font-bold whitespace-nowrap transition-all active:opacity-80 ${
+    `min-h-11 px-2 rounded-xl border text-sm font-bold transition-all active:opacity-80 ${
       on ? onCls : 'bg-slate-900 border-slate-700 text-slate-300 hover:text-white'
     }`;
 
@@ -432,7 +435,7 @@ Output exactly in this JSON format:
       indigo: 'bg-indigo-950/40 border-indigo-500/40 text-indigo-300 hover:bg-indigo-950/80',
       emerald: 'bg-emerald-950/40 border-emerald-500/40 text-emerald-300 hover:bg-emerald-950/80',
     };
-    return `min-h-12 p-2 rounded-2xl border-2 flex flex-col items-center justify-center gap-0.5 text-sm font-bold text-center leading-tight transition-all active:opacity-80 ${tones[tone]}`;
+    return `min-h-12 px-1.5 py-2 rounded-2xl border-2 flex flex-col items-center justify-center gap-0.5 text-sm font-bold text-center leading-tight transition-all active:opacity-80 ${tones[tone]}`;
   };
 
   const renderProgress = (label: string, index: number, total: number) => (
@@ -473,7 +476,7 @@ Output exactly in this JSON format:
       </header>
 
       {/* Mode Switch: sticky segmented control under the app navbar */}
-      <div className="sticky top-14 z-20 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2 bg-slate-950/90 backdrop-blur-md">
+      <div className="sticky top-[53px] sm:top-[57px] z-20 -mx-4 sm:-mx-6 px-4 sm:px-6 py-2 bg-slate-950/90 backdrop-blur-md">
         <div
           role="tablist"
           aria-label="โหมดฝึก"
@@ -488,14 +491,14 @@ Output exactly in this JSON format:
                 role="tab"
                 aria-selected={selected}
                 onClick={() => setActiveMode(key)}
-                className={`min-h-11 px-2 rounded-xl flex items-center justify-center gap-1.5 text-sm font-bold transition-all active:opacity-80 ${
+                className={`min-h-12 px-1 md:px-2 rounded-xl flex flex-col md:flex-row items-center justify-center gap-0.5 md:gap-1.5 text-sm font-bold transition-all active:opacity-80 ${
                   selected
                     ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white shadow-md shadow-rose-600/30'
                     : 'text-slate-300 hover:text-white'
                 }`}
               >
                 <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
-                <span className="truncate">{label}</span>
+                <span className="whitespace-nowrap">{label}</span>
               </button>
             );
           })}
@@ -505,12 +508,9 @@ Output exactly in this JSON format:
       {/* Mode A: Flashcards & SRS Review */}
       {activeMode === 'srs' && (
         <div className="max-w-2xl mx-auto space-y-3">
-          {/* Deck + filter chips in one scrollable row */}
-          <div
-            role="group"
-            aria-label="ชุดและตัวกรองการ์ด"
-            className="flex items-center gap-2 overflow-x-auto pb-1 [scrollbar-width:none]"
-          >
+          {/* Deck chips (row 1) and word filter chips (row 2, words deck only) */}
+          <div className="space-y-2">
+          <div role="group" aria-label="ชุดคำถาม" className="grid grid-cols-2 gap-2">
             <button
               type="button"
               aria-pressed={srsDeckType === 'words'}
@@ -533,54 +533,63 @@ Output exactly in this JSON format:
             >
               ประโยคที่บันทึก ({minedSentences.length})
             </button>
-            {srsDeckType === 'words' && (
-              <>
-                <span aria-hidden="true" className="shrink-0 w-px h-6 bg-slate-800 mx-0.5" />
-                <button
-                  type="button"
-                  aria-pressed={wordFilter === 'all'}
-                  onClick={() => {
-                    setWordFilter('all');
-                    setWordIndex(0);
-                    setIsRevealed(false);
-                  }}
-                  className={chipClass(wordFilter === 'all', 'bg-slate-200 border-slate-200 text-slate-900')}
-                >
-                  ทั้งหมด ({dictionaryWords.length})
-                </button>
-                <button
-                  type="button"
-                  aria-pressed={wordFilter === 'learning'}
-                  onClick={() => {
-                    setWordFilter('learning');
-                    setWordIndex(0);
-                    setIsRevealed(false);
-                  }}
-                  className={chipClass(wordFilter === 'learning', 'bg-amber-600 border-amber-500 text-white')}
-                >
-                  กำลังเรียน ({learningCount})
-                </button>
-                <button
-                  type="button"
-                  aria-pressed={wordFilter === 'known'}
-                  onClick={() => {
-                    setWordFilter('known');
-                    setWordIndex(0);
-                    setIsRevealed(false);
-                  }}
-                  className={chipClass(wordFilter === 'known', 'bg-emerald-600 border-emerald-500 text-white')}
-                >
-                  จำได้แล้ว ({knownCount})
-                </button>
-              </>
-            )}
+          </div>
+          {srsDeckType === 'words' && (
+            <div role="group" aria-label="ตัวกรองคำศัพท์" className="grid grid-cols-3 gap-2">
+              <button
+                type="button"
+                aria-pressed={wordFilter === 'all'}
+                onClick={() => {
+                  setWordFilter('all');
+                  setWordIndex(0);
+                  setIsRevealed(false);
+                }}
+                className={chipClass(wordFilter === 'all', 'bg-slate-200 border-slate-200 text-slate-900')}
+              >
+                <span className="flex flex-col leading-tight">
+                  <span>ทั้งหมด</span>
+                  <span className="text-xs font-normal">{dictionaryWords.length} คำ</span>
+                </span>
+              </button>
+              <button
+                type="button"
+                aria-pressed={wordFilter === 'learning'}
+                onClick={() => {
+                  setWordFilter('learning');
+                  setWordIndex(0);
+                  setIsRevealed(false);
+                }}
+                className={chipClass(wordFilter === 'learning', 'bg-amber-600 border-amber-500 text-white')}
+              >
+                <span className="flex flex-col leading-tight">
+                  <span>กำลังเรียน</span>
+                  <span className="text-xs font-normal">{learningCount} คำ</span>
+                </span>
+              </button>
+              <button
+                type="button"
+                aria-pressed={wordFilter === 'known'}
+                onClick={() => {
+                  setWordFilter('known');
+                  setWordIndex(0);
+                  setIsRevealed(false);
+                }}
+                className={chipClass(wordFilter === 'known', 'bg-emerald-600 border-emerald-500 text-white')}
+              >
+                <span className="flex flex-col leading-tight">
+                  <span>จำได้แล้ว</span>
+                  <span className="text-xs font-normal">{knownCount} คำ</span>
+                </span>
+              </button>
+            </div>
+          )}
           </div>
 
           {srsDeckType === 'words' ? (
             /* WORDS VAULT DECK */
             <div className="space-y-3">
-              {renderProgress('คำที่', wordIndex, filteredWords.length)}
-              <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 shadow-2xl overflow-hidden p-4 sm:p-8 space-y-5">
+              {filteredWords.length > 0 && renderProgress('คำที่', wordIndex, filteredWords.length)}
+              <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 shadow-2xl overflow-hidden p-4 sm:p-8 space-y-4">
                 {currentWord ? (
                   <>
                     {/* Flashcard Body */}
@@ -596,9 +605,19 @@ Output exactly in this JSON format:
 
                       {isRevealed && (
                         <div className="space-y-2 pt-1 animate-in fade-in duration-150">
-                          <p className="text-lg font-jp text-indigo-300 font-bold">
-                            {currentWord.reading_kana} {currentWord.romaji ? `(${currentWord.romaji})` : ''}
-                          </p>
+                          <div className="flex items-center justify-center gap-2">
+                            <p className="text-lg font-jp text-indigo-300 font-bold">
+                              {currentWord.reading_kana} {currentWord.romaji ? `(${currentWord.romaji})` : ''}
+                            </p>
+                            <button
+                              type="button"
+                              onClick={() => playAudio(currentWord.lemma)}
+                              aria-label="ฟังอีกครั้ง"
+                              className="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl bg-slate-800 text-rose-300 hover:bg-slate-700 active:opacity-80 transition-colors"
+                            >
+                              <Volume2 className="w-4 h-4" aria-hidden="true" />
+                            </button>
+                          </div>
                           <p className="text-lg sm:text-xl text-emerald-300 font-bold">
                             🇹🇭 {currentWord.core_meanings?.join(', ') || 'ความหมายภาษาญี่ปุ่น'}
                           </p>
@@ -638,22 +657,6 @@ Output exactly in this JSON format:
                       </button>
                     ) : (
                       <div className="space-y-4 animate-in fade-in duration-150">
-                        {/* Audio Button */}
-                        <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-2">
-                          <span className="text-sm text-slate-300 flex items-center gap-1.5 font-medium">
-                            <Volume2 className="w-4 h-4 text-rose-400 shrink-0" aria-hidden="true" />
-                            เสียงออกเสียง
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => playAudio(currentWord.lemma)}
-                            className="min-h-11 px-4 rounded-xl bg-slate-800 text-sm text-slate-100 hover:bg-slate-700 flex items-center gap-1.5 font-semibold transition-colors active:opacity-80"
-                          >
-                            <RotateCcw className="w-4 h-4" aria-hidden="true" />
-                            ฟังอีกครั้ง
-                          </button>
-                        </div>
-
                         {/* Word Grade Rating Buttons */}
                         <div className="grid grid-cols-3 gap-2">
                           <button
@@ -661,8 +664,10 @@ Output exactly in this JSON format:
                             onClick={() => handleWordGrade('again')}
                             className={gradeClass('rose')}
                           >
-                            <X className="w-4 h-4" aria-hidden="true" />
-                            <span>ยังจำไม่ได้</span>
+                            <span className="flex items-center gap-1">
+                              <X className="w-4 h-4" aria-hidden="true" />
+                              <span>ยังจำไม่ได้</span>
+                            </span>
                             <span className="text-xs font-normal text-slate-300">ทบทวนต่อ</span>
                           </button>
                           <button
@@ -670,8 +675,10 @@ Output exactly in this JSON format:
                             onClick={() => handleWordGrade('good')}
                             className={gradeClass('amber')}
                           >
-                            <Zap className="w-4 h-4" aria-hidden="true" />
-                            <span>พอจำได้</span>
+                            <span className="flex items-center gap-1">
+                              <Zap className="w-4 h-4" aria-hidden="true" />
+                              <span>พอจำได้</span>
+                            </span>
                             <span className="text-xs font-normal text-slate-300">+5 XP</span>
                           </button>
                           <button
@@ -679,8 +686,10 @@ Output exactly in this JSON format:
                             onClick={() => handleWordGrade('easy')}
                             className={gradeClass('emerald')}
                           >
-                            <Check className="w-4 h-4" aria-hidden="true" />
-                            <span>จำได้แม่น</span>
+                            <span className="flex items-center gap-1">
+                              <Check className="w-4 h-4" aria-hidden="true" />
+                              <span>จำได้แม่น</span>
+                            </span>
                             <span className="text-xs font-normal text-slate-300">+15 XP</span>
                           </button>
                         </div>
@@ -705,16 +714,20 @@ Output exactly in this JSON format:
             /* MINED SENTENCES DECK */
             <div className="space-y-3">
               {renderProgress('ประโยคที่', srsIndex, minedSentences.length)}
-              <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 shadow-2xl overflow-hidden p-4 sm:p-8 space-y-5">
-                {/* Card Meta & Drill Toggle */}
+              <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 shadow-2xl overflow-hidden p-4 sm:p-8 space-y-4">
+                {/* Card Meta & Drill Toggle (hidden when the line cannot be resolved) */}
                 <div className="flex items-center justify-between gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setQuizMode(quizMode === 'cloze' ? 'listening' : 'cloze')}
-                    className="min-h-11 px-3.5 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 text-sm font-semibold transition-colors active:opacity-80"
-                  >
-                    โหมด: {quizMode === 'cloze' ? 'เติมคำ' : 'ฟังเสียง'}
-                  </button>
+                  {!getModeAMinedSentence().missing ? (
+                    <button
+                      type="button"
+                      onClick={() => setQuizMode(quizMode === 'cloze' ? 'listening' : 'cloze')}
+                      className="min-h-11 px-3.5 rounded-xl bg-slate-800 text-slate-200 hover:bg-slate-700 text-sm font-semibold transition-colors active:opacity-80"
+                    >
+                      โหมด: {quizMode === 'cloze' ? 'เติมคำ' : 'ฟังเสียง'}
+                    </button>
+                  ) : (
+                    <span />
+                  )}
                   <span className="px-2.5 py-1 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 font-mono text-xs">
                     ช่วง: {currentMined?.srs_interval || 1} วัน
                   </span>
@@ -724,6 +737,28 @@ Output exactly in this JSON format:
                 {(() => {
                   const modeA = getModeAMinedSentence();
                   const clozeText = getClozeSentence(modeA.japanese, modeA.targetLemma, modeA.line);
+
+                  if (modeA.missing) {
+                    // Unresolvable line: no cloze/reveal/grade controls, only a skip to the next card.
+                    return (
+                      <>
+                        <div className="py-2 sm:py-4 space-y-3 text-center">
+                          <p className="text-sm text-slate-300">ไม่พบประโยคต้นฉบับ (คลิปอาจถูกอัปเดต)</p>
+                          {modeA.thai && <p className="text-base text-emerald-300 font-bold">🇹🇭 {modeA.thai}</p>}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setIsRevealed(false);
+                            setSrsIndex(srsIndex < minedSentences.length - 1 ? srsIndex + 1 : 0);
+                          }}
+                          className="w-full min-h-12 py-3 rounded-2xl text-base font-bold bg-slate-800 hover:bg-slate-700 text-slate-100 transition-all active:opacity-80"
+                        >
+                          ไปการ์ดถัดไป
+                        </button>
+                      </>
+                    );
+                  }
 
                   return (
                     <>
@@ -744,9 +779,21 @@ Output exactly in this JSON format:
                           </div>
                         ) : (
                           <div className="space-y-3">
-                            <p className="font-jp text-2xl sm:text-3xl font-extrabold text-white leading-relaxed tracking-wide">
-                              {isRevealed ? modeA.japanese : clozeText}
-                            </p>
+                            <div className="flex items-center justify-center gap-2">
+                              <p className="font-jp text-2xl sm:text-3xl font-extrabold text-white leading-relaxed tracking-wide">
+                                {isRevealed ? modeA.japanese : clozeText}
+                              </p>
+                              {isRevealed && (
+                                <button
+                                  type="button"
+                                  onClick={() => playAudio(modeA.japanese)}
+                                  aria-label="ฟังอีกครั้ง"
+                                  className="min-h-11 min-w-11 shrink-0 inline-flex items-center justify-center rounded-xl bg-slate-800 text-rose-300 hover:bg-slate-700 active:opacity-80 transition-colors"
+                                >
+                                  <Volume2 className="w-4 h-4" aria-hidden="true" />
+                                </button>
+                              )}
+                            </div>
                             {isRevealed && (
                               <div className="space-y-2 pt-1 animate-in fade-in duration-150">
                                 <p className="text-lg text-emerald-300 font-bold">🇹🇭 {modeA.thai}</p>
@@ -778,22 +825,6 @@ Output exactly in this JSON format:
                         </button>
                       ) : (
                         <div className="space-y-4 animate-in fade-in duration-150">
-                          {/* Replay Scene Audio Button */}
-                          <div className="p-3 rounded-2xl bg-slate-950 border border-slate-800 flex items-center justify-between gap-2">
-                            <span className="text-sm text-slate-300 flex items-center gap-1.5 font-medium">
-                              <Volume2 className="w-4 h-4 text-rose-400 shrink-0" aria-hidden="true" />
-                              เสียงประโยค
-                            </span>
-                            <button
-                              type="button"
-                              onClick={() => playAudio(modeA.japanese)}
-                              className="min-h-11 px-4 rounded-xl bg-slate-800 text-sm text-slate-100 hover:bg-slate-700 flex items-center gap-1.5 font-semibold transition-colors active:opacity-80"
-                            >
-                              <RotateCcw className="w-4 h-4" aria-hidden="true" />
-                              ฟังอีกครั้ง
-                            </button>
-                          </div>
-
                           {/* SRS Rating Buttons */}
                           <div className="grid grid-cols-4 gap-2">
                             <button
@@ -801,8 +832,10 @@ Output exactly in this JSON format:
                               onClick={() => handleSRSGrade('again')}
                               className={gradeClass('rose')}
                             >
-                              <X className="w-4 h-4" aria-hidden="true" />
-                              <span>อีกครั้ง</span>
+                              <span className="flex items-center gap-1">
+                                <X className="w-4 h-4" aria-hidden="true" />
+                                <span>อีกครั้ง</span>
+                              </span>
                               <span className="text-xs font-normal text-slate-300">12 ชม.</span>
                             </button>
                             <button
@@ -810,8 +843,10 @@ Output exactly in this JSON format:
                               onClick={() => handleSRSGrade('hard')}
                               className={gradeClass('amber')}
                             >
-                              <Minus className="w-4 h-4" aria-hidden="true" />
-                              <span>ยาก</span>
+                              <span className="flex items-center gap-1">
+                                <Minus className="w-4 h-4" aria-hidden="true" />
+                                <span>ยาก</span>
+                              </span>
                               <span className="text-xs font-normal text-slate-300">1 วัน</span>
                             </button>
                             <button
@@ -819,8 +854,10 @@ Output exactly in this JSON format:
                               onClick={() => handleSRSGrade('good')}
                               className={gradeClass('indigo')}
                             >
-                              <Check className="w-4 h-4" aria-hidden="true" />
-                              <span>ดี</span>
+                              <span className="flex items-center gap-1">
+                                <Check className="w-4 h-4" aria-hidden="true" />
+                                <span>ดี</span>
+                              </span>
                               <span className="text-xs font-normal text-slate-300">3 วัน</span>
                             </button>
                             <button
@@ -828,8 +865,10 @@ Output exactly in this JSON format:
                               onClick={() => handleSRSGrade('easy')}
                               className={gradeClass('emerald')}
                             >
-                              <Zap className="w-4 h-4" aria-hidden="true" />
-                              <span>ง่าย</span>
+                              <span className="flex items-center gap-1">
+                                <Zap className="w-4 h-4" aria-hidden="true" />
+                                <span>ง่าย</span>
+                              </span>
                               <span className="text-xs font-normal text-slate-300">5 วัน</span>
                             </button>
                           </div>
@@ -892,12 +931,17 @@ Output exactly in this JSON format:
                     <Flame className="w-3.5 h-3.5" aria-hidden="true" />
                     ฟังเสียงต้นฉบับ แล้วพูดตาม
                   </span>
-                  <h3 className="font-jp text-2xl sm:text-3xl font-extrabold text-white pt-1 leading-relaxed">
-                    {modeB.japanese}
-                  </h3>
+                  {modeB.missing ? (
+                    <p className="text-sm text-slate-300 pt-1">ไม่พบประโยคต้นฉบับ (คลิปอาจถูกอัปเดต)</p>
+                  ) : (
+                    <h3 className="font-jp text-2xl sm:text-3xl font-extrabold text-white pt-1 leading-relaxed">
+                      {modeB.japanese}
+                    </h3>
+                  )}
                   {modeB.thai && <p className="text-sm font-medium text-emerald-300">🇹🇭 {modeB.thai}</p>}
                 </div>
 
+                {!modeB.missing && (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                   <button
                     type="button"
@@ -928,6 +972,7 @@ Output exactly in this JSON format:
                     </button>
                   )}
                 </div>
+                )}
 
                 {/* Speech Recognition Warning */}
                 {speechWarning && (
