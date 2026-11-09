@@ -176,13 +176,29 @@ and vid-vlog-n5-uji wrongly reuses the Pokémon video nGLVwQuwnfY. All video rec
 6. `npm run build` passes; report the per-video table: youtube_id, duration, lines, % lines with ja, % lines with th,
    th source (manual/auto/missing).
 
+## Task 7: Code Geass episodes (user request 2026-11-09) — runs BEFORE Task 6
+
+Add Code Geass: Lelouch of the Rebellion EP1–EP3 from Ani-One Asia (not Ani-One Thailand: its Thai subs are burned
+into the picture, which would duplicate the app's subtitles). Controller checked: NZyO-FFwmHE (#1), U7VDDvGEwdA (#2),
+jVywpPb1TLE (#3); public, embeddable, ~1448 s; tracks: manual `en` (+ fil/id/zh), auto `ja-orig`/`ja`; NO manual th.
+1. `scripts/fetch-captions.py`: support videos with no manual th: take `ja-orig` (preferred) or auto `ja` as the PRIMARY
+   timeline (rolling-caption dedupe as today) and attach the manual `en` track by midpoint overlap into a new optional
+   line field `en` (reference for translators; not shown in the UI). Existing videos' output must not change
+   (re-run and diff: only the 3 new files appear).
+2. Records in `src/data/mockVideos.ts`: ids `vid-anione-codegeass-01..03`, category Anime, Thai title
+   "โค้ดกีอัส ภาคการปฏิวัติของลูลูช ตอนที่ N (Ani-One Asia)", japanese_title "コードギアス 反逆のルルーシュ", 1-sentence Thai
+   description per episode from the YouTube description (no invented plot), emoji ♟️, a dark purple/red gradient,
+   real duration, primary JLPT N3.
+3. Tokenize with `scripts/tokenize-captions.mjs` (same as Task 5). `npm run build` passes. Report lines / % ja / en coverage.
+Their Thai lines are produced by Task 6 (which also uses the `en` field as a reference when present).
+
 ## Task 6: Thai translation for every line (content)
 
 After Task 5, every line with Japanese text must have a natural Thai translation (`th`), and lines whose `th` came from
 YouTube AUTO translation are re-translated from the Japanese. Official manual Thai is kept as-is.
 1. `scripts/export-untranslated.mjs` writes batches of at most 150 lines to
    `.superpowers/translate/<youtube_id>-<n>.json` as `[{ "key": "<start_ms>", "ja": "..." }]` for lines needing Thai.
-2. Translate each batch into `<same>.th.json` as `[{ "key", "th" }]`: natural spoken Thai matching the speaker's tone
+2. Translate each batch (include the line's `en` field in the batch as a reference when present) into `<same>.th.json` as `[{ "key", "th" }]`: natural spoken Thai matching the speaker's tone
    (casual anime speech stays casual), no romanization, keep names in Thai script as official Thai subs do
    (ยูจิ, โกโจ, สุคุนะ, อิจิโกะ, เดนจิ, โปจิตะ...). Never leave a line empty.
 3. `scripts/import-translations.mjs` merges them back into `src/data/captions/*.json` with `th_source: "ai"`;
