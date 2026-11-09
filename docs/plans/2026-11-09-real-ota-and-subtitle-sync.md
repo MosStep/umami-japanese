@@ -295,3 +295,23 @@ User wants fun general clips like はじめしゃちょー (Hajime Shacho) and J
    emits `src/data/captions/word-index.json` = `{ "<youtube_id>": ["<lemma>|<reading>", ...unique content keys] }`; the feed's
    known-% uses it instead of loading every caption file (resolve dictionary ids at runtime from lemma+reading, so the
    index cannot drift from dictionary changes). Then remove the idle sequential loading of all captions from the feed.
+
+## Task 12: Subtitle dock layout (user device feedback, ship in 1.0.9 APK)
+
+Phone screenshot (375-ish wide, 1.0.7): in ImmersionPlayer's subtitle dock the Japanese line renders at text-2xl/3xl
+with wide token gaps, furigana and a dotted underline + per-token meaning under each token, so a normal line wraps to
+3 rows and the Thai translation is pushed off-screen (the user can't see it without scrolling); the tap-word card then
+appears below and covers more. In gaps between lines the whole dock fades out (opacity-0) — the user wants the frame to stay.
+1. Compact Japanese line: base `text-xl` (sm:text-2xl), tighter token spacing (`gap-x-0.5 gap-y-1`), furigana `text-xs`
+   (≥ 12px rule), keep the tap target ≥ 32px tall per token via padding not font size; dotted underline 1px; show the small
+   per-token Thai gloss under a token ONLY for the tapped/active token (not under every learning word). A typical 15–20
+   character line should fit in ≤ 2 rows at 375px.
+2. Thai translation always visible directly under the Japanese (when translation is not hidden), `text-base`, max 2 lines
+   then wraps — never pushed below the fold by the controls; move the reading-mode segmented (ฮิรากานะ / โรมันจิ / ปิด)
+   and the show/hide-translation toggle into ONE compact row (icon+short label, min-h-11) above the line.
+3. Fixed-size frame: the dock keeps a stable min-height (so the page doesn't jump between lines) and NEVER disappears.
+   In a gap (no active line): keep showing the last spoken line dimmed (`opacity-50`) with a small muted label
+   "♪ ช่วงไม่มีบทพูด"; before the first line show "รอบทพูดแรก…" in the frame. Tokens of a dimmed line stay tappable.
+4. The tap-word floating card must not cover the Thai translation: render it as a compact overlay anchored ABOVE the
+   dock (or a bottom sheet over the controls), with a close button, max-height and its own scroll.
+Verify: `npm run build`; dev server at 375x812 — a 20-char line + Thai fits in the dock without scrolling the page.
