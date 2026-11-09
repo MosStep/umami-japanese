@@ -108,12 +108,14 @@ export const ImmersionPlayer: React.FC = () => {
     lines: activeSubtitleLines,
     loop: loopCurrentLine,
     autoPause: autoPauseAtEnd,
+    playbackSpeed,
     addXP,
   });
   syncRef.current = {
     lines: activeSubtitleLines,
     loop: loopCurrentLine,
     autoPause: autoPauseAtEnd,
+    playbackSpeed,
     addXP,
   };
 
@@ -249,7 +251,7 @@ export const ImmersionPlayer: React.FC = () => {
           seekPendingRef.current = null;
         }
 
-        const { lines, loop, autoPause, addXP: xp } = syncRef.current;
+        const { lines, loop, autoPause, playbackSpeed: speed, addXP: xp } = syncRef.current;
         const { index, active, spoken } = resolveSubtitleLine(lines, sec);
         setIsLineActive(active);
 
@@ -268,11 +270,14 @@ export const ImmersionPlayer: React.FC = () => {
         if (!spokenLine) return;
         const endSec = spokenLine.end_time_ms / 1000;
 
-        // Crossing by natural playback only: passed the end since last tick, or just past it.
-        // A seek far past the end (>= 0.5 s) does not count.
+        // Crossing requires natural forward progress since the last tick (one 150 ms tick plus
+        // timer slack, scaled by playback speed). Larger jumps are seeks (native scrub, our own
+        // seeks) and never fire loop / auto-pause.
+        const maxStep = 0.6 * Math.max(1, speed);
+        const naturalStep = prevSec !== null && sec >= prevSec && sec - prevSec < maxStep;
         const crossed =
-          (prevSec !== null && prevSec < endSec && endSec <= sec) ||
-          (sec >= endSec && sec - endSec < 0.5);
+          naturalStep &&
+          ((prevSec !== null && prevSec < endSec && endSec <= sec) || (sec >= endSec && sec - endSec < 0.5));
 
         // Re-arm auto-pause once the user has scrubbed back before this line's end
         if (pausedLineIdRef.current === spokenLine.id && sec < endSec - 0.3) {
