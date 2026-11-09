@@ -146,3 +146,43 @@ Scope: layout/presentation only. Do NOT change SRS/XP/grading logic, state shape
 Verify: `npm run build` passes. Dev server (`npm run dev`, http://localhost:5173, viewport 375x812): Dojo tab shows the
 segmented control and the flashcard word + reveal button without scrolling; all three modes still switch and work
 (reveal → grade advances to next card). Report before/after notes per numbered item.
+
+## Task 5: Full-clip content — every video playable, fully subtitled, tokenized
+
+User request (2026-11-09): learn from the WHOLE clip with Thai translation for the whole clip, app "100% ready".
+State after Task 3: real captions exist for miiLadou1cw, YKnowHCkAA8, OgyORlzV0uw (full ~24 min episodes, official Thai),
+BMpzc-gck0c (2 h compilation, auto ja + auto th), nGLVwQuwnfY (manual ja only 33 lines), SX_ViT4Ra7k (43 lines).
+Broken: S-zdoi1dv8k (members-only), 6q_3f5mE6E8 / FkL4CjZ12aM / 2OvyA2__Lak (unavailable), 5yx6BWlEVcY (no ja/th track),
+and vid-vlog-n5-uji wrongly reuses the Pokémon video nGLVwQuwnfY. All video records have fake `duration` 60/65.
+
+1. `scripts/find-replacements.py` (yt_dlp module API, never the exe): for each broken record above, search
+   `ytsearch15:<query>` with a topic query matching the record's category/title (e.g. "ブルーロック 第1話 公式",
+   "たこ焼き 大阪 屋台 日本語", "ラーメン 作り方 日本語 字幕", "日本語 ポッドキャスト 初級 自己紹介", "東京 カフェ vlog 日本語字幕",
+   "宇治 抹茶 散歩 vlog"). Accept a candidate only if: availability public, `playable_in_embed` true, not live, duration 3–30 min
+   (anime episodes up to 30 min), and it has a MANUAL `ja*` subtitle track (preferred) or a manual `th` track + auto ja.
+   Print a table of the chosen candidate per record (id, title, channel, duration, sub tracks) to the report.
+2. Update `src/data/mockVideos.ts` records in place (keep each record's `id`, category, emoji, gradient): set the new
+   `youtube_id`, a Thai/Japanese `title` and `description` matching the real video, and the real `duration` (seconds)
+   for ALL videos (also the working ones). Remove the now-unused MOCK_SUBTITLE_LINES entries only for records that have
+   real captions (keep MOCK for any record still without a caption file).
+3. Re-run `scripts/fetch-captions.py` for all ids (Task 3's fixed version).
+4. `scripts/tokenize-captions.mjs` (devDependency `kuromoji`): for every caption JSON line with Japanese text, write
+   `tokens: [{ surface, lemma, reading (hiragana), romaji (Hepburn, from a small kana table in the script), pos }]`.
+   `src/data/captions/index.ts` builds `tokens_json` from these (reading_kana = reading, romaji, part_of_speech), and
+   when a token's lemma equals an existing `dictionaryWords` lemma, use that word's id so the tap card shows its meaning.
+   Skip pure punctuation tokens for tap targets but keep them in the rendered text.
+5. `npm run build` passes; report the per-video table: youtube_id, duration, lines, % lines with ja, % lines with th,
+   th source (manual/auto/missing).
+
+## Task 6: Thai translation for every line (content)
+
+After Task 5, every line with Japanese text must have a natural Thai translation (`th`), and lines whose `th` came from
+YouTube AUTO translation are re-translated from the Japanese. Official manual Thai is kept as-is.
+1. `scripts/export-untranslated.mjs` writes batches of at most 150 lines to
+   `.superpowers/translate/<youtube_id>-<n>.json` as `[{ "key": "<start_ms>", "ja": "..." }]` for lines needing Thai.
+2. Translate each batch into `<same>.th.json` as `[{ "key", "th" }]`: natural spoken Thai matching the speaker's tone
+   (casual anime speech stays casual), no romanization, keep names in Thai script as official Thai subs do
+   (ยูจิ, โกโจ, สุคุนะ, อิจิโกะ, เดนจิ, โปจิตะ...). Never leave a line empty.
+3. `scripts/import-translations.mjs` merges them back into `src/data/captions/*.json` with `th_source: "ai"`;
+   `source.th` becomes `"manual+ai"` / `"ai"` accordingly.
+4. Verify: 100% of ja lines have th; spot-check table of 10 random lines per video in the report; `npm run build` passes.
