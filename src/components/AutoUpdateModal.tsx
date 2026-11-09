@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 import {
   DownloadCloud,
@@ -74,6 +74,20 @@ export const AutoUpdateModal: React.FC<Props> = ({ isOpen, onClose }) => {
   // Must run before the early `return null` below, so it is called on every render.
   useLockBodyScroll(isOpen);
 
+  // APK URL waiting for the "install unknown apps" permission (granted later in Settings)
+  const pendingApkUrlRef = useRef<string | null>(null);
+
+  // Live read of the permission; the value captured on mount goes stale once the user grants it.
+  const readCanInstall = (): boolean => {
+    try {
+      const live = (window as any).AndroidAutoUpdater?.canInstallPackages?.();
+      if (typeof live === 'boolean') return live;
+    } catch {
+      // bridge unavailable: fall back to stored value
+    }
+    return canInstall;
+  };
+
   useEffect(() => {
     if (typeof window !== 'undefined' && (window as any).AndroidAutoUpdater) {
       setIsNativeApp(true);
@@ -82,6 +96,26 @@ export const AutoUpdateModal: React.FC<Props> = ({ isOpen, onClose }) => {
       }
     }
   }, []);
+
+  // Back from Settings: re-read the permission; if granted and an install is pending, install now.
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return;
+      const live = (window as any).AndroidAutoUpdater?.canInstallPackages?.();
+      if (typeof live !== 'boolean') return;
+      setCanInstall(live);
+      const pending = pendingApkUrlRef.current;
+      if (live && pending && (window as any).AndroidAutoUpdater?.installApkFromUrl) {
+        pendingApkUrlRef.current = null;
+        (window as any).AndroidAutoUpdater.installApkFromUrl(pending);
+        setTimeout(() => {
+          onClose();
+        }, 1500);
+      }
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+  }, [onClose]);
 
   const checkForUpdates = async () => {
     setStatus('checking');
@@ -138,10 +172,15 @@ export const AutoUpdateModal: React.FC<Props> = ({ isOpen, onClose }) => {
     setStatus('downloading');
 
     if (isNativeApp && (window as any).AndroidAutoUpdater?.installApkFromUrl) {
-      if (!canInstall && (window as any).AndroidAutoUpdater?.openUnknownAppSourcesPermission) {
+      // Check at click time, not the value read on mount (permission may have been granted since)
+      const allowed = readCanInstall();
+      setCanInstall(allowed);
+      if (!allowed && (window as any).AndroidAutoUpdater?.openUnknownAppSourcesPermission) {
+        pendingApkUrlRef.current = apkUrl;
         (window as any).AndroidAutoUpdater.openUnknownAppSourcesPermission();
         return;
       }
+      pendingApkUrlRef.current = null;
       (window as any).AndroidAutoUpdater.installApkFromUrl(apkUrl);
       setTimeout(() => {
         onClose();
