@@ -6,3 +6,5 @@ android/build/
 *.apk
 .env
 .env.local
+
+release/

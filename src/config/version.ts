@@ -1,14 +1,10 @@
-export const APP_VERSION_BASE = 'v1.0.6';
-export const APP_VERSION_NAME = '1.0.6';
-export const APP_BUILD = 106;
-export const APP_RELEASE_DATE = '2026-11-08';
+export const APP_VERSION_BASE = 'v1.0.7';
+export const APP_VERSION_NAME = '1.0.7';
+export const APP_BUILD = 107;
+export const APP_RELEASE_DATE = '2026-11-09';
 
-export const getLiveAppVersion = (): string => {
-  try {
-    const live = localStorage.getItem('umami_live_tag') || localStorage.getItem('umami_live_version');
-    if (live) return live.startsWith('v') ? live : `v${live}`;
-  } catch {}
-  return APP_VERSION_BASE;
-};
+// Native build of the Android shell. Bump only when android/ native code changes
+// (plugins, permissions, Gradle, Capacitor native deps). Web-only changes ship as OTA bundles.
+export const NATIVE_BUILD = 107;
 
-export const APP_VERSION = getLiveAppVersion();
+export const APP_VERSION = APP_VERSION_BASE;
