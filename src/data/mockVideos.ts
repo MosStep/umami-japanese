@@ -3536,14 +3536,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【呪術廻戦】第1話 両面宿儺！特級呪物を喰らう (Ani-One Asia)",
     "channel": "Ani-One Asia",
     "category": "Anime",
-    "difficulty_rating": 2,
+    "difficulty_rating": 3,
     "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 45,
-      "N3": 20,
-      "N2": 0,
-      "N1": 0
+      "N5": 33,
+      "N4": 17,
+      "N3": 19,
+      "N2": 4,
+      "N1": 27
     },
     "duration": 1435,
     "thumbnail_gradient": "from-purple-900 via-indigo-950 to-slate-900",
@@ -3558,13 +3558,13 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N3",
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 30,
-      "N4": 50,
-      "N3": 20,
-      "N2": 0,
-      "N1": 0
+      "N5": 37,
+      "N4": 18,
+      "N3": 17,
+      "N2": 4,
+      "N1": 24
     },
     "duration": 1435,
     "thumbnail_gradient": "from-blue-900 via-indigo-900 to-slate-900",
@@ -3578,14 +3578,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【BLEACH 死神】第1話 死神になっちゃった日！朽木ルキアとの出会い (Ani-One Asia)",
     "channel": "Ani-One Asia",
     "category": "Anime",
-    "difficulty_rating": 2,
+    "difficulty_rating": 3,
     "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 40,
-      "N4": 45,
-      "N3": 15,
-      "N2": 0,
-      "N1": 0
+      "N5": 34,
+      "N4": 16,
+      "N3": 19,
+      "N2": 4,
+      "N1": 27
     },
     "duration": 1380,
     "thumbnail_gradient": "from-orange-950 via-red-950 to-slate-900",
@@ -3599,14 +3599,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "米津玄師 - Lemon で学ぶ日本語！胸に響く歌詞の世界 (N4)",
     "channel": "J-Pop Japanese",
     "category": "J-Pop",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "difficulty_rating": 4,
+    "primary_jlpt": "N2",
     "jlpt_distribution": {
-      "N5": 45,
-      "N4": 45,
-      "N3": 10,
-      "N2": 0,
-      "N1": 0
+      "N5": 33,
+      "N4": 11,
+      "N3": 16,
+      "N2": 4,
+      "N1": 36
     },
     "duration": 274,
     "thumbnail_gradient": "from-amber-500 via-yellow-600 to-stone-900",
@@ -3620,14 +3620,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【アオアシ】2nd シーズン 第1話 (Ani-One Asia)",
     "channel": "Ani-One Asia",
     "category": "Anime",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 4,
+    "primary_jlpt": "N2",
     "jlpt_distribution": {
-      "N5": 68,
-      "N4": 30,
-      "N3": 2,
-      "N2": 0,
-      "N1": 0
+      "N5": 34,
+      "N4": 12,
+      "N3": 22,
+      "N2": 5,
+      "N1": 27
     },
     "duration": 1470,
     "thumbnail_gradient": "from-green-900 via-emerald-950 to-slate-900",
@@ -3641,14 +3641,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "Battle Spirits [Re] ZEKKAI NO KU",
     "channel": "Ani-One Asia",
     "category": "Anime",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 5,
+    "primary_jlpt": "N1",
     "jlpt_distribution": {
-      "N5": 61,
-      "N4": 38,
-      "N3": 1,
-      "N2": 0,
-      "N1": 0
+      "N5": 34,
+      "N4": 12,
+      "N3": 16,
+      "N2": 5,
+      "N1": 33
     },
     "duration": 1426,
     "thumbnail_gradient": "from-sky-900 via-blue-950 to-slate-900",
@@ -3662,14 +3662,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【DARK MACHINE】第1話 (Ani-One Asia)",
     "channel": "Ani-One Asia",
     "category": "Anime",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 4,
+    "primary_jlpt": "N2",
     "jlpt_distribution": {
-      "N5": 69,
-      "N4": 31,
-      "N3": 0,
-      "N2": 0,
-      "N1": 0
+      "N5": 35,
+      "N4": 13,
+      "N3": 20,
+      "N2": 5,
+      "N1": 27
     },
     "duration": 1370,
     "thumbnail_gradient": "from-neutral-900 via-stone-950 to-slate-900",
@@ -3684,13 +3684,13 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N3",
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 94,
-      "N4": 6,
-      "N3": 0,
-      "N2": 0,
-      "N1": 0
+      "N5": 39,
+      "N4": 14,
+      "N3": 19,
+      "N2": 3,
+      "N1": 25
     },
     "duration": 1425,
     "thumbnail_gradient": "from-pink-700 via-rose-900 to-slate-900",
@@ -3704,14 +3704,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【魔法騎士レイアース】第1話 (Ani-One Asia)",
     "channel": "Ani-One Asia",
     "category": "Anime",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 5,
+    "primary_jlpt": "N1",
     "jlpt_distribution": {
-      "N5": 77,
-      "N4": 23,
-      "N3": 0,
-      "N2": 0,
-      "N1": 0
+      "N5": 36,
+      "N4": 14,
+      "N3": 17,
+      "N2": 3,
+      "N1": 30
     },
     "duration": 1404,
     "thumbnail_gradient": "from-fuchsia-800 via-violet-950 to-slate-900",
@@ -3726,13 +3726,13 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N3",
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 80,
-      "N4": 20,
-      "N3": 0,
-      "N2": 0,
-      "N1": 0
+      "N5": 37,
+      "N4": 16,
+      "N3": 19,
+      "N2": 3,
+      "N1": 25
     },
     "duration": 1430,
     "thumbnail_gradient": "from-rose-800 via-purple-950 to-slate-900",
@@ -3746,14 +3746,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【転生したら剣でした】第2期 第1話 (Ani-One Asia)",
     "channel": "Ani-One Asia",
     "category": "Anime",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 5,
+    "primary_jlpt": "N1",
     "jlpt_distribution": {
-      "N5": 78,
-      "N4": 22,
-      "N3": 0,
-      "N2": 0,
-      "N1": 0
+      "N5": 28,
+      "N4": 12,
+      "N3": 21,
+      "N2": 5,
+      "N1": 34
     },
     "duration": 1420,
     "thumbnail_gradient": "from-slate-700 via-slate-900 to-zinc-950",
@@ -3767,14 +3767,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【転生ゴブリンだけど質問ある？】第1話 (Ani-One Asia)",
     "channel": "Ani-One Asia",
     "category": "Anime",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 4,
+    "primary_jlpt": "N2",
     "jlpt_distribution": {
-      "N5": 72,
-      "N4": 28,
-      "N3": 0,
-      "N2": 0,
-      "N1": 0
+      "N5": 36,
+      "N4": 14,
+      "N3": 20,
+      "N2": 3,
+      "N1": 27
     },
     "duration": 1420,
     "thumbnail_gradient": "from-lime-900 via-green-950 to-slate-900",
@@ -3788,14 +3788,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "コードギアス 反逆のルルーシュ",
     "channel": "Ani-One Asia",
     "category": "Anime",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 4,
+    "primary_jlpt": "N2",
     "jlpt_distribution": {
-      "N5": 15,
-      "N4": 35,
-      "N3": 35,
-      "N2": 15,
-      "N1": 0
+      "N5": 32,
+      "N4": 12,
+      "N3": 20,
+      "N2": 3,
+      "N1": 33
     },
     "duration": 1448,
     "thumbnail_gradient": "from-purple-950 via-red-950 to-slate-900",
@@ -3809,14 +3809,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "コードギアス 反逆のルルーシュ",
     "channel": "Ani-One Asia",
     "category": "Anime",
-    "difficulty_rating": 2,
+    "difficulty_rating": 3,
     "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 15,
-      "N4": 35,
-      "N3": 35,
-      "N2": 15,
-      "N1": 0
+      "N5": 33,
+      "N4": 13,
+      "N3": 22,
+      "N2": 2,
+      "N1": 30
     },
     "duration": 1448,
     "thumbnail_gradient": "from-purple-950 via-red-950 to-slate-900",
@@ -3830,14 +3830,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "コードギアス 反逆のルルーシュ",
     "channel": "Ani-One Asia",
     "category": "Anime",
-    "difficulty_rating": 2,
+    "difficulty_rating": 3,
     "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 15,
-      "N4": 35,
-      "N3": 35,
-      "N2": 15,
-      "N1": 0
+      "N5": 35,
+      "N4": 15,
+      "N3": 17,
+      "N2": 3,
+      "N1": 30
     },
     "duration": 1448,
     "thumbnail_gradient": "from-purple-950 via-red-950 to-slate-900",
@@ -3854,11 +3854,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 3,
     "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 10,
-      "N4": 30,
-      "N3": 40,
-      "N2": 15,
-      "N1": 5
+      "N5": 39,
+      "N4": 13,
+      "N3": 20,
+      "N2": 5,
+      "N1": 23
     },
     "duration": 818,
     "thumbnail_gradient": "from-teal-800 via-cyan-950 to-slate-900",
@@ -3875,11 +3875,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 3,
     "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 10,
-      "N4": 30,
-      "N3": 40,
-      "N2": 15,
-      "N1": 5
+      "N5": 30,
+      "N4": 18,
+      "N3": 21,
+      "N2": 5,
+      "N1": 26
     },
     "duration": 1082,
     "thumbnail_gradient": "from-lime-900 via-green-950 to-slate-900",
@@ -3896,11 +3896,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 3,
     "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 10,
-      "N4": 30,
-      "N3": 40,
-      "N2": 15,
-      "N1": 5
+      "N5": 36,
+      "N4": 13,
+      "N3": 17,
+      "N2": 5,
+      "N1": 29
     },
     "duration": 1130,
     "thumbnail_gradient": "from-sky-900 via-blue-950 to-slate-900",
@@ -3917,11 +3917,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 3,
     "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 10,
-      "N4": 30,
-      "N3": 40,
-      "N2": 15,
-      "N1": 5
+      "N5": 44,
+      "N4": 13,
+      "N3": 15,
+      "N2": 3,
+      "N1": 25
     },
     "duration": 859,
     "thumbnail_gradient": "from-fuchsia-800 via-violet-950 to-slate-900",
@@ -3938,11 +3938,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 1,
     "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 60,
-      "N4": 30,
-      "N3": 10,
-      "N2": 0,
-      "N1": 0
+      "N5": 49,
+      "N4": 21,
+      "N3": 11,
+      "N2": 4,
+      "N1": 15
     },
     "duration": 1717,
     "thumbnail_gradient": "from-blue-900 via-indigo-900 to-slate-900",
@@ -3956,14 +3956,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "「せ」から始まる10動詞で日本語会話【N5】Japanese Listening practice",
     "channel": "Japanese super immersion",
     "category": "Podcasts",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 60,
-      "N4": 30,
-      "N3": 10,
-      "N2": 0,
-      "N1": 0
+      "N5": 43,
+      "N4": 19,
+      "N3": 11,
+      "N2": 6,
+      "N1": 21
     },
     "duration": 1718,
     "thumbnail_gradient": "from-indigo-900 via-violet-950 to-slate-900",
@@ -3980,11 +3980,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 2,
     "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 30,
-      "N4": 50,
-      "N3": 20,
-      "N2": 0,
-      "N1": 0
+      "N5": 43,
+      "N4": 25,
+      "N3": 12,
+      "N2": 2,
+      "N1": 18
     },
     "duration": 1787,
     "thumbnail_gradient": "from-purple-900 via-indigo-950 to-slate-900",
@@ -4001,11 +4001,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 3,
     "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 10,
-      "N4": 25,
-      "N3": 45,
-      "N2": 15,
-      "N1": 5
+      "N5": 40,
+      "N4": 26,
+      "N3": 12,
+      "N2": 3,
+      "N1": 19
     },
     "duration": 1356,
     "thumbnail_gradient": "from-blue-950 via-slate-900 to-zinc-950",
@@ -4022,11 +4022,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 3,
     "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 10,
-      "N4": 25,
-      "N3": 45,
-      "N2": 15,
-      "N1": 5
+      "N5": 48,
+      "N4": 23,
+      "N3": 10,
+      "N2": 3,
+      "N1": 16
     },
     "duration": 1596,
     "thumbnail_gradient": "from-violet-900 via-purple-950 to-slate-900",
@@ -4043,11 +4043,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 1,
     "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 65,
-      "N4": 25,
-      "N3": 10,
-      "N2": 0,
-      "N1": 0
+      "N5": 62,
+      "N4": 10,
+      "N3": 13,
+      "N2": 2,
+      "N1": 13
     },
     "duration": 542,
     "thumbnail_gradient": "from-rose-900 via-pink-950 to-slate-900",
@@ -4061,14 +4061,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "vlog)5:30AMから始まる24歳社会人の休日☀️勉強・カフェ・部屋づくり🏠ひとり時間を楽しむ暮らし💖",
     "channel": "Nobu-chan",
     "category": "Vlogs",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 55,
-      "N4": 35,
-      "N3": 10,
-      "N2": 0,
-      "N1": 0
+      "N5": 40,
+      "N4": 15,
+      "N3": 16,
+      "N2": 3,
+      "N1": 26
     },
     "duration": 1074,
     "thumbnail_gradient": "from-amber-900 via-orange-950 to-slate-900",
@@ -4085,11 +4085,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 1,
     "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 60,
-      "N4": 30,
+      "N5": 55,
+      "N4": 15,
       "N3": 10,
-      "N2": 0,
-      "N1": 0
+      "N2": 1,
+      "N1": 19
     },
     "duration": 511,
     "thumbnail_gradient": "from-indigo-900 via-blue-950 to-slate-900",
@@ -4106,11 +4106,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 1,
     "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 65,
-      "N4": 25,
+      "N5": 61,
+      "N4": 13,
       "N3": 10,
-      "N2": 0,
-      "N1": 0
+      "N2": 1,
+      "N1": 15
     },
     "duration": 1164,
     "thumbnail_gradient": "from-emerald-900 via-teal-950 to-slate-900",
@@ -4127,11 +4127,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 1,
     "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 70,
-      "N4": 20,
-      "N3": 10,
-      "N2": 0,
-      "N1": 0
+      "N5": 69,
+      "N4": 9,
+      "N3": 9,
+      "N2": 1,
+      "N1": 12
     },
     "duration": 449,
     "thumbnail_gradient": "from-green-900 via-emerald-950 to-slate-900",
@@ -4148,11 +4148,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 1,
     "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 60,
-      "N4": 30,
-      "N3": 10,
+      "N5": 58,
+      "N4": 18,
+      "N3": 9,
       "N2": 0,
-      "N1": 0
+      "N1": 15
     },
     "duration": 819,
     "thumbnail_gradient": "from-sky-900 via-indigo-950 to-slate-900",
@@ -4166,14 +4166,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【カフェの日本語会話】コーヒーとケーキの注文と会計",
     "channel": "あかね的日本語教室",
     "category": "Vlogs",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 55,
-      "N4": 35,
-      "N3": 10,
-      "N2": 0,
-      "N1": 0
+      "N5": 48,
+      "N4": 13,
+      "N3": 15,
+      "N2": 2,
+      "N1": 22
     },
     "duration": 657,
     "thumbnail_gradient": "from-amber-950 via-stone-900 to-slate-950",
@@ -4187,14 +4187,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "Going to a Supermarket and Making Dinner | Japanese Listening Practice",
     "channel": "Speak Japanese Naturally",
     "category": "Vlogs",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 55,
-      "N4": 35,
-      "N3": 10,
-      "N2": 0,
-      "N1": 0
+      "N5": 47,
+      "N4": 11,
+      "N3": 18,
+      "N2": 5,
+      "N1": 19
     },
     "duration": 1241,
     "thumbnail_gradient": "from-lime-900 via-emerald-950 to-slate-900",
@@ -4208,14 +4208,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "日本語で料理をします",
     "channel": "あかね的日本語教室",
     "category": "Street Food",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 55,
-      "N4": 35,
-      "N3": 10,
-      "N2": 0,
-      "N1": 0
+      "N5": 47,
+      "N4": 13,
+      "N3": 15,
+      "N2": 4,
+      "N1": 21
     },
     "duration": 941,
     "thumbnail_gradient": "from-orange-900 via-amber-950 to-slate-900",
@@ -4232,11 +4232,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 1,
     "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 55,
-      "N4": 35,
-      "N3": 10,
-      "N2": 0,
-      "N1": 0
+      "N5": 56,
+      "N4": 19,
+      "N3": 11,
+      "N2": 3,
+      "N1": 11
     },
     "duration": 500,
     "thumbnail_gradient": "from-cyan-900 via-blue-950 to-slate-900",
@@ -4253,11 +4253,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 2,
     "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 50,
+      "N5": 50,
+      "N4": 18,
       "N3": 15,
-      "N2": 0,
-      "N1": 0
+      "N2": 2,
+      "N1": 15
     },
     "duration": 888,
     "thumbnail_gradient": "from-teal-900 via-cyan-950 to-slate-900",
@@ -4274,11 +4274,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 2,
     "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 50,
-      "N3": 15,
-      "N2": 0,
-      "N1": 0
+      "N5": 44,
+      "N4": 22,
+      "N3": 18,
+      "N2": 3,
+      "N1": 13
     },
     "duration": 692,
     "thumbnail_gradient": "from-indigo-900 via-slate-900 to-zinc-950",
@@ -4295,11 +4295,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 2,
     "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 50,
-      "N3": 15,
-      "N2": 0,
-      "N1": 0
+      "N5": 51,
+      "N4": 12,
+      "N3": 16,
+      "N2": 3,
+      "N1": 18
     },
     "duration": 1439,
     "thumbnail_gradient": "from-sky-800 via-blue-950 to-slate-900",
@@ -4316,11 +4316,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 2,
     "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 30,
-      "N4": 50,
-      "N3": 20,
-      "N2": 0,
-      "N1": 0
+      "N5": 40,
+      "N4": 14,
+      "N3": 21,
+      "N2": 3,
+      "N1": 22
     },
     "duration": 1384,
     "thumbnail_gradient": "from-rose-900 via-purple-950 to-slate-900",
@@ -4334,14 +4334,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "Talking About Japanese Breakfast (日本の朝ごはん) | Japanese Daily Podcast",
     "channel": "Japanese Daily Podcast",
     "category": "Podcasts",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 30,
-      "N4": 50,
-      "N3": 20,
-      "N2": 0,
-      "N1": 0
+      "N5": 45,
+      "N4": 16,
+      "N3": 16,
+      "N2": 3,
+      "N1": 20
     },
     "duration": 983,
     "thumbnail_gradient": "from-amber-800 via-yellow-950 to-slate-900",
@@ -4355,14 +4355,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "A Mountain Walk in Japan ⛰️ | Real Japanese Immersion for 20 min",
     "channel": "けんさんおかえり Japanese",
     "category": "Podcasts",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 50,
-      "N3": 15,
-      "N2": 0,
-      "N1": 0
+      "N5": 57,
+      "N4": 16,
+      "N3": 13,
+      "N2": 3,
+      "N1": 11
     },
     "duration": 1215,
     "thumbnail_gradient": "from-emerald-800 via-green-950 to-slate-900",
@@ -4376,14 +4376,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "Can You Guess These Everyday Japanese Words? 🇯🇵 | Japanese Listening Challenge",
     "channel": "けんさんおかえり Japanese",
     "category": "Podcasts",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 50,
-      "N3": 15,
-      "N2": 0,
-      "N1": 0
+      "N5": 60,
+      "N4": 18,
+      "N3": 10,
+      "N2": 1,
+      "N1": 11
     },
     "duration": 1219,
     "thumbnail_gradient": "from-violet-900 via-indigo-950 to-slate-900",
@@ -4397,14 +4397,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "やさしい日本語ニュースわん 9/6　「分身ロボットで接客、生きる希望に」「政府、客に渡す12の品物にプラスチックを使わないで」「新しい1万円のお札　工場で印刷が始まる」",
     "channel": "阿部先生の日本語教室",
     "category": "Podcasts",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 50,
-      "N3": 15,
-      "N2": 0,
-      "N1": 0
+      "N5": 53,
+      "N4": 19,
+      "N3": 11,
+      "N2": 2,
+      "N1": 15
     },
     "duration": 703,
     "thumbnail_gradient": "from-blue-900 via-slate-900 to-zinc-950",
@@ -4421,11 +4421,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 2,
     "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 30,
-      "N4": 50,
-      "N3": 20,
-      "N2": 0,
-      "N1": 0
+      "N5": 42,
+      "N4": 13,
+      "N3": 16,
+      "N2": 3,
+      "N1": 26
     },
     "duration": 605,
     "thumbnail_gradient": "from-purple-900 via-slate-900 to-zinc-950",
@@ -4439,14 +4439,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "第1話「出発進行」│アニメ『銀河特急 ミルキー☆サブウェイ』本編│Episode01 \"All Aboard!\"   MILKY☆SUBWAY THE GALACTIC LIMITED EXPRESS",
     "channel": "MILKY☆SUBWAY THE GALACTIC LIMITED EXPRESS",
     "category": "Anime",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "difficulty_rating": 5,
+    "primary_jlpt": "N1",
     "jlpt_distribution": {
-      "N5": 35,
-      "N4": 45,
-      "N3": 20,
-      "N2": 0,
-      "N1": 0
+      "N5": 33,
+      "N4": 12,
+      "N3": 17,
+      "N2": 6,
+      "N1": 32
     },
     "duration": 210,
     "thumbnail_gradient": "from-pink-800 via-rose-950 to-slate-900",
@@ -4463,11 +4463,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 3,
     "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 20,
-      "N4": 30,
-      "N3": 40,
-      "N2": 10,
-      "N1": 0
+      "N5": 37,
+      "N4": 16,
+      "N3": 16,
+      "N2": 4,
+      "N1": 27
     },
     "duration": 1245,
     "thumbnail_gradient": "from-red-900 via-orange-950 to-slate-900",
@@ -4481,14 +4481,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【世界初】バスの2階が回転寿司食べ放題。寿司バスに乗ってみた。",
     "channel": "はじめしゃちょー（hajime）",
     "category": "Vlogs",
-    "difficulty_rating": 3,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 20,
-      "N4": 30,
-      "N3": 40,
-      "N2": 10,
-      "N1": 0
+      "N5": 40,
+      "N4": 15,
+      "N3": 16,
+      "N2": 4,
+      "N1": 25
     },
     "duration": 1217,
     "thumbnail_gradient": "from-amber-900 via-red-950 to-slate-900",
@@ -4502,14 +4502,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "肺炎で入院してました",
     "channel": "HikakinTV",
     "category": "Vlogs",
-    "difficulty_rating": 3,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 15,
-      "N4": 30,
-      "N3": 45,
-      "N2": 10,
-      "N1": 0
+      "N5": 37,
+      "N4": 17,
+      "N3": 19,
+      "N2": 5,
+      "N1": 22
     },
     "duration": 1015,
     "thumbnail_gradient": "from-sky-900 via-slate-900 to-zinc-950",
@@ -4523,14 +4523,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "おばあちゃんにバズーカを見せて「バズーカ」と答えられる年齢の境目を見つけよう！！！",
     "channel": "東海オンエア",
     "category": "Vlogs",
-    "difficulty_rating": 3,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 15,
-      "N4": 25,
-      "N3": 45,
-      "N2": 15,
-      "N1": 0
+      "N5": 42,
+      "N4": 14,
+      "N3": 18,
+      "N2": 3,
+      "N1": 23
     },
     "duration": 1071,
     "thumbnail_gradient": "from-orange-900 via-amber-950 to-slate-900",
@@ -4544,14 +4544,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【大盛り】海鮮タワー丼(¥4,500)が美味しすぎて話が盛り上がりすぎて大反省しました【すしめん処大京】",
     "channel": "水溜りボンド",
     "category": "Street Food",
-    "difficulty_rating": 3,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 15,
-      "N4": 30,
-      "N3": 45,
-      "N2": 10,
-      "N1": 0
+      "N5": 41,
+      "N4": 17,
+      "N3": 13,
+      "N2": 6,
+      "N1": 23
     },
     "duration": 1226,
     "thumbnail_gradient": "from-cyan-900 via-blue-950 to-slate-900",
@@ -4568,11 +4568,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 3,
     "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 15,
-      "N4": 25,
-      "N3": 45,
-      "N2": 15,
-      "N1": 0
+      "N5": 39,
+      "N4": 12,
+      "N3": 22,
+      "N2": 3,
+      "N1": 24
     },
     "duration": 1083,
     "thumbnail_gradient": "from-rose-900 via-red-950 to-slate-900",
@@ -4586,14 +4586,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【ゆっくり実況】日本語音声が追加されたチャプター1を改めてプレイしました - Poppy Playtime【ホラーゲーム】",
     "channel": "asdfgame",
     "category": "Gaming",
-    "difficulty_rating": 3,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 5,
+    "primary_jlpt": "N1",
     "jlpt_distribution": {
-      "N5": 15,
-      "N4": 25,
-      "N3": 45,
-      "N2": 15,
-      "N1": 0
+      "N5": 30,
+      "N4": 14,
+      "N3": 17,
+      "N2": 6,
+      "N1": 33
     },
     "duration": 1027,
     "thumbnail_gradient": "from-purple-950 via-indigo-950 to-slate-950",
@@ -4610,11 +4610,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 3,
     "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 15,
-      "N4": 30,
-      "N3": 40,
-      "N2": 15,
-      "N1": 0
+      "N5": 35,
+      "N4": 14,
+      "N3": 17,
+      "N2": 6,
+      "N1": 28
     },
     "duration": 1152,
     "thumbnail_gradient": "from-emerald-900 via-stone-900 to-slate-950",
@@ -4628,14 +4628,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【東京駅ラーメン8選】ミシュラン3年連続獲得ラーメン、東京駅No.1ラーメンなど！",
     "channel": "ハーリーのグルメ",
     "category": "Street Food",
-    "difficulty_rating": 3,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 4,
+    "primary_jlpt": "N2",
     "jlpt_distribution": {
-      "N5": 15,
-      "N4": 25,
-      "N3": 45,
-      "N2": 15,
-      "N1": 0
+      "N5": 35,
+      "N4": 10,
+      "N3": 21,
+      "N2": 3,
+      "N1": 31
     },
     "duration": 1030,
     "thumbnail_gradient": "from-amber-900 via-orange-950 to-slate-900",
@@ -4649,14 +4649,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【旅行vlog】春の京都3泊4日 | 食と茶と買い物を楽しむゆるり旅 | 京町屋ホテル",
     "channel": "HIGE and ME",
     "category": "Vlogs",
-    "difficulty_rating": 3,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 15,
-      "N4": 30,
-      "N3": 40,
-      "N2": 15,
-      "N1": 0
+      "N5": 41,
+      "N4": 12,
+      "N3": 21,
+      "N2": 4,
+      "N1": 22
     },
     "duration": 1441,
     "thumbnail_gradient": "from-indigo-900 via-violet-950 to-slate-900",
@@ -4670,14 +4670,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "ミステリーの禁忌、\"ノックスの十戒\"を全て破ったら大変な事に！！",
     "channel": "東海オンエア",
     "category": "Vlogs",
-    "difficulty_rating": 4,
-    "primary_jlpt": "N2",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 10,
-      "N4": 20,
-      "N3": 30,
-      "N2": 35,
-      "N1": 5
+      "N5": 38,
+      "N4": 15,
+      "N3": 20,
+      "N2": 3,
+      "N1": 24
     },
     "duration": 1259,
     "thumbnail_gradient": "from-slate-800 via-zinc-950 to-black",
@@ -4691,14 +4691,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【ご報告】カンタ、結婚しました！！",
     "channel": "水溜りボンド",
     "category": "Vlogs",
-    "difficulty_rating": 4,
-    "primary_jlpt": "N2",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 10,
-      "N4": 20,
-      "N3": 30,
-      "N2": 35,
-      "N1": 5
+      "N5": 42,
+      "N4": 17,
+      "N3": 16,
+      "N2": 4,
+      "N1": 21
     },
     "duration": 916,
     "thumbnail_gradient": "from-rose-900 via-pink-950 to-slate-900",
@@ -4712,14 +4712,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "敬語を使うと距離ができる？敬語とタメ口の話｜日本語ポッドキャスト、N3～N1聴解【中級、上級】",
     "channel": "Haru no Nihongo",
     "category": "Podcasts",
-    "difficulty_rating": 4,
-    "primary_jlpt": "N2",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 10,
-      "N4": 15,
-      "N3": 30,
-      "N2": 35,
-      "N1": 10
+      "N5": 43,
+      "N4": 16,
+      "N3": 13,
+      "N2": 7,
+      "N1": 21
     },
     "duration": 1302,
     "thumbnail_gradient": "from-purple-900 via-indigo-950 to-slate-900",
@@ -4733,14 +4733,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "ニュースから学ぶ！Learn from Japanese news! #3　（日本語字幕付き）",
     "channel": "Enjoy Japanese",
     "category": "Podcasts",
-    "difficulty_rating": 4,
-    "primary_jlpt": "N2",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 10,
-      "N4": 15,
-      "N3": 25,
-      "N2": 40,
-      "N1": 10
+      "N5": 37,
+      "N4": 16,
+      "N3": 20,
+      "N2": 2,
+      "N1": 25
     },
     "duration": 1104,
     "thumbnail_gradient": "from-blue-950 via-slate-900 to-zinc-950",
@@ -4757,11 +4757,11 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "difficulty_rating": 4,
     "primary_jlpt": "N2",
     "jlpt_distribution": {
-      "N5": 10,
-      "N4": 15,
-      "N3": 25,
-      "N2": 40,
-      "N1": 10
+      "N5": 19,
+      "N4": 12,
+      "N3": 20,
+      "N2": 10,
+      "N1": 39
     },
     "duration": 1068,
     "thumbnail_gradient": "from-stone-800 via-amber-950 to-slate-950",
@@ -4775,14 +4775,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "知っていますか？ 日本の伝統芸能5選！歴史・特徴・鑑賞の楽しみ方　  #yuka老師的日本語教室",
     "channel": "Yuka's Japanese Class",
     "category": "Podcasts",
-    "difficulty_rating": 4,
-    "primary_jlpt": "N2",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 10,
+      "N5": 33,
       "N4": 15,
-      "N3": 25,
-      "N2": 40,
-      "N1": 10
+      "N3": 22,
+      "N2": 4,
+      "N1": 26
     },
     "duration": 1435,
     "thumbnail_gradient": "from-red-950 via-stone-900 to-slate-950",
@@ -4796,14 +4796,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "【経済】【字幕対応】国民の生活水準低下 vs 経済指標好転！？ - サナエノミクスの「エコチェンバー」と マクロ経済の共通認識 Part 2【AI解説】",
     "channel": "+AI News Lab",
     "category": "Podcasts",
-    "difficulty_rating": 5,
-    "primary_jlpt": "N1",
+    "difficulty_rating": 4,
+    "primary_jlpt": "N2",
     "jlpt_distribution": {
-      "N5": 5,
-      "N4": 10,
-      "N3": 20,
-      "N2": 30,
-      "N1": 35
+      "N5": 27,
+      "N4": 14,
+      "N3": 27,
+      "N2": 5,
+      "N1": 27
     },
     "duration": 416,
     "thumbnail_gradient": "from-slate-900 via-blue-950 to-zinc-950",
@@ -4817,14 +4817,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "日経平均6.0%安｜下落482銘柄、売りの広がり｜アステラス製薬の監視条件【11/6 日本株】",
     "channel": "耳でわかる株式市場",
     "category": "Podcasts",
-    "difficulty_rating": 5,
-    "primary_jlpt": "N1",
+    "difficulty_rating": 4,
+    "primary_jlpt": "N2",
     "jlpt_distribution": {
-      "N5": 5,
-      "N4": 10,
-      "N3": 15,
-      "N2": 30,
-      "N1": 40
+      "N5": 14,
+      "N4": 11,
+      "N3": 38,
+      "N2": 3,
+      "N1": 34
     },
     "duration": 437,
     "thumbnail_gradient": "from-emerald-950 via-slate-900 to-zinc-950",
@@ -4838,14 +4838,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "能を楽しむための基礎知識❖日本の伝統芸能【日本通tv】",
     "channel": "NipponTsuTV",
     "category": "Vlogs",
-    "difficulty_rating": 5,
-    "primary_jlpt": "N1",
+    "difficulty_rating": 4,
+    "primary_jlpt": "N2",
     "jlpt_distribution": {
-      "N5": 5,
-      "N4": 10,
-      "N3": 20,
-      "N2": 30,
-      "N1": 35
+      "N5": 27,
+      "N4": 8,
+      "N3": 30,
+      "N2": 6,
+      "N1": 29
     },
     "duration": 722,
     "thumbnail_gradient": "from-amber-950 via-stone-950 to-black",
@@ -4859,19 +4859,187 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "時間という財産: Hidetaka Nagaoka at TEDxSaku",
     "channel": "TEDx Talks",
     "category": "Podcasts",
-    "difficulty_rating": 5,
-    "primary_jlpt": "N1",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 5,
-      "N4": 10,
-      "N3": 20,
-      "N2": 30,
-      "N1": 35
+      "N5": 44,
+      "N4": 15,
+      "N3": 19,
+      "N2": 2,
+      "N1": 20
     },
     "duration": 1183,
     "thumbnail_gradient": "from-red-950 via-slate-900 to-zinc-950",
     "scene_emoji": "⏳",
     "description": "การบรรยายบนเวที TEDxSaku ว่าด้วยคุณค่าของเวลา มุมมองต่อชีวิต และการก่อตั้งโรงเรียนทางเลือกเพื่อช่วยเหลือเยาวชน"
+  },
+  {
+    "id": "vid-yt-hajime-03",
+    "youtube_id": "fAXc2iSQT3Y",
+    "title": "10 สิ่งของที่ขาดไม่ได้ในชีวิตของยูทูบเบอร์ ฮาจิเมะชาโจ",
+    "japanese_title": "YouTuberはじめしゃちょーの人生に欠かせない10のアイテム",
+    "channel": "はじめしゃちょー（hajime）",
+    "category": "Vlogs",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 39,
+      "N4": 13,
+      "N3": 15,
+      "N2": 5,
+      "N1": 28
+    },
+    "duration": 805,
+    "thumbnail_gradient": "from-red-900 via-orange-950 to-slate-900",
+    "scene_emoji": "🎒",
+    "description": "ฮาจิเมะชาโจแนะนำสิ่งของ 10 อย่างที่มีความสำคัญและจำเป็นอย่างยิ่งต่อการใช้ชีวิตและการทำงาน"
+  },
+  {
+    "id": "vid-yt-hajime-04",
+    "youtube_id": "8NELQojJw_U",
+    "title": "ให้ ChatGPT คิดไอเดียคลิปที่จะต้องแมสแน่นอนให้ผม",
+    "japanese_title": "「チャットGPT」にオレが絶対バズる動画のネタ考えさせてみた。",
+    "channel": "はじめしゃちょー（hajime）",
+    "category": "Vlogs",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 36,
+      "N4": 13,
+      "N3": 16,
+      "N2": 5,
+      "N1": 30
+    },
+    "duration": 928,
+    "thumbnail_gradient": "from-teal-900 via-emerald-950 to-slate-900",
+    "scene_emoji": "🤖",
+    "description": "ฮาจิเมะชาโจทดลองให้ปัญญาประดิษฐ์ ChatGPT ช่วยคิดหัวข้อคลิปวิดีโอที่น่าจะได้รับความนิยมอย่างถล่มทลาย"
+  },
+  {
+    "id": "vid-yt-hajime-05",
+    "youtube_id": "F1k5UgeNHmk",
+    "title": "พิสูจน์: ดื่มเครื่องดื่มเพิ่มความสูง Senobic ต่อเนื่องทุกวัน 30 วัน ส่วนสูงจะเพิ่มขึ้นไหม",
+    "japanese_title": "【検証】30日間毎日セノビックを飲み続けたら身長は伸びるの？",
+    "channel": "はじめしゃちょー（hajime）",
+    "category": "Vlogs",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 42,
+      "N4": 13,
+      "N3": 20,
+      "N2": 4,
+      "N1": 21
+    },
+    "duration": 1005,
+    "thumbnail_gradient": "from-blue-900 via-cyan-950 to-slate-900",
+    "scene_emoji": "🥛",
+    "description": "การทดลองดื่มผลิตภัณฑ์เสริมสารอาหารเซโนบิคติดต่อกัน 30 วันเพื่อวัดว่าส่วนสูงจะเพิ่มขึ้นจริงหรือไม่"
+  },
+  {
+    "id": "vid-yt-hajime-06",
+    "youtube_id": "9-hPqlXaycI",
+    "title": "กินขนมปัง FamilyMart ทุกชนิดแล้วจัดอันดับ แถมยังเอามาผสมรวมกันด้วย",
+    "japanese_title": "ファミマのパンを全部食べてランキングを付ける！あ。ついでに全部混ぜます",
+    "channel": "はじめしゃちょー（hajime）",
+    "category": "Vlogs",
+    "difficulty_rating": 4,
+    "primary_jlpt": "N2",
+    "jlpt_distribution": {
+      "N5": 37,
+      "N4": 16,
+      "N3": 14,
+      "N2": 3,
+      "N1": 30
+    },
+    "duration": 1085,
+    "thumbnail_gradient": "from-green-900 via-emerald-950 to-slate-900",
+    "scene_emoji": "🍞",
+    "description": "ฮาจิเมะชาโจชิมขนมปังทุกแบบที่มีขายในแฟมิลี่มาร์ทเพื่อจัดอันดับความอร่อยก่อนนำมารวมกัน"
+  },
+  {
+    "id": "vid-yt-hajime-07",
+    "youtube_id": "gBhY1uCqwso",
+    "title": "ลองลงประมูลเก้าอี้เกมมิ่งราคา 3.5 ล้านเยนในราคาเริ่มต้น 1 เยน",
+    "japanese_title": "350万円のゲーミングチェアを1円で出品してみたwwwww",
+    "channel": "はじめしゃちょー（hajime）",
+    "category": "Vlogs",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 41,
+      "N4": 13,
+      "N3": 16,
+      "N2": 5,
+      "N1": 25
+    },
+    "duration": 606,
+    "thumbnail_gradient": "from-purple-900 via-indigo-950 to-slate-900",
+    "scene_emoji": "💺",
+    "description": "การนำเก้าอี้เกมมิ่งราคาแพงสามล้านห้าแสนเยนมาเปิดประมูลออนไลน์โดยตั้งราคาเริ่มต้นเพียงหนึ่งเยน"
+  },
+  {
+    "id": "vid-yt-hajime-08",
+    "youtube_id": "YCTa2iAo2Bo",
+    "title": "เหมาตู้รถไฟชินคันเซ็นคนเดียวทั้งตู้",
+    "japanese_title": "1人で新幹線貸し切ってみたwwwww",
+    "channel": "はじめしゃちょー（hajime）",
+    "category": "Vlogs",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 41,
+      "N4": 15,
+      "N3": 14,
+      "N2": 7,
+      "N1": 23
+    },
+    "duration": 1147,
+    "thumbnail_gradient": "from-sky-900 via-blue-950 to-slate-900",
+    "scene_emoji": "🚄",
+    "description": "ฮาจิเมะชาโจจองและเหมาโบกี้รถไฟหัวกระสุนชินคันเซ็นทั้งตู้เพื่อเดินทางคนเดียวแบบส่วนตัว"
+  },
+  {
+    "id": "vid-yt-hajime-09",
+    "youtube_id": "Dy0vsCaEOO8",
+    "title": "ซื้อมอเตอร์ไซค์ดีไซน์ล้ำสุดเท่ NM4-02 แต่กลับเจอเรื่องไม่คาดคิด",
+    "japanese_title": "【衝撃】カッコ良すぎるバイクを買ったけどこの男まさかのwwwww【NM4-02】",
+    "channel": "はじめしゃちょー（hajime）",
+    "category": "Vlogs",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 42,
+      "N4": 11,
+      "N3": 13,
+      "N2": 5,
+      "N1": 29
+    },
+    "duration": 919,
+    "thumbnail_gradient": "from-zinc-800 via-stone-900 to-black",
+    "scene_emoji": "🏍️",
+    "description": "การรีวิวมอเตอร์ไซค์บิ๊กไบค์ทรงล้ำยุครุ่น NM4-02 ที่เพิ่งซื้อมาพร้อมความรู้สึกในการขับขี่"
+  },
+  {
+    "id": "vid-yt-hajime-10",
+    "youtube_id": "Wgx9Cn9kGLk",
+    "title": "ปี 2025 สั่งห้ามตัวเองทำสิ่งนี้ตลอด 1 ปีเต็ม ไม่รู้จะใช้ชีวิตรอดไหม",
+    "japanese_title": "2025年。1年間○○禁止します。生活できるか分かりません。",
+    "channel": "はじめしゃちょー（hajime）",
+    "category": "Vlogs",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 42,
+      "N4": 15,
+      "N3": 15,
+      "N2": 3,
+      "N1": 25
+    },
+    "duration": 1154,
+    "thumbnail_gradient": "from-red-950 via-neutral-900 to-black",
+    "scene_emoji": "🚫",
+    "description": "การประกาศกติกาห้ามทำพฤติกรรมบางอย่างตลอดทั้งปี 2025 เพื่อท้าทายตัวเองในการใช้ชีวิต"
   }
 ];
 
