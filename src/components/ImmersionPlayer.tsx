@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
 import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 import { useApp, FuriganaMode } from '../context/AppContext';
 import { SubtitleLineRecord, SubtitleTokenJSON } from '../schema/databaseSchema';
@@ -13,7 +13,9 @@ import {
   Bookmark,
   Volume2,
   Settings,
-  Sparkles,
+  Check,
+  Zap,
+  MoreHorizontal,
   BookOpen,
   CheckCircle2,
   Sliders,
@@ -85,6 +87,12 @@ export const ImmersionPlayer: React.FC = () => {
   });
   const [revealedLines, setRevealedLines] = useState<Record<string, boolean>>({});
   const [showContextualModal, setShowContextualModal] = useState<boolean>(false);
+  // Tiny tap-word popover: placement relative to the token row, measured on tap
+  const [popPos, setPopPos] = useState<{ top: number; left: number; arrow: number; above: boolean } | null>(null);
+  const dockRef = useRef<HTMLDivElement>(null);
+  const rowRef = useRef<HTMLDivElement>(null);
+  const popRef = useRef<HTMLDivElement>(null);
+  const tappedElRef = useRef<HTMLElement | null>(null);
   // Preferences sheet: lock page scroll while it is open (counter-based, see utils/useLockBodyScroll).
   useLockBodyScroll(showSettingsMenu);
   // true only while playback time is inside a line's window (see resolveSubtitleLine)
@@ -410,15 +418,73 @@ export const ImmersionPlayer: React.FC = () => {
   };
 
   // When clicking a token: pause video, auto-speak word, and open dictionary
-  const handleTokenClick = (token: SubtitleTokenJSON, line: SubtitleLineRecord) => {
+  const handleTokenClick = (token: SubtitleTokenJSON, line: SubtitleLineRecord, el: HTMLElement) => {
+    // Tapping the same token again closes its popover
+    if (selectedToken?.token === token) {
+      setSelectedToken(null);
+      return;
+    }
     if (playerRef.current && typeof playerRef.current.pauseVideo === 'function') {
       playerRef.current.pauseVideo();
       setIsPlaying(false);
     }
     // Auto-speak token immediately!
     playNativeAudio(token.surface);
+    tappedElRef.current = el;
     setSelectedToken({ token, line });
   };
+
+  // Close the popover when the active line changes
+  useEffect(() => {
+    setSelectedToken(null);
+  }, [activeLine?.id]);
+
+  // Popover dismissal: outside tap, resize, Escape (not while the full dictionary modal is open)
+  useEffect(() => {
+    if (!selectedToken || showContextualModal) return;
+    const onDown = (e: PointerEvent) => {
+      const tgt = e.target as Element | null;
+      if (tgt && typeof tgt.closest === 'function' && tgt.closest('[data-token-popover],[data-token]')) return;
+      setSelectedToken(null);
+    };
+    const onResize = () => setSelectedToken(null);
+    document.addEventListener('pointerdown', onDown);
+    window.addEventListener('resize', onResize);
+    return () => {
+      document.removeEventListener('pointerdown', onDown);
+      window.removeEventListener('resize', onResize);
+    };
+  }, [selectedToken, showContextualModal, setSelectedToken]);
+
+  // Position the popover: below the tapped token, flipped above if it would overflow the dock bottom.
+  // Horizontally centred on the token, clamped to the dock with an 8px margin.
+  useLayoutEffect(() => {
+    const tokenEl = tappedElRef.current;
+    const row = rowRef.current;
+    const dock = dockRef.current;
+    const pop = popRef.current;
+    if (!selectedToken || showContextualModal || !tokenEl || !row || !dock || !pop) {
+      setPopPos(null);
+      return;
+    }
+    const t = tokenEl.getBoundingClientRect();
+    const r = row.getBoundingClientRect();
+    const d = dock.getBoundingClientRect();
+    const w = pop.offsetWidth;
+    const h = pop.offsetHeight;
+    const margin = 8;
+    const gap = 6;
+    const centerX = t.left + t.width / 2;
+    const minL = d.left + margin;
+    const maxL = Math.max(minL, d.right - margin - w);
+    const left = Math.min(Math.max(centerX - w / 2, minL), maxL);
+    const spaceBelow = d.bottom - t.bottom - margin;
+    const spaceAbove = t.top - d.top - margin;
+    const above = spaceBelow < h + gap && spaceAbove > spaceBelow;
+    const top = above ? t.top - r.top - h - gap : t.bottom - r.top + gap;
+    const arrow = Math.min(Math.max(centerX - left, 10), w - 10);
+    setPopPos({ top, left: left - r.left, arrow, above });
+  }, [selectedToken, showContextualModal, activeLine?.id]);
 
   // Global Keyboard Shortcuts
   useEffect(() => {
@@ -442,6 +508,9 @@ export const ImmersionPlayer: React.FC = () => {
         if (activeLine && activeLine.raw_text) {
           mineSentence(activeLine);
         }
+      } else if (e.key === 'Escape' && selectedToken && !showContextualModal) {
+        e.preventDefault();
+        setSelectedToken(null);
       } else if (['1', '2', '3'].includes(e.key) && selectedToken) {
         e.preventDefault();
         const statusMap = { '1': 'new', '2': 'learning', '3': 'known' } as const;
@@ -451,7 +520,7 @@ export const ImmersionPlayer: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [activeSubtitleLines, currentLineIndex, activeLine, selectedToken, isPlaying]);
+  }, [activeSubtitleLines, currentLineIndex, activeLine, selectedToken, isPlaying, showContextualModal]);
 
   const isCurrentLineMined = minedSentences.some(
     (m) => m.subtitle_line_id === activeLine?.id
@@ -510,98 +579,7 @@ export const ImmersionPlayer: React.FC = () => {
 
           {/* Interactive Japanese Subtitle Dock: fixed frame that never disappears.
               In a gap the last spoken line stays visible but dimmed. */}
-          <div className="relative rounded-3xl bg-slate-900/95 border-2 border-slate-800 p-4 sm:p-6 flex flex-col gap-3 shadow-2xl backdrop-blur-md text-center">
-            {/* Tap-word card: floats ABOVE the dock with its own scroll, so the Thai line is never covered */}
-            {selectedToken && (
-              <div className="absolute bottom-full left-0 right-0 mb-2 z-20 max-h-[40vh] overflow-y-auto rounded-2xl animate-in slide-in-from-bottom-2 duration-150 text-left">
-                <div className="relative rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/70 to-slate-900 border-2 border-indigo-500/40 p-3 sm:p-4 shadow-xl backdrop-blur-xl">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <button
-                        onClick={() => playNativeAudio(selectedToken.token.surface)}
-                        className="min-h-11 px-2.5 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 active:opacity-70 transition-all flex items-center gap-1.5 border border-amber-500/40"
-                        title="ฟังเสียงคำนี้"
-                      >
-                        <Volume2 className="w-4 h-4" />
-                        <span className="text-xs font-bold">ฟัง</span>
-                      </button>
-                      <span className="text-xl sm:text-2xl font-jp font-extrabold text-white tracking-wide">
-                        {selectedToken.token.surface}
-                      </span>
-                      {selectedToken.token.reading_kana && (
-                        <span className="text-sm font-jp text-indigo-300 font-bold">
-                          ({selectedToken.token.reading_kana})
-                        </span>
-                      )}
-                      {selectedToken.token.romaji && (
-                        <span className="text-xs font-mono text-cyan-300">
-                          [{selectedToken.token.romaji}]
-                        </span>
-                      )}
-                      <span className="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-indigo-600 text-white">
-                        {selectedToken.token.jlpt_level}
-                      </span>
-                    </div>
-                    <button
-                      onClick={() => setSelectedToken(null)}
-                      className="min-h-11 min-w-11 flex items-center justify-center -mt-2 -mr-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
-                      title="ปิดการ์ดคำแปล"
-                      aria-label="ปิดการ์ดคำแปล"
-                    >
-                      <X className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  {/* Meaning row & 1-tap Status */}
-                  <div className="mt-2 flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-slate-800/80">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs">🇹🇭</span>
-                      <span className="text-sm font-bold text-emerald-300">
-                        {selectedToken.token.thai_meaning || selectedToken.token.contextual_meaning}
-                      </span>
-                      {selectedToken.token.part_of_speech && (
-                        <span className="text-xs text-slate-400">
-                          ({selectedToken.token.part_of_speech})
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="flex items-center gap-1.5 text-xs">
-                      <button
-                        onClick={() => setWordStatus(selectedToken.token.word_id, 'known')}
-                        className={`min-h-11 px-3 rounded-lg font-bold transition-all ${
-                          getWordStatus(selectedToken.token.word_id) === 'known'
-                            ? 'bg-emerald-600 text-white shadow'
-                            : 'bg-slate-800 text-slate-400 hover:text-emerald-300'
-                        }`}
-                      >
-                        ✓ จำได้แล้ว
-                      </button>
-                      <button
-                        onClick={() => setWordStatus(selectedToken.token.word_id, 'learning')}
-                        className={`min-h-11 px-3 rounded-lg font-bold transition-all ${
-                          getWordStatus(selectedToken.token.word_id) === 'learning'
-                            ? 'bg-amber-600 text-white shadow'
-                            : 'bg-slate-800 text-slate-400 hover:text-amber-300'
-                        }`}
-                      >
-                        ⚡ กำลังเรียน
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Deep grammar & AI inquiry button */}
-                  <button
-                    type="button"
-                    onClick={() => setShowContextualModal(true)}
-                    className="mt-2.5 w-full min-h-11 py-2 px-3 rounded-xl bg-indigo-600/25 hover:bg-indigo-600/40 text-indigo-200 border border-indigo-500/40 text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:opacity-70"
-                  >
-                    <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-                    <span>🔍 ดูไวยากรณ์เชิงลึก & ถาม AI</span>
-                  </button>
-                </div>
-              </div>
-            )}
+          <div ref={dockRef} className="relative rounded-3xl bg-slate-900/95 border-2 border-slate-800 p-4 sm:p-6 flex flex-col gap-3 shadow-2xl backdrop-blur-md text-center">
 
             {activeLine ? (
               <>
@@ -662,7 +640,7 @@ export const ImmersionPlayer: React.FC = () => {
                 {/* Dimmed in gaps (last spoken line). Tokens stay tappable. */}
                 <div className={`flex flex-col gap-3 transition-opacity duration-200 ${isLineActive ? 'opacity-100' : 'opacity-50'}`}>
                   {/* Japanese line: compact ruby, stable min-height for 2 rows */}
-                  <div className="flex flex-wrap items-end justify-center content-center gap-x-0.5 gap-y-1 min-h-[8.5rem] leading-relaxed">
+                  <div ref={rowRef} className="relative flex flex-wrap items-end justify-center content-center gap-x-0.5 gap-y-1 min-h-[8.5rem] leading-relaxed">
                     {activeLine.tokens_json.map((token, idx) => {
                       const status = getWordStatus(token.word_id);
                       const isSpokenNow = isPlaying && idx === activeTokenIndex;
@@ -674,7 +652,8 @@ export const ImmersionPlayer: React.FC = () => {
                       return (
                         <div
                           key={idx}
-                          onClick={() => handleTokenClick(token, activeLine)}
+                          data-token
+                          onClick={(e) => handleTokenClick(token, activeLine, e.currentTarget)}
                           className={`cursor-pointer select-none inline-flex flex-col items-center min-w-8 min-h-8 px-0.5 py-0.5 rounded-lg transition-colors active:opacity-70 ${
                             isSpokenNow ? 'bg-indigo-500/30 ring-1 ring-indigo-400' : ''
                           }`}
@@ -729,6 +708,90 @@ export const ImmersionPlayer: React.FC = () => {
                         </div>
                       );
                     })}
+
+                    {/* Tiny tap-word popover: anchored to the tapped token, never over the video */}
+                    {selectedToken && !showContextualModal && (
+                      <div
+                        ref={popRef}
+                        data-token-popover
+                        role="dialog"
+                        aria-label={selectedToken.token.surface}
+                        style={
+                          popPos
+                            ? { top: popPos.top, left: popPos.left }
+                            : { top: 0, left: 0, visibility: 'hidden' }
+                        }
+                        className="absolute z-30 w-max max-w-[15rem] rounded-xl bg-slate-900 border border-indigo-500/50 shadow-xl shadow-black/40 px-3 py-2 text-left animate-in fade-in duration-150"
+                      >
+                        {/* Caret pointing at the tapped word */}
+                        <span
+                          aria-hidden="true"
+                          className={`absolute h-2.5 w-2.5 rotate-45 bg-slate-900 border-indigo-500/50 ${
+                            popPos?.above ? '-bottom-[6px] border-r border-b' : '-top-[6px] border-l border-t'
+                          }`}
+                          style={{ left: (popPos?.arrow ?? 0) - 5 }}
+                        />
+                        <div className="flex items-baseline gap-1.5 min-w-0">
+                          <span className="text-lg font-jp font-extrabold text-white">{selectedToken.token.surface}</span>
+                          {selectedToken.token.reading_kana && selectedToken.token.reading_kana !== selectedToken.token.surface && (
+                            <span className="text-sm font-jp font-bold text-indigo-300">{selectedToken.token.reading_kana}</span>
+                          )}
+                        </div>
+                        {(selectedToken.token.thai_meaning || selectedToken.token.contextual_meaning) && (
+                          <p className="mt-0.5 text-sm font-bold text-emerald-300 line-clamp-2">
+                            {selectedToken.token.thai_meaning || selectedToken.token.contextual_meaning}
+                          </p>
+                        )}
+                        <div className="mt-1.5 flex items-center justify-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => playNativeAudio(selectedToken.token.surface)}
+                            aria-label="ฟังเสียง"
+                            title="ฟังเสียง"
+                            className="h-11 w-11 rounded-full flex items-center justify-center bg-amber-500/15 text-amber-300 hover:bg-amber-500/25 active:opacity-70 transition-colors"
+                          >
+                            <Volume2 className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setWordStatus(selectedToken.token.word_id, 'known')}
+                            aria-label="จำได้แล้ว"
+                            aria-pressed={getWordStatus(selectedToken.token.word_id) === 'known'}
+                            title="จำได้แล้ว"
+                            className={`h-11 w-11 rounded-full flex items-center justify-center transition-colors active:opacity-70 ${
+                              getWordStatus(selectedToken.token.word_id) === 'known'
+                                ? 'bg-emerald-600 text-white shadow'
+                                : 'bg-slate-800 text-slate-400 hover:text-emerald-300'
+                            }`}
+                          >
+                            <Check className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setWordStatus(selectedToken.token.word_id, 'learning')}
+                            aria-label="กำลังเรียน"
+                            aria-pressed={getWordStatus(selectedToken.token.word_id) === 'learning'}
+                            title="กำลังเรียน"
+                            className={`h-11 w-11 rounded-full flex items-center justify-center transition-colors active:opacity-70 ${
+                              getWordStatus(selectedToken.token.word_id) === 'learning'
+                                ? 'bg-amber-600 text-white shadow'
+                                : 'bg-slate-800 text-slate-400 hover:text-amber-300'
+                            }`}
+                          >
+                            <Zap className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setShowContextualModal(true)}
+                            aria-label="ดูรายละเอียด"
+                            title="ดูรายละเอียด"
+                            className="h-11 w-11 rounded-full flex items-center justify-center bg-indigo-600/25 text-indigo-200 hover:bg-indigo-600/40 active:opacity-70 transition-colors"
+                          >
+                            <MoreHorizontal className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    )}
                   </div>
 
                   {/* Translation: always visible under the Japanese (unless spoiler-hidden) */}
@@ -1010,7 +1073,10 @@ export const ImmersionPlayer: React.FC = () => {
       {showContextualModal && selectedToken && (
         <ContextualDictionaryModal
           data={selectedToken}
-          onClose={() => setShowContextualModal(false)}
+          onClose={() => {
+            setShowContextualModal(false);
+            setSelectedToken(null);
+          }}
         />
       )}
     </div>

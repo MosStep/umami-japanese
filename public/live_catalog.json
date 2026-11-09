@@ -1,13 +1,15 @@
 {
-  "version": "1.0.9",
-  "build": 109,
+  "version": "1.0.10",
+  "build": 110,
   "min_native_build": 109,
-  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.9/web-bundle-1.0.9.zip",
+  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.10/web-bundle-1.0.10.zip",
   "updated_at": "2026-11-09T07:00:00.000Z",
   "words_count": 125,
   "videos_count": 24,
   "announcement": "🔧 v1.0.9 แก้ระบบอัปเดตในแอป: ต้องติดตั้ง APK ครั้งนี้ครั้งเดียว หลังจากนี้อัปเดตในแอปได้เลย",
   "release_notes": [
+    "💬 แตะคำแล้วขึ้นป๊อปอัปเล็กๆ ข้างคำ ไม่บังวิดีโอ",
+    "⚡ อัปเดตนี้ติดตั้งในแอปทันที ไม่ต้องลง APK",
     "🔧 แก้ระบบอัปเดตในแอป (ต้องติดตั้ง APK ครั้งนี้ครั้งเดียว หลังจากนี้อัปเดตในแอปได้เลย)",
     "🇹🇭 คำแปลไทยครบทุกบรรทัดตลอดทั้งตอน (รวม Code Geass ตอนที่ 1–3)",
     "📖 แตะคำญี่ปุ่นคำไหนก็มีความหมายภาษาไทย (คลังคำศัพท์ 6,500+ คำ)",
@@ -20,5 +22,5 @@
   ],
   "update_type": "live_ota",
   "apk_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.9/umami-app-debug.apk",
-  "checksum": "7642d7aec82223cb3e3f66f368734bc761ed637b93656d101498e1418c3887cb"
+  "checksum": "fd75c0f8aa65496817920056c364e33440f12c85bc30a2eaa2a31dbc14fd46cc"
 }
