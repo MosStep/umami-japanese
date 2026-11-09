@@ -38,7 +38,7 @@ for (const name of readdirSync(OUT_DIR)) {
 
 // Optional ids: node scripts/export-untranslated.mjs <youtube_id> ... exports only those files.
 const only = process.argv.slice(2);
-const captionFiles = readdirSync(CAPTION_DIR).filter((f) => f.endsWith('.json'))
+const captionFiles = readdirSync(CAPTION_DIR).filter((f) => f.endsWith('.json') && f !== 'word-index.json')
   .filter((f) => only.length === 0 || only.includes(f.replace(/\.json$/, ''))).sort();
 const batchRows = [];
 let totalLines = 0;

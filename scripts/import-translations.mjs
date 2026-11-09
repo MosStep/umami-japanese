@@ -20,7 +20,7 @@ const needsThai = (file, line) => Boolean(line.ja) && (!line.th || file.source?.
 
 // Caption files, keyed by youtube_id.
 const captions = new Map();
-for (const fileName of readdirSync(CAPTION_DIR).filter((f) => f.endsWith('.json')).sort()) {
+for (const fileName of readdirSync(CAPTION_DIR).filter((f) => f.endsWith('.json') && f !== 'word-index.json').sort()) {
   const data = JSON.parse(readFileSync(join(CAPTION_DIR, fileName), 'utf8'));
   const keyIndex = new Map();
   data.lines.forEach((line, i) => {

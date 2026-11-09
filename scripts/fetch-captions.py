@@ -183,6 +183,12 @@ def build_lines(ja_events, th_events, ja_kind, th_kind):
         for j in ja_only:
             out.append({"start_ms": j["start"], "end_ms": j["end"], "ja": j["text"], "th": None})
         out.sort(key=lambda l: l["start_ms"])
+        seen_starts = set()
+        for ln in out:
+            while ln["start_ms"] in seen_starts:
+                ln["start_ms"] += 1
+                ln["end_ms"] = max(ln["end_ms"], ln["start_ms"] + 1)
+            seen_starts.add(ln["start_ms"])
         build_lines.counts = {"ja_total": len(ja_events), "attached": attached, "ja_only": len(ja_only)}
         return out
 
