@@ -167,7 +167,6 @@ export const ImmersionPlayer: React.FC = () => {
   };
 
   const activeTokenIndex = getActiveTokenIndex();
-  const activeToken = activeTokenIndex >= 0 && activeLine ? activeLine.tokens_json[activeTokenIndex] : null;
 
   // Guaranteed audio playback on all mobile devices
   const playNativeAudio = (text: string) => {
@@ -458,6 +457,10 @@ export const ImmersionPlayer: React.FC = () => {
     (m) => m.subtitle_line_id === activeLine?.id
   );
 
+  // Gap before the first line: the dock shows a waiting label instead of "no line"
+  const isBeforeFirstLine =
+    !isLineActive && activeSubtitleLines.length > 0 && currentTimeSec < activeSubtitleLines[0].start_time_ms / 1000;
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 space-y-6 animate-in fade-in duration-200">
       {/* Main Split-Screen Player (HayaiLearn Architecture: Left Video & Subtitles, Right Transcript) */}
@@ -505,300 +508,269 @@ export const ImmersionPlayer: React.FC = () => {
             </div>
           </div>
 
-          {/* Interactive Japanese Subtitle Dock (Sleek Glassmorphic Panel) */}
-          <div
-            className={`relative rounded-3xl bg-slate-900/95 border-2 border-slate-800 p-4 sm:p-6 space-y-3.5 shadow-2xl backdrop-blur-md text-center transition-opacity duration-200 ${
-              isPlayerReady && !isLineActive ? 'opacity-0 pointer-events-none' : 'opacity-100'
-            }`}
-          >
+          {/* Interactive Japanese Subtitle Dock: fixed frame that never disappears.
+              In a gap the last spoken line stays visible but dimmed. */}
+          <div className="relative rounded-3xl bg-slate-900/95 border-2 border-slate-800 p-4 sm:p-6 flex flex-col gap-3 shadow-2xl backdrop-blur-md text-center">
+            {/* Tap-word card: floats ABOVE the dock with its own scroll, so the Thai line is never covered */}
+            {selectedToken && (
+              <div className="absolute bottom-full left-0 right-0 mb-2 z-20 max-h-[40vh] overflow-y-auto rounded-2xl animate-in slide-in-from-bottom-2 duration-150 text-left">
+                <div className="relative rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/70 to-slate-900 border-2 border-indigo-500/40 p-3 sm:p-4 shadow-xl backdrop-blur-xl">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <button
+                        onClick={() => playNativeAudio(selectedToken.token.surface)}
+                        className="min-h-11 px-2.5 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 active:opacity-70 transition-all flex items-center gap-1.5 border border-amber-500/40"
+                        title="ฟังเสียงคำนี้"
+                      >
+                        <Volume2 className="w-4 h-4" />
+                        <span className="text-xs font-bold">ฟัง</span>
+                      </button>
+                      <span className="text-xl sm:text-2xl font-jp font-extrabold text-white tracking-wide">
+                        {selectedToken.token.surface}
+                      </span>
+                      {selectedToken.token.reading_kana && (
+                        <span className="text-sm font-jp text-indigo-300 font-bold">
+                          ({selectedToken.token.reading_kana})
+                        </span>
+                      )}
+                      {selectedToken.token.romaji && (
+                        <span className="text-xs font-mono text-cyan-300">
+                          [{selectedToken.token.romaji}]
+                        </span>
+                      )}
+                      <span className="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-indigo-600 text-white">
+                        {selectedToken.token.jlpt_level}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => setSelectedToken(null)}
+                      className="min-h-11 min-w-11 flex items-center justify-center -mt-2 -mr-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
+                      title="ปิดการ์ดคำแปล"
+                      aria-label="ปิดการ์ดคำแปล"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Meaning row & 1-tap Status */}
+                  <div className="mt-2 flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-slate-800/80">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs">🇹🇭</span>
+                      <span className="text-sm font-bold text-emerald-300">
+                        {selectedToken.token.thai_meaning || selectedToken.token.contextual_meaning}
+                      </span>
+                      {selectedToken.token.part_of_speech && (
+                        <span className="text-xs text-slate-400">
+                          ({selectedToken.token.part_of_speech})
+                        </span>
+                      )}
+                    </div>
+
+                    <div className="flex items-center gap-1.5 text-xs">
+                      <button
+                        onClick={() => setWordStatus(selectedToken.token.word_id, 'known')}
+                        className={`min-h-11 px-3 rounded-lg font-bold transition-all ${
+                          getWordStatus(selectedToken.token.word_id) === 'known'
+                            ? 'bg-emerald-600 text-white shadow'
+                            : 'bg-slate-800 text-slate-400 hover:text-emerald-300'
+                        }`}
+                      >
+                        ✓ จำได้แล้ว
+                      </button>
+                      <button
+                        onClick={() => setWordStatus(selectedToken.token.word_id, 'learning')}
+                        className={`min-h-11 px-3 rounded-lg font-bold transition-all ${
+                          getWordStatus(selectedToken.token.word_id) === 'learning'
+                            ? 'bg-amber-600 text-white shadow'
+                            : 'bg-slate-800 text-slate-400 hover:text-amber-300'
+                        }`}
+                      >
+                        ⚡ กำลังเรียน
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Deep grammar & AI inquiry button */}
+                  <button
+                    type="button"
+                    onClick={() => setShowContextualModal(true)}
+                    className="mt-2.5 w-full min-h-11 py-2 px-3 rounded-xl bg-indigo-600/25 hover:bg-indigo-600/40 text-indigo-200 border border-indigo-500/40 text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:opacity-70"
+                  >
+                    <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
+                    <span>🔍 ดูไวยากรณ์เชิงลึก & ถาม AI</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
             {activeLine ? (
               <>
-                {/* Real-Time Sync Indicator & Reading Guide Toggles */}
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800/80 pb-2.5 text-xs">
-                  {/* Live Speech Indicator */}
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    <Radio className="w-3.5 h-3.5 animate-pulse text-rose-500" />
-                    <span className="text-slate-400 font-semibold text-[11px]">
-                      บรรทัดที่ {currentLineIndex + 1}
-                    </span>
-                    {activeToken && isPlaying && (
-                      <span className="px-2 py-0.5 rounded-lg bg-indigo-500/20 text-amber-300 font-bold border border-indigo-500/30 text-[11px] flex items-center gap-1 animate-in fade-in">
-                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping" />
-                        「{activeToken.surface}」{activeToken.thai_meaning ? `(${activeToken.thai_meaning})` : ''}
+                {/* Row 1: reading guide + translation toggle, one compact row */}
+                <div className="flex items-stretch gap-2">
+                  <div className="flex-1 min-w-0 grid grid-cols-3 gap-1 p-1 bg-slate-950/80 rounded-xl border border-slate-800">
+                    {(
+                      [
+                        { mode: 'hiragana', label: 'ฮิรากานะ', title: 'แสดงฟูริงะนะ / ฮิรากานะกำกับคันจิ' },
+                        { mode: 'romaji', label: 'โรมันจิ', title: 'แสดงโรมันจิกำกับคันจิ' },
+                        { mode: 'off', label: 'ปิด', title: 'ปิดตัวช่วยอ่าน (คันจิล้วน)' },
+                      ] as const
+                    ).map((opt) => (
+                      <button
+                        key={opt.mode}
+                        onClick={() => setReadingGuideMode(opt.mode)}
+                        className={`min-h-11 px-1 rounded-lg text-xs font-bold transition-all flex items-center justify-center active:opacity-70 ${
+                          readingGuideMode === opt.mode
+                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
+                            : 'text-slate-400 hover:text-slate-200'
+                        }`}
+                        title={opt.title}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {/* Translation spoiler toggle */}
+                  <button
+                    onClick={toggleHideTranslation}
+                    className={`min-h-11 px-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border shrink-0 active:opacity-70 ${
+                      hideTranslation
+                        ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 hover:bg-amber-500/30'
+                        : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/30'
+                    }`}
+                    title={hideTranslation ? 'คลิกเพื่อแสดงคำแปลอัตโนมัติ' : 'คลิกเพื่อซ่อนเฉลยคำแปล (แตะเปิดดูทีละประโยค)'}
+                  >
+                    {hideTranslation ? <EyeOff className="w-3.5 h-3.5 text-amber-400" /> : <Eye className="w-3.5 h-3.5 text-emerald-400" />}
+                    <span>{hideTranslation ? 'ซ่อนเฉลย' : 'แสดงคำแปล'}</span>
+                  </button>
+                </div>
+
+                {/* Row 2: live status / gap label (keeps the frame, never removes it) */}
+                <div className="flex items-center justify-center gap-1.5 min-h-4 text-xs font-semibold text-slate-400">
+                  {isLineActive ? (
+                    <>
+                      <Radio className="w-3.5 h-3.5 animate-pulse text-rose-500" />
+                      <span>
+                        บรรทัดที่ {currentLineIndex + 1} / {activeSubtitleLines.length}
                       </span>
+                    </>
+                  ) : (
+                    <span>{isBeforeFirstLine ? 'รอบทพูดแรก…' : '♪ ช่วงไม่มีบทพูด'}</span>
+                  )}
+                </div>
+
+                {/* Dimmed in gaps (last spoken line). Tokens stay tappable. */}
+                <div className={`flex flex-col gap-3 transition-opacity duration-200 ${isLineActive ? 'opacity-100' : 'opacity-50'}`}>
+                  {/* Japanese line: compact ruby, stable min-height for 2 rows */}
+                  <div className="flex flex-wrap items-end justify-center content-center gap-x-0.5 gap-y-1 min-h-[8.5rem] leading-relaxed">
+                    {activeLine.tokens_json.map((token, idx) => {
+                      const status = getWordStatus(token.word_id);
+                      const isSpokenNow = isPlaying && idx === activeTokenIndex;
+                      const isTapped = selectedToken?.token === token;
+                      const gloss = token.thai_meaning || token.contextual_meaning;
+                      // Per-token gloss only for the spoken or tapped token (setting: showMicroGloss)
+                      const showGloss = showMicroGloss && !!gloss && (isSpokenNow || isTapped);
+
+                      return (
+                        <div
+                          key={idx}
+                          onClick={() => handleTokenClick(token, activeLine)}
+                          className={`cursor-pointer select-none inline-flex flex-col items-center min-w-8 min-h-8 px-0.5 py-0.5 rounded-lg transition-colors active:opacity-70 ${
+                            isSpokenNow ? 'bg-indigo-500/30 ring-1 ring-indigo-400' : ''
+                          }`}
+                          title="แตะเพื่อฟังเสียงและดูคำแปลทันที"
+                        >
+                          {/* Surface with furigana (ruby) or romaji */}
+                          <ruby
+                            className={`text-xl sm:text-2xl font-jp font-extrabold tracking-wide ${
+                              isSpokenNow ? 'text-amber-200' : 'text-white'
+                            }`}
+                          >
+                            {token.surface}
+                            {readingGuideMode === 'hiragana' &&
+                              furiganaMode !== 'off' &&
+                              token.reading_kana &&
+                              token.reading_kana !== token.surface &&
+                              (furiganaMode === 'all' || status === 'learning') && (
+                                <rt className="text-xs font-jp font-bold text-indigo-300">{token.reading_kana}</rt>
+                              )}
+                            {readingGuideMode === 'romaji' && token.romaji && (
+                              <rt className="text-xs font-sans font-semibold text-cyan-300">{token.romaji}</rt>
+                            )}
+                          </ruby>
+
+                          {/* Pitch accent contour (optional setting) */}
+                          {showPitchAccent && token.pitch_morae && !isSpokenNow && (
+                            <div className="w-full flex items-center justify-center gap-0.5 h-1 mt-0.5">
+                              {token.pitch_morae.map((m, mIdx) => (
+                                <div
+                                  key={mIdx}
+                                  className={`flex-1 h-0.5 rounded-full ${m.high ? 'bg-amber-400' : 'bg-slate-700'}`}
+                                />
+                              ))}
+                            </div>
+                          )}
+
+                          {/* Status underline: 1px dotted for unknown, 2px colour bar for learning/known */}
+                          <div
+                            className={`w-full mt-0.5 rounded-full ${
+                              status === 'known'
+                                ? 'h-0.5 bg-emerald-500'
+                                : status === 'learning'
+                                ? 'h-0.5 bg-amber-500'
+                                : 'border-b border-dotted border-slate-500'
+                            }`}
+                          />
+
+                          {/* Gloss slot: fixed height so showing it never shifts the layout */}
+                          <span className="h-4 mt-0.5 max-w-[5.5rem] truncate text-xs leading-4 font-medium font-sans text-amber-300">
+                            {showGloss ? gloss : ''}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Translation: always visible under the Japanese (unless spoiler-hidden) */}
+                  <div className="space-y-1 pt-2 border-t border-slate-800/80">
+                    {hideTranslation && !revealedLines[activeLine.id] ? (
+                      <button
+                        onClick={() => setRevealedLines((prev) => ({ ...prev, [activeLine.id]: true }))}
+                        className="w-full min-h-11 py-2 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-amber-500/30 text-amber-300 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all active:opacity-70"
+                      >
+                        <Eye className="w-4 h-4 text-amber-400" />
+                        <span>แตะเพื่อดูเฉลยคำแปลภาษาไทย 🇹🇭</span>
+                      </button>
+                    ) : (
+                      <>
+                        <div className="flex items-start gap-2 min-h-[3rem]">
+                          <p className="flex-1 text-base font-bold leading-6 text-emerald-300 line-clamp-2">
+                            🇹🇭 {activeLine.thai_translation || activeLine.natural_translation}
+                          </p>
+                          {hideTranslation && (
+                            <button
+                              onClick={() => setRevealedLines((prev) => ({ ...prev, [activeLine.id]: false }))}
+                              className="min-h-11 min-w-11 shrink-0 flex items-center justify-center rounded-lg text-slate-500 hover:text-slate-300"
+                              title="ซ่อนเฉลยประโยคนี้อีกครั้ง"
+                              aria-label="ซ่อนเฉลยประโยคนี้อีกครั้ง"
+                            >
+                              <EyeOff className="w-3.5 h-3.5" />
+                            </button>
+                          )}
+                        </div>
+                        {activeLine.thai_translation && activeLine.natural_translation && (
+                          <p className="text-xs text-slate-400 font-medium line-clamp-1">{activeLine.natural_translation}</p>
+                        )}
+                        {activeLine.ai_grammar_summary && (
+                          <p className="text-xs text-amber-300/90 italic line-clamp-1">💡 {activeLine.ai_grammar_summary}</p>
+                        )}
+                      </>
                     )}
                   </div>
-
-                  {/* Reading Guide & Translation Toggle Controls */}
-                  <div className="flex items-center gap-1.5 flex-wrap">
-                    {/* Reading Guide Toggle Pills: [ 読 ฮิรากานะ ] [ Abc โรมันจิ ] [ ✕ ปิด ] */}
-                    <div className="flex items-center gap-1.5 bg-slate-950/80 p-1 rounded-xl border border-slate-800">
-                      <button
-                        onClick={() => setReadingGuideMode('hiragana')}
-                        className={`px-3 py-2 min-h-[38px] rounded-lg text-xs font-bold transition-all flex items-center justify-center ${
-                          readingGuideMode === 'hiragana'
-                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                            : 'text-slate-400 hover:text-slate-200'
-                        }`}
-                        title="แสดงฟูริงะนะ / ฮิรากานะกำกับคันจิ"
-                      >
-                        読 ฮิรากานะ
-                      </button>
-                      <button
-                        onClick={() => setReadingGuideMode('romaji')}
-                        className={`px-3 py-2 min-h-[38px] rounded-lg text-xs font-bold transition-all flex items-center justify-center ${
-                          readingGuideMode === 'romaji'
-                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                            : 'text-slate-400 hover:text-slate-200'
-                        }`}
-                        title="แสดงโรมันจิกำกับคันจิ"
-                      >
-                        Abc โรมันจิ
-                      </button>
-                      <button
-                        onClick={() => setReadingGuideMode('off')}
-                        className={`px-2.5 py-2 min-h-[38px] rounded-lg text-xs font-bold transition-all flex items-center justify-center ${
-                          readingGuideMode === 'off'
-                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                            : 'text-slate-400 hover:text-slate-200'
-                        }`}
-                        title="ปิดตัวช่วยอ่าน (คันจิล้วน)"
-                      >
-                        ✕ ปิด
-                      </button>
-                    </div>
-
-                    {/* Translation Spoiler Toggle Button */}
-                    <button
-                      onClick={toggleHideTranslation}
-                      className={`px-3 py-2 min-h-[38px] rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border ${
-                        hideTranslation
-                          ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 hover:bg-amber-500/30'
-                          : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/30'
-                      }`}
-                      title={hideTranslation ? 'คลิกเพื่อแสดงคำแปลอัตโนมัติ' : 'คลิกเพื่อซ่อนเฉลยคำแปล (แตะเปิดดูทีละประโยค)'}
-                    >
-                      {hideTranslation ? <EyeOff className="w-3.5 h-3.5 text-amber-400" /> : <Eye className="w-3.5 h-3.5 text-emerald-400" />}
-                      <span>{hideTranslation ? 'ซ่อนเฉลยแปล' : 'แสดงคำแปล'}</span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Tokenized Japanese Subtitle (Tappable with real-time active speech highlight) */}
-                <div className="inline-flex flex-wrap items-end justify-center gap-x-2 gap-y-3 leading-relaxed pt-1">
-                  {activeLine.tokens_json.map((token, idx) => {
-                    const status = getWordStatus(token.word_id);
-                    const isSpokenNow = isPlaying && idx === activeTokenIndex;
-
-                    return (
-                      <div
-                        key={idx}
-                        onClick={() => handleTokenClick(token, activeLine)}
-                        className={`group/token cursor-pointer select-none inline-flex flex-col items-center justify-center min-h-[48px] min-w-[36px] transition-all ${
-                          isSpokenNow
-                            ? 'bg-indigo-500/30 ring-2 ring-indigo-400 shadow-lg shadow-indigo-500/40 rounded-2xl px-2.5 py-1.5 scale-105'
-                            : 'hover:scale-105 active:scale-95 px-1.5 py-1'
-                        }`}
-                        title="แตะเพื่อฟังเสียงและดูคำแปลทันที"
-                      >
-                        {/* Token with Furigana Ruby or Romaji */}
-                        <ruby
-                          className={`text-2xl sm:text-3xl font-jp font-extrabold tracking-wide ${
-                            isSpokenNow
-                              ? 'text-amber-200 drop-shadow-[0_0_8px_rgba(251,191,36,0.6)]'
-                              : 'text-white'
-                          }`}
-                        >
-                          {token.surface}
-                          {readingGuideMode === 'hiragana' &&
-                            furiganaMode !== 'off' &&
-                            token.reading_kana &&
-                            token.reading_kana !== token.surface &&
-                            (furiganaMode === 'all' || getWordStatus(token.word_id) === 'learning') && (
-                              <rt className="text-xs sm:text-sm font-jp font-bold text-indigo-300 pb-0.5">
-                                {token.reading_kana}
-                              </rt>
-                            )}
-                          {readingGuideMode === 'romaji' && token.romaji && (
-                            <rt className="text-[11px] font-sans font-semibold text-cyan-300 pb-0.5">
-                              {token.romaji}
-                            </rt>
-                          )}
-                        </ruby>
-
-                        {/* Active Speech Dot Indicator */}
-                        {isSpokenNow && (
-                          <div className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-bounce mt-0.5 shadow-sm shadow-amber-400" />
-                        )}
-
-                        {/* Pitch Accent Contour Bar */}
-                        {showPitchAccent && token.pitch_morae && !isSpokenNow && (
-                          <div className="w-full flex items-center justify-center gap-0.5 h-1 mt-0.5">
-                            {token.pitch_morae.map((m, mIdx) => (
-                              <div
-                                key={mIdx}
-                                className={`flex-1 h-0.5 rounded-full ${
-                                  m.high ? 'bg-amber-400' : 'bg-slate-700'
-                                }`}
-                              />
-                            ))}
-                          </div>
-                        )}
-
-                        {/* Status Color-Coded Underline */}
-                        <div
-                          className={`w-full h-1 rounded-full mt-1 transition-colors ${
-                            status === 'known'
-                              ? 'bg-emerald-500 shadow-sm shadow-emerald-500/50'
-                              : status === 'learning'
-                              ? 'bg-amber-500 shadow-sm shadow-amber-500/50'
-                              : 'border-b-2 border-dotted border-slate-600'
-                          }`}
-                        />
-
-                        {/* Micro-gloss Preview */}
-                        {showMicroGloss && status !== 'known' && !isSpokenNow && (
-                          <span className="text-[10px] text-amber-300 font-sans tracking-tight max-w-[90px] truncate text-center mt-0.5 font-medium">
-                            {token.thai_meaning || token.contextual_meaning}
-                          </span>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
-
-                {/* Sleek Floating Compact Definition Card (แตะคำศัพท์แล้วขึ้นแถบกะทัดรัด ไม่บังจอ) */}
-                {selectedToken && (
-                  <div className="relative rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/70 to-slate-900 border-2 border-indigo-500/40 p-3 sm:p-4 shadow-xl backdrop-blur-xl animate-in slide-in-from-bottom-2 duration-150 text-left">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <button
-                          onClick={() => playNativeAudio(selectedToken.token.surface)}
-                          className="p-1.5 rounded-xl bg-amber-500/20 text-amber-300 hover:bg-amber-500/30 active:scale-95 transition-all flex items-center gap-1 border border-amber-500/40"
-                          title="ฟังเสียงคำนี้"
-                        >
-                          <Volume2 className="w-4 h-4" />
-                          <span className="text-xs font-bold">ฟัง</span>
-                        </button>
-                        <span className="text-xl sm:text-2xl font-jp font-extrabold text-white tracking-wide">
-                          {selectedToken.token.surface}
-                        </span>
-                        {selectedToken.token.reading_kana && (
-                          <span className="text-sm font-jp text-indigo-300 font-bold">
-                            ({selectedToken.token.reading_kana})
-                          </span>
-                        )}
-                        {selectedToken.token.romaji && (
-                          <span className="text-xs font-mono text-cyan-300">
-                            [{selectedToken.token.romaji}]
-                          </span>
-                        )}
-                        <span className="px-2 py-0.5 rounded-lg text-[10px] font-extrabold bg-indigo-600 text-white">
-                          {selectedToken.token.jlpt_level}
-                        </span>
-                      </div>
-                      <button
-                        onClick={() => setSelectedToken(null)}
-                        className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition-colors"
-                        title="ปิดการ์ดคำแปล"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-
-                    {/* Meaning row & 1-tap Status */}
-                    <div className="mt-2 flex items-center justify-between flex-wrap gap-2 pt-2 border-t border-slate-800/80">
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs">🇹🇭</span>
-                        <span className="text-sm font-bold text-emerald-300">
-                          {selectedToken.token.thai_meaning || selectedToken.token.contextual_meaning}
-                        </span>
-                        {selectedToken.token.part_of_speech && (
-                          <span className="text-xs text-slate-400">
-                            ({selectedToken.token.part_of_speech})
-                          </span>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-1.5 text-xs">
-                        <button
-                          onClick={() => setWordStatus(selectedToken.token.word_id, 'known')}
-                          className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
-                            getWordStatus(selectedToken.token.word_id) === 'known'
-                              ? 'bg-emerald-600 text-white shadow'
-                              : 'bg-slate-800 text-slate-400 hover:text-emerald-300'
-                          }`}
-                        >
-                          ✓ จำได้แล้ว
-                        </button>
-                        <button
-                          onClick={() => setWordStatus(selectedToken.token.word_id, 'learning')}
-                          className={`px-2.5 py-1 rounded-lg font-bold transition-all ${
-                            getWordStatus(selectedToken.token.word_id) === 'learning'
-                              ? 'bg-amber-600 text-white shadow'
-                              : 'bg-slate-800 text-slate-400 hover:text-amber-300'
-                          }`}
-                        >
-                          ⚡ กำลังเรียน
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Deep grammar & AI inquiry button */}
-                    <button
-                      type="button"
-                      onClick={() => setShowContextualModal(true)}
-                      className="mt-2.5 w-full py-2 px-3 rounded-xl bg-indigo-600/25 hover:bg-indigo-600/40 text-indigo-200 border border-indigo-500/40 text-xs font-bold transition-all flex items-center justify-center gap-1.5 shadow-sm active:scale-98"
-                    >
-                      <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-                      <span>🔍 ดูไวยากรณ์เชิงลึก & ถาม AI</span>
-                    </button>
-                  </div>
-                )}
-
-                {/* Natural & Thai Translation & Grammar Summary */}
-                <div className="space-y-1.5 pt-2 border-t border-slate-800/80">
-                  {hideTranslation && !revealedLines[activeLine.id] ? (
-                    <button
-                      onClick={() => setRevealedLines((prev) => ({ ...prev, [activeLine.id]: true }))}
-                      className="w-full py-2.5 px-3 rounded-xl bg-slate-900/90 hover:bg-slate-800 border border-amber-500/30 text-amber-300 text-xs sm:text-sm font-semibold flex items-center justify-center gap-2 transition-all active:scale-98 shadow-sm group"
-                    >
-                      <Eye className="w-4 h-4 text-amber-400 group-hover:scale-110 transition-transform" />
-                      <span>แตะเพื่อดูเฉลยคำแปลภาษาไทย 🇹🇭</span>
-                    </button>
-                  ) : (
-                    <>
-                      <div className="flex items-center justify-center gap-2">
-                        <p className="text-base sm:text-lg text-emerald-300 font-bold flex items-center justify-center gap-2">
-                          <span className="text-base">🇹🇭</span>
-                          <span>{activeLine.thai_translation || activeLine.natural_translation}</span>
-                        </p>
-                        {hideTranslation && (
-                          <button
-                            onClick={() => setRevealedLines((prev) => ({ ...prev, [activeLine.id]: false }))}
-                            className="p-1 rounded-lg text-slate-500 hover:text-slate-300 text-xs ml-1"
-                            title="ซ่อนเฉลยประโยคนี้อีกครั้ง"
-                          >
-                            <EyeOff className="w-3.5 h-3.5" />
-                          </button>
-                        )}
-                      </div>
-                      {activeLine.thai_translation && activeLine.natural_translation && (
-                        <p className="text-xs text-slate-400 font-medium">
-                          {activeLine.natural_translation}
-                        </p>
-                      )}
-                      {activeLine.ai_grammar_summary && (
-                        <p className="text-xs text-amber-300/90 italic line-clamp-1">
-                          💡 {activeLine.ai_grammar_summary}
-                        </p>
-                      )}
-                    </>
-                  )}
                 </div>
               </>
             ) : (
-              <p className="text-sm text-slate-400">กำลังโหลดข้อมูลซับไตเติล...</p>
+              <p className="text-sm text-slate-400 min-h-[8rem] flex items-center justify-center">กำลังโหลดข้อมูลซับไตเติล...</p>
             )}
           </div>
 
