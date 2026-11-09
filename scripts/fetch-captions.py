@@ -213,9 +213,80 @@ def build_lines(ja_events, th_events, ja_kind, th_kind):
     return out
 
 
+def attach_en(lines, en_events, max_gap_ms=1500):
+    """Attach each manual English event to the line whose span holds its midpoint
+    (else the nearest line within max_gap_ms). Sets `en` on every line.
+    Returns the number of English events that matched no line."""
+    parts = [[] for _ in lines]
+    dropped = 0
+    for e in en_events:
+        m = (e["start"] + e["end"]) / 2
+        best, best_d = None, None
+        for i, ln in enumerate(lines):
+            if ln["start_ms"] <= m < ln["end_ms"]:
+                d = 0
+            else:
+                d = min(abs(m - ln["start_ms"]), abs(m - ln["end_ms"]))
+            if d <= max_gap_ms and (best_d is None or d < best_d):
+                best, best_d = i, d
+        if best is None:
+            dropped += 1
+        else:
+            parts[best].append(e["text"])
+    for ln, p in zip(lines, parts):
+        ln["en"] = join_rolling(p) or None
+    return dropped
+
+
+def build_ja_only(ydl, youtube_id, info):
+    """No manual Thai track: Japanese is the primary timeline (auto ja-orig preferred,
+    then auto ja), Thai is null, and the manual English track (if any) is attached as
+    the reference field `en`. Auto English is never used."""
+    ja_kind, ja_formats = pick_track(info, "ja", ["ja-orig", "ja"])
+    ja_events = []
+    if ja_formats:
+        data = fetch_json3(ydl, ja_formats)
+        if data is None:
+            ja_kind = "none"
+        else:
+            ja_events = parse_events(data)
+    en_formats = (info.get("subtitles") or {}).get("en") or None
+    en_events = []
+    if ja_events and en_formats:
+        time.sleep(TRACK_SLEEP_S)
+        data = fetch_json3(ydl, en_formats)
+        if data is not None:
+            en_events = parse_events(data)
+    if not ja_events:
+        return None, {"ja": ja_kind, "th": "none"}
+
+    ja_events = drop_adjacent_dups(sorted(ja_events, key=lambda e: e["start"]))
+    build_lines.counts = {}
+    lines = build_lines(ja_events, [], ja_kind, "none")
+    en_dropped = attach_en(lines, sorted(en_events, key=lambda e: e["start"]))
+    en_src = "manual" if en_events else "none"
+    record = {
+        "youtube_id": youtube_id,
+        "source": {"ja": ja_kind, "th": "none", "en": en_src},
+        "lines": lines,
+    }
+    counts = {"en_events": len(en_events), "en_dropped": en_dropped}
+    return record, {"ja": ja_kind, "th": "none", "en": en_src, **counts}
+
+
+# Videos whose Thai is only an auto translation and whose saved output (built before the
+# no-manual-Thai branch existed) pairs that auto Thai. They keep the original path so
+# their captions do not change. Do not add ids here for new videos.
+LEGACY_AUTO_TH_IDS = {"SX_ViT4Ra7k"}
+
+
 def build_for_video(ydl, youtube_id):
     url = f"https://www.youtube.com/watch?v={youtube_id}"
     info = ydl.extract_info(url, download=False)
+
+    th_kind, _ = pick_track(info, "th", ["th"])
+    if th_kind != "manual" and youtube_id not in LEGACY_AUTO_TH_IDS:
+        return build_ja_only(ydl, youtube_id, info)
 
     ja_kind, ja_formats = pick_track(info, "ja", ["ja", "ja-orig"])
     th_kind, th_formats = pick_track(info, "th", ["th"])

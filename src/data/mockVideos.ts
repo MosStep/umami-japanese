@@ -3537,7 +3537,7 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
       "N5": 35,
       "N4": 45,
@@ -3558,7 +3558,7 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
       "N5": 30,
       "N4": 50,
@@ -3579,7 +3579,7 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N4",
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
       "N5": 40,
       "N4": 45,
@@ -3621,9 +3621,9 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N5",
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 67,
+      "N5": 68,
       "N4": 30,
       "N3": 2,
       "N2": 0,
@@ -3642,10 +3642,10 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N5",
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 47,
-      "N4": 30,
+      "N5": 61,
+      "N4": 38,
       "N3": 1,
       "N2": 0,
       "N1": 0
@@ -3663,10 +3663,10 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N5",
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 55,
-      "N4": 25,
+      "N5": 69,
+      "N4": 31,
       "N3": 0,
       "N2": 0,
       "N1": 0
@@ -3684,9 +3684,9 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N5",
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 82,
+      "N5": 94,
       "N4": 6,
       "N3": 0,
       "N2": 0,
@@ -3705,9 +3705,9 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N5",
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 75,
+      "N5": 77,
       "N4": 23,
       "N3": 0,
       "N2": 0,
@@ -3726,7 +3726,7 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N5",
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
       "N5": 80,
       "N4": 20,
@@ -3747,10 +3747,10 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N5",
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 52,
-      "N4": 15,
+      "N5": 78,
+      "N4": 22,
       "N3": 0,
       "N2": 0,
       "N1": 0
@@ -3768,10 +3768,10 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "channel": "Ani-One Asia",
     "category": "Anime",
     "difficulty_rating": 2,
-    "primary_jlpt": "N5",
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 65,
-      "N4": 26,
+      "N5": 72,
+      "N4": 28,
       "N3": 0,
       "N2": 0,
       "N1": 0
@@ -3780,6 +3780,69 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "thumbnail_gradient": "from-lime-900 via-green-950 to-slate-900",
     "scene_emoji": "👺",
     "description": "ยากามิ อากิระ พนักงานบริษัทที่เสียชีวิตขณะช่วยเด็ก เกิดใหม่เป็นก็อบลินและสืบทอดสกิลจากก็อบลินที่จากไป"
+  },
+  {
+    "id": "vid-anione-codegeass-01",
+    "youtube_id": "NZyO-FFwmHE",
+    "title": "โค้ดกีอัส ภาคการปฏิวัติของลูลูช ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "コードギアス 反逆のルルーシュ",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 15,
+      "N4": 35,
+      "N3": 35,
+      "N2": 15,
+      "N1": 0
+    },
+    "duration": 1448,
+    "thumbnail_gradient": "from-purple-950 via-red-950 to-slate-900",
+    "scene_emoji": "♟️",
+    "description": "อนิเมะคลาสสิก Code Geass: Lelouch of the Rebellion ตอนที่ 1 ฉบับทางการจาก Ani-One Asia (เสียงญี่ปุ่น)"
+  },
+  {
+    "id": "vid-anione-codegeass-02",
+    "youtube_id": "U7VDDvGEwdA",
+    "title": "โค้ดกีอัส ภาคการปฏิวัติของลูลูช ตอนที่ 2 (Ani-One Asia)",
+    "japanese_title": "コードギアス 反逆のルルーシュ",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 15,
+      "N4": 35,
+      "N3": 35,
+      "N2": 15,
+      "N1": 0
+    },
+    "duration": 1448,
+    "thumbnail_gradient": "from-purple-950 via-red-950 to-slate-900",
+    "scene_emoji": "♟️",
+    "description": "อนิเมะคลาสสิก Code Geass: Lelouch of the Rebellion ตอนที่ 2 ฉบับทางการจาก Ani-One Asia (เสียงญี่ปุ่น)"
+  },
+  {
+    "id": "vid-anione-codegeass-03",
+    "youtube_id": "jVywpPb1TLE",
+    "title": "โค้ดกีอัส ภาคการปฏิวัติของลูลูช ตอนที่ 3 (Ani-One Asia)",
+    "japanese_title": "コードギアス 反逆のルルーシュ",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 15,
+      "N4": 35,
+      "N3": 35,
+      "N2": 15,
+      "N1": 0
+    },
+    "duration": 1448,
+    "thumbnail_gradient": "from-purple-950 via-red-950 to-slate-900",
+    "scene_emoji": "♟️",
+    "description": "อนิเมะคลาสสิก Code Geass: Lelouch of the Rebellion ตอนที่ 3 ฉบับทางการจาก Ani-One Asia (เสียงญี่ปุ่น)"
   }
 ];
 
