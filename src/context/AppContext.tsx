@@ -114,7 +114,7 @@ const STORAGE_KEYS = {
 };
 
 const DEFAULT_ALBUMS: Album[] = [
-  { id: 'alb-daily', name: 'Tokyo Everyday Life', emoji: '🗼', video_ids: ['vid-game-n5-starter', 'vid-anime-n4-cafe1', 'vid-vlog-n5-uji'] },
+  { id: 'alb-daily', name: 'Tokyo Everyday Life', emoji: '🗼', video_ids: ['vid-game-n5-starter', 'vid-anime-n4-cafe1'] },
   { id: 'alb-favorites', name: 'Must-Watch Anime & Gaming', emoji: '🌟', video_ids: ['vid-game-n5-starter', 'vid-anime-n4-cafe1', 'vid-n4-pretender'] },
 ];
 

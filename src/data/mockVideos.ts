@@ -3545,7 +3545,7 @@ export const MOCK_VIDEOS: VideoRecord[] = [
       "N2": 0,
       "N1": 0
     },
-    "duration": 65,
+    "duration": 1435,
     "thumbnail_gradient": "from-purple-900 via-indigo-950 to-slate-900",
     "scene_emoji": "⚔️",
     "description": "Official licensed anime from Ani-One Asia: Yuji Itadori encounters Megumi Fushiguro and swallows the cursed finger of Ryomen Sukuna."
@@ -3566,7 +3566,7 @@ export const MOCK_VIDEOS: VideoRecord[] = [
       "N2": 0,
       "N1": 0
     },
-    "duration": 60,
+    "duration": 1435,
     "thumbnail_gradient": "from-blue-900 via-indigo-900 to-slate-900",
     "scene_emoji": "🤞",
     "description": "Official licensed anime from Ani-One Asia: Satoru Gojo effortlessly handles Sukuna and introduces Yuji to the world of Jujutsu Sorcery."
@@ -3587,52 +3587,10 @@ export const MOCK_VIDEOS: VideoRecord[] = [
       "N2": 0,
       "N1": 0
     },
-    "duration": 60,
+    "duration": 1380,
     "thumbnail_gradient": "from-orange-950 via-red-950 to-slate-900",
     "scene_emoji": "🗡️",
     "description": "Official classic anime from Ani-One Asia: Ichigo Kurosaki encounters Soul Reaper Rukia Kuchiki and awakens his dormant spirit power."
-  },
-  {
-    "id": "vid-anione-chainsaw-01",
-    "youtube_id": "BMpzc-gck0c",
-    "title": "Chainsaw Man Compilation: Dog & Chainsaw (Ani-One Thailand)",
-    "japanese_title": "【チェンソーマン】デンジとポチタの約束！犬とチェンソー (Ani-One Thailand)",
-    "channel": "Ani-One Thailand",
-    "category": "Anime",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N4",
-    "jlpt_distribution": {
-      "N5": 40,
-      "N4": 45,
-      "N3": 15,
-      "N2": 0,
-      "N1": 0
-    },
-    "duration": 60,
-    "thumbnail_gradient": "from-red-900 via-amber-950 to-slate-900",
-    "scene_emoji": "🪚",
-    "description": "Official licensed anime from Ani-One Thailand: Denji makes an unforgettable soul pact with the Chainsaw Devil Pochita."
-  },
-  {
-    "id": "vid-anione-bluelock-01",
-    "youtube_id": "S-zdoi1dv8k",
-    "title": "BLUE LOCK VS. U-20 JAPAN EP 1 (Ani-One Thailand)",
-    "japanese_title": "【ブルーロック】U-20日本代表戦 第1話！エゴイストたちの挑戦 (Ani-One Thailand)",
-    "channel": "Ani-One Thailand",
-    "category": "Anime",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N4",
-    "jlpt_distribution": {
-      "N5": 35,
-      "N4": 50,
-      "N3": 15,
-      "N2": 0,
-      "N1": 0
-    },
-    "duration": 60,
-    "thumbnail_gradient": "from-cyan-950 via-blue-950 to-slate-900",
-    "scene_emoji": "⚽",
-    "description": "Official licensed anime from Ani-One Thailand: Isagi Yoichi and Blue Lock strikers ignite their ultimate ego to take on Japan U-20."
   },
   {
     "id": "vid-game-n5-starter",
@@ -3650,7 +3608,7 @@ export const MOCK_VIDEOS: VideoRecord[] = [
       "N2": 0,
       "N1": 0
     },
-    "duration": 65,
+    "duration": 1716,
     "thumbnail_gradient": "from-red-600 via-orange-600 to-slate-900",
     "scene_emoji": "🎮",
     "description": "Beginner gaming Japanese: learning basic vocabulary, commands, choosing your partner Pokémon, and starting your adventure."
@@ -3671,115 +3629,10 @@ export const MOCK_VIDEOS: VideoRecord[] = [
       "N2": 0,
       "N1": 0
     },
-    "duration": 60,
+    "duration": 5508,
     "thumbnail_gradient": "from-yellow-500 via-amber-600 to-stone-900",
     "scene_emoji": "⚡",
     "description": "Essential RPG and gaming vocabulary: items, monster balls, catching Pokémon, and basic battle menu interactions."
-  },
-  {
-    "id": "vid-n5-takoyaki",
-    "youtube_id": "6q_3f5mE6E8",
-    "title": "Osaka Takoyaki Street Food: Ordering in Japanese (N5)",
-    "japanese_title": "大阪名物たこ焼き！本場の注文と熱々グルメ (N5)",
-    "channel": "Nippon Wandering",
-    "category": "Street Food",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "jlpt_distribution": {
-      "N5": 85,
-      "N4": 15,
-      "N3": 0,
-      "N2": 0,
-      "N1": 0
-    },
-    "duration": 60,
-    "thumbnail_gradient": "from-amber-600 via-orange-700 to-slate-900",
-    "scene_emoji": "🐙",
-    "description": "Watch authentic Osaka takoyaki being prepared while learning ordering phrases, food toppings, and hot taste expressions."
-  },
-  {
-    "id": "vid-n4-cooking",
-    "youtube_id": "FkL4CjZ12aM",
-    "title": "Tokyo Ramen Master: Rich Tonkotsu Broth (N4)",
-    "japanese_title": "職人の極上とんこつラーメン！スープ作りの極意 (N4)",
-    "channel": "Ramen Walker Japan",
-    "category": "Street Food",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N4",
-    "jlpt_distribution": {
-      "N5": 50,
-      "N4": 40,
-      "N3": 10,
-      "N2": 0,
-      "N1": 0
-    },
-    "duration": 60,
-    "thumbnail_gradient": "from-yellow-700 via-red-800 to-slate-900",
-    "scene_emoji": "🍜",
-    "description": "Learn cooking terms, noodles texture (katame, futsuu), and rich umami soup seasoning in authentic Tokyo ramen shops."
-  },
-  {
-    "id": "vid-pod-n5-intro",
-    "youtube_id": "2OvyA2__Lak",
-    "title": "Japanese with Shun Ep 1: Self Introduction (N5)",
-    "japanese_title": "日本語の森 • はじめまして！日常会話の第一歩 (N5)",
-    "channel": "Japanese with Shun",
-    "category": "Podcasts",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "jlpt_distribution": {
-      "N5": 90,
-      "N4": 10,
-      "N3": 0,
-      "N2": 0,
-      "N1": 0
-    },
-    "duration": 60,
-    "thumbnail_gradient": "from-teal-600 via-emerald-700 to-slate-900",
-    "scene_emoji": "🎙️",
-    "description": "Clear, gentle spoken Japanese for complete beginners covering hobbies, origins, daily schedule, and polite self-introduction."
-  },
-  {
-    "id": "vid-n5-vlog",
-    "youtube_id": "5yx6BWlEVcY",
-    "title": "Tokyo Cafe & Shinjuku Street Walk Vlog (N5)",
-    "japanese_title": "東京新宿のカフェ巡り！のんびり街歩き日本語 (N5)",
-    "channel": "Tokyo Stroll",
-    "category": "Vlogs",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "jlpt_distribution": {
-      "N5": 80,
-      "N4": 20,
-      "N3": 0,
-      "N2": 0,
-      "N1": 0
-    },
-    "duration": 60,
-    "thumbnail_gradient": "from-indigo-600 via-purple-700 to-slate-900",
-    "scene_emoji": "☕",
-    "description": "Walking through Shinjuku alleys, ordering iced matcha latte in a quiet cafe, and admiring evening city lights in easy Japanese."
-  },
-  {
-    "id": "vid-vlog-n5-uji",
-    "youtube_id": "nGLVwQuwnfY",
-    "title": "Kyoto Uji Matcha Walk: Green Tea & Historic Temples (N5)",
-    "japanese_title": "宇治の抹茶と歴史の散歩道！京都ぶらり旅 (N5)",
-    "channel": "Kyoto Walk 日本語",
-    "category": "Vlogs",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "jlpt_distribution": {
-      "N5": 85,
-      "N4": 15,
-      "N3": 0,
-      "N2": 0,
-      "N1": 0
-    },
-    "duration": 60,
-    "thumbnail_gradient": "from-emerald-600 via-teal-700 to-slate-900",
-    "scene_emoji": "🍵",
-    "description": "Strolling through Kyoto Uji, enjoying rich matcha soft cream, visiting historic Byodoin Phoenix Hall, and practicing travel Japanese."
   },
   {
     "id": "vid-n4-lemon",
@@ -3797,10 +3650,178 @@ export const MOCK_VIDEOS: VideoRecord[] = [
       "N2": 0,
       "N1": 0
     },
-    "duration": 60,
+    "duration": 274,
     "thumbnail_gradient": "from-amber-500 via-yellow-600 to-stone-900",
     "scene_emoji": "🎵",
     "description": "Study emotional grammar patterns and expressive vocabulary through the masterpiece Lemon by Kenshi Yonezu."
+  },
+  {
+    "id": "vid-anione-aoashi-s2-01",
+    "youtube_id": "LW5jN9YvoO0",
+    "title": "อาโอะอาชิ ซีซั่น 2 ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【アオアシ】2nd シーズン 第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 35,
+      "N4": 45,
+      "N3": 20,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 1470,
+    "thumbnail_gradient": "from-green-900 via-emerald-950 to-slate-900",
+    "scene_emoji": "⚽",
+    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+  },
+  {
+    "id": "vid-anione-battlespirits-01",
+    "youtube_id": "3umS7qVj2kg",
+    "title": "แบทเทิลสปิริตส์ [Re] ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【バトルスピリッツ】[Re] 絶界の空 第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 35,
+      "N4": 45,
+      "N3": 20,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 1426,
+    "thumbnail_gradient": "from-sky-900 via-blue-950 to-slate-900",
+    "scene_emoji": "🎴",
+    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+  },
+  {
+    "id": "vid-anione-darkmachine-01",
+    "youtube_id": "UqTNGEKXrRI",
+    "title": "ดาร์กแมชชีน ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【DARK MACHINE】第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 35,
+      "N4": 45,
+      "N3": 20,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 1370,
+    "thumbnail_gradient": "from-neutral-900 via-stone-950 to-slate-900",
+    "scene_emoji": "🌑",
+    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+  },
+  {
+    "id": "vid-anione-kurumi-01",
+    "youtube_id": "LKiQ70L4IGQ",
+    "title": "FX ไฟเตอร์ คุรุมิจัง ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【FXファイター久留美ちゃん】第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 35,
+      "N4": 45,
+      "N3": 20,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 1425,
+    "thumbnail_gradient": "from-pink-700 via-rose-900 to-slate-900",
+    "scene_emoji": "🎀",
+    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+  },
+  {
+    "id": "vid-anione-rayearth-01",
+    "youtube_id": "t0rFFd8BtvA",
+    "title": "แมจิกไนท์ เรย์เอิร์ธ ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【魔法騎士レイアース】第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 35,
+      "N4": 45,
+      "N3": 20,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 1404,
+    "thumbnail_gradient": "from-fuchsia-800 via-violet-950 to-slate-900",
+    "scene_emoji": "🧙",
+    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+  },
+  {
+    "id": "vid-anione-mgrp-01",
+    "youtube_id": "lHAh8nfXB1k",
+    "title": "โปรเจกต์เลี้ยงเด็กสาวเวทมนตร์ Restart ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【魔法少女育成計画 restart】第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 35,
+      "N4": 45,
+      "N3": 20,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 1430,
+    "thumbnail_gradient": "from-rose-800 via-purple-950 to-slate-900",
+    "scene_emoji": "🔮",
+    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+  },
+  {
+    "id": "vid-anione-sword-s2-01",
+    "youtube_id": "XCzVymkR5sE",
+    "title": "เกิดใหม่เป็นดาบ ซีซั่น 2 ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【転生したら剣でした】第2期 第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 35,
+      "N4": 45,
+      "N3": 20,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 1420,
+    "thumbnail_gradient": "from-slate-700 via-slate-900 to-zinc-950",
+    "scene_emoji": "🗡️",
+    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
+  },
+  {
+    "id": "vid-anione-goblin-01",
+    "youtube_id": "9mBa-f8ZPQ4",
+    "title": "เกิดใหม่เป็นก็อบลิน ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【転生ゴブリンだけど質問ある？】第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 35,
+      "N4": 45,
+      "N3": 20,
+      "N2": 0,
+      "N1": 0
+    },
+    "duration": 1420,
+    "thumbnail_gradient": "from-lime-900 via-green-950 to-slate-900",
+    "scene_emoji": "👺",
+    "description": "อนิเมะตอนเต็มจาก Ani-One Asia พร้อมซับญี่ปุ่นและซับไทย ฝึกฟังและอ่านภาษาญี่ปุ่นจากบทสนทนาจริง"
   }
 ];
 
@@ -4239,126 +4260,6 @@ export const MOCK_SUBTITLE_LINES: Record<string, SubtitleLineRecord[]> = {
       ]
     }
   ],
-  "vid-anione-chainsaw-01": [
-    {
-      "id": "sub-csm-01",
-      "video_id": "vid-anione-chainsaw-01",
-      "line_index": 0,
-      "start_time_ms": 0,
-      "end_time_ms": 7000,
-      "speaker": "デンジ (Denji)",
-      "raw_text": "ポチタ、約束しようぜ。俺の夢を、お前が見せてくれ！",
-      "natural_translation": "Pochita, let us make a promise. Show me my dreams come true!",
-      "thai_translation": "โพชิตะ มาสัญญากันนะ ความฝันของฉันน่ะ นายช่วยทำให้ฉันได้เห็นมันทีเถอะนะ!",
-      "ai_grammar_summary": "〜しようぜ = ชักชวนแบบเป็นกันเอง / 〜てくれ = ขอร้องให้ผู้อื่นทำเพื่อเรา",
-      "tokens_json": [
-        {
-          "surface": "ポチタ",
-          "word_id": "w-pochita",
-          "lemma": "ポチタ",
-          "reading_kana": "ぽちた",
-          "romaji": "pochita",
-          "jlpt_level": "N4",
-          "part_of_speech": "Proper Noun",
-          "contextual_meaning": "Pochita",
-          "thai_meaning": "โพชิตะ"
-        },
-        {
-          "surface": "約束しようぜ",
-          "word_id": "w-yakusoku",
-          "lemma": "約束",
-          "reading_kana": "やくそくしようぜ",
-          "romaji": "yakusoku shiyou ze",
-          "jlpt_level": "N5",
-          "part_of_speech": "Phrase",
-          "contextual_meaning": "let us make a promise",
-          "thai_meaning": "มาสัญญากันนะ"
-        },
-        {
-          "surface": "俺の夢を",
-          "word_id": "w-yume",
-          "lemma": "夢",
-          "reading_kana": "おれのゆめを",
-          "romaji": "ore no yume o",
-          "jlpt_level": "N4",
-          "part_of_speech": "Noun phrase",
-          "contextual_meaning": "my dream",
-          "thai_meaning": "ความฝันของฉัน"
-        },
-        {
-          "surface": "見せてくれ",
-          "word_id": "w-miru",
-          "lemma": "見る",
-          "reading_kana": "みせてくれ",
-          "romaji": "misete kure",
-          "jlpt_level": "N4",
-          "part_of_speech": "Verb phrase",
-          "contextual_meaning": "show me please",
-          "thai_meaning": "ทำให้ฉันได้เห็นที"
-        }
-      ]
-    }
-  ],
-  "vid-anione-bluelock-01": [
-    {
-      "id": "sub-bl-01",
-      "video_id": "vid-anione-bluelock-01",
-      "line_index": 0,
-      "start_time_ms": 0,
-      "end_time_ms": 7000,
-      "speaker": "潔世一 (Isagi Yoichi)",
-      "raw_text": "俺がゴールを決める！世界一のストライカーになるのは俺だ！",
-      "natural_translation": "I will score the goal! The one who will become the world’s best striker is me!",
-      "thai_translation": "ฉันจะเป็นคนยิงประตูเอง! คนที่จะกลายเป็นสไตรเกอร์อันดับ 1 ของโลกก็คือฉันนี่แหละ!",
-      "ai_grammar_summary": "〜を決める = ทำสำเร็จเด็ดขาด / 〜になるのは = ผู้ที่จะกลายเป็น...",
-      "tokens_json": [
-        {
-          "surface": "ゴールを",
-          "word_id": "w-goal",
-          "lemma": "ゴール",
-          "reading_kana": "ごーるを",
-          "romaji": "gooru o",
-          "jlpt_level": "N5",
-          "part_of_speech": "Noun",
-          "contextual_meaning": "the goal",
-          "thai_meaning": "ประตู / โกล"
-        },
-        {
-          "surface": "決める",
-          "word_id": "w-kimeru",
-          "lemma": "決める",
-          "reading_kana": "きめる",
-          "romaji": "kimeru",
-          "jlpt_level": "N4",
-          "part_of_speech": "Verb",
-          "contextual_meaning": "score / decide",
-          "thai_meaning": "ยิงประตูตัดสิน"
-        },
-        {
-          "surface": "世界一の",
-          "word_id": "w-sekaiichi",
-          "lemma": "世界一",
-          "reading_kana": "せかいいちの",
-          "romaji": "sekaiichi no",
-          "jlpt_level": "N4",
-          "part_of_speech": "Noun",
-          "contextual_meaning": "world’s number one",
-          "thai_meaning": "อันดับหนึ่งของโลก"
-        },
-        {
-          "surface": "俺だ",
-          "word_id": "w-ore",
-          "lemma": "俺",
-          "reading_kana": "おれだ",
-          "romaji": "ore da",
-          "jlpt_level": "N4",
-          "part_of_speech": "Pronoun + Copula",
-          "contextual_meaning": "it is me",
-          "thai_meaning": "คือฉันเอง!"
-        }
-      ]
-    }
-  ],
   "vid-game-n5-starter": [
     {
       "id": "sub-poke-01",
@@ -4473,257 +4374,6 @@ export const MOCK_SUBTITLE_LINES: Record<string, SubtitleLineRecord[]> = {
           "part_of_speech": "Verb",
           "contextual_meaning": "choose!",
           "thai_meaning": "จงเลือกสิ"
-        }
-      ]
-    }
-  ],
-  "vid-n5-takoyaki": [
-    {
-      "id": "sub-tako-01",
-      "video_id": "vid-n5-takoyaki",
-      "line_index": 0,
-      "start_time_ms": 0,
-      "end_time_ms": 6000,
-      "speaker": "店員 (Shopkeeper)",
-      "raw_text": "いらっしゃい！焼きたての熱々たこ焼きはいかがですか？",
-      "natural_translation": "Welcome! How about some freshly grilled, piping-hot takoyaki?",
-      "thai_translation": "ยินดีต้อนรับครับ! ทาโกะยากิร้อนๆ เพิ่งย่างเสร็จใหม่ๆ สักกล่องไหมครับ?",
-      "ai_grammar_summary": "焼きたて = เพิ่งย่างเสร็จสดใหม่ (กริยาตัด ます + たて) / いかがですか = รับสักนิดไหมครับ (สุภาพมาก)",
-      "tokens_json": [
-        {
-          "surface": "いらっしゃい",
-          "word_id": "w-irasshai",
-          "lemma": "いらっしゃる",
-          "reading_kana": "いらっしゃい",
-          "romaji": "irasshai",
-          "jlpt_level": "N5",
-          "part_of_speech": "Greeting",
-          "contextual_meaning": "welcome",
-          "thai_meaning": "ยินดีต้อนรับ"
-        },
-        {
-          "surface": "焼きたての",
-          "word_id": "w-yakitate",
-          "lemma": "焼く",
-          "reading_kana": "やきたての",
-          "romaji": "yakitate no",
-          "jlpt_level": "N4",
-          "part_of_speech": "Noun",
-          "contextual_meaning": "freshly grilled",
-          "thai_meaning": "เพิ่งย่างเสร็จร้อนๆ"
-        },
-        {
-          "surface": "熱々",
-          "word_id": "w-atsui",
-          "lemma": "熱い",
-          "reading_kana": "あつあつ",
-          "romaji": "atsuatsu",
-          "jlpt_level": "N5",
-          "part_of_speech": "Na-Adjective",
-          "contextual_meaning": "piping hot",
-          "thai_meaning": "ร้อนๆ ฉุยๆ"
-        },
-        {
-          "surface": "たこ焼きは",
-          "word_id": "w-takoyaki",
-          "lemma": "たこ焼き",
-          "reading_kana": "たこやきは",
-          "romaji": "takoyaki wa",
-          "jlpt_level": "N5",
-          "part_of_speech": "Noun",
-          "contextual_meaning": "takoyaki",
-          "thai_meaning": "ทาโกะยากิ"
-        }
-      ]
-    }
-  ],
-  "vid-n4-cooking": [
-    {
-      "id": "sub-ramen-01",
-      "video_id": "vid-n4-cooking",
-      "line_index": 0,
-      "start_time_ms": 0,
-      "end_time_ms": 6500,
-      "speaker": "店主 (Master)",
-      "raw_text": "豚骨を10時間煮込んで、濃厚なスープを作ります。",
-      "natural_translation": "We simmer pork bones for 10 hours to make our rich, flavorful soup.",
-      "thai_translation": "เราเคี่ยวกระดูกหมูอย่างพิถีพิถันนานถึง 10 ชั่วโมง เพื่อทำน้ำซุปเข้มข้นรสเลิศครับ",
-      "ai_grammar_summary": "〜時間 = ระยะเวลาเป็นชั่วโมง / 煮込む = เคี่ยวจนเข้าเนื้อ / 作り = ทำ/ปรุง",
-      "tokens_json": [
-        {
-          "surface": "豚骨を",
-          "word_id": "w-tonkotsu",
-          "lemma": "豚骨",
-          "reading_kana": "とんこつを",
-          "romaji": "tonkotsu o",
-          "jlpt_level": "N4",
-          "part_of_speech": "Noun",
-          "contextual_meaning": "pork bones",
-          "thai_meaning": "กระดูกหมู"
-        },
-        {
-          "surface": "10時間",
-          "word_id": "w-jikan",
-          "lemma": "時間",
-          "reading_kana": "じゅうじかん",
-          "romaji": "juu jikan",
-          "jlpt_level": "N5",
-          "part_of_speech": "Noun",
-          "contextual_meaning": "ten hours",
-          "thai_meaning": "10 ชั่วโมง"
-        },
-        {
-          "surface": "煮込んで",
-          "word_id": "w-nikomu",
-          "lemma": "煮込む",
-          "reading_kana": "にこんで",
-          "romaji": "nikonde",
-          "jlpt_level": "N3",
-          "part_of_speech": "Verb",
-          "contextual_meaning": "simmering",
-          "thai_meaning": "เคี่ยวตุ๋น"
-        },
-        {
-          "surface": "濃厚なスープを",
-          "word_id": "w-suupu",
-          "lemma": "スープ",
-          "reading_kana": "のうこうなすーぷを",
-          "romaji": "noukou na suupu o",
-          "jlpt_level": "N4",
-          "part_of_speech": "Noun phrase",
-          "contextual_meaning": "rich soup",
-          "thai_meaning": "น้ำซุปเข้มข้น"
-        }
-      ]
-    }
-  ],
-  "vid-pod-n5-intro": [
-    {
-      "id": "sub-pod-01",
-      "video_id": "vid-pod-n5-intro",
-      "line_index": 0,
-      "start_time_ms": 0,
-      "end_time_ms": 6000,
-      "speaker": "しゅん (Shun)",
-      "raw_text": "皆さんこんにちは！しゅんです。今日も楽しく日本語を勉強しましょう！",
-      "natural_translation": "Hello everyone! I am Shun. Let us enjoy studying Japanese together today too!",
-      "thai_translation": "สวัสดีครับทุกคน! ผมชุนครับ วันนี้เรามาเรียนภาษาญี่ปุ่นอย่างสนุกสนานด้วยกันอีกนะครับ!",
-      "ai_grammar_summary": "楽しく = อย่างสนุกสนาน (คุณศัพท์รูปกริยาวิเศษณ์) / 〜ましょう = รูปชักชวนอย่างสุภาพ",
-      "tokens_json": [
-        {
-          "surface": "皆さん",
-          "word_id": "w-minasan",
-          "lemma": "皆さん",
-          "reading_kana": "みなさん",
-          "romaji": "minasan",
-          "jlpt_level": "N5",
-          "part_of_speech": "Noun",
-          "contextual_meaning": "everyone",
-          "thai_meaning": "ทุกคน"
-        },
-        {
-          "surface": "こんにちは",
-          "word_id": "w-konnichiwa",
-          "lemma": "こんにちは",
-          "reading_kana": "こんにちは",
-          "romaji": "konnichiwa",
-          "jlpt_level": "N5",
-          "part_of_speech": "Greeting",
-          "contextual_meaning": "hello",
-          "thai_meaning": "สวัสดี"
-        },
-        {
-          "surface": "今日も",
-          "word_id": "w-kyou",
-          "lemma": "今日",
-          "reading_kana": "きょうも",
-          "romaji": "kyou mo",
-          "jlpt_level": "N5",
-          "part_of_speech": "Noun + Particle",
-          "contextual_meaning": "today also",
-          "thai_meaning": "วันนี้ด้วย"
-        },
-        {
-          "surface": "日本語を",
-          "word_id": "w-nihongo",
-          "lemma": "日本語",
-          "reading_kana": "にほんごを",
-          "romaji": "nihongo o",
-          "jlpt_level": "N5",
-          "part_of_speech": "Noun",
-          "contextual_meaning": "Japanese language",
-          "thai_meaning": "ภาษาญี่ปุ่น"
-        },
-        {
-          "surface": "勉強しましょう",
-          "word_id": "w-benkyou",
-          "lemma": "勉強する",
-          "reading_kana": "べんきょうしましょう",
-          "romaji": "benkyou shimashou",
-          "jlpt_level": "N5",
-          "part_of_speech": "Verb (Polite volitional)",
-          "contextual_meaning": "let us study",
-          "thai_meaning": "มาเรียนกันเถอะ"
-        }
-      ]
-    }
-  ],
-  "vid-n5-vlog": [
-    {
-      "id": "sub-vlog-01",
-      "video_id": "vid-n5-vlog",
-      "line_index": 0,
-      "start_time_ms": 0,
-      "end_time_ms": 6000,
-      "speaker": "Vlogger",
-      "raw_text": "今日は天気がとてもいいので、新宿のカフェへ行きます。",
-      "natural_translation": "The weather is great today, so I am going to a cafe in Shinjuku.",
-      "thai_translation": "วันนี้อากาศดีมากเลยครับ ผมเลยจะไปคาเฟ่ที่ชินจูกุสักหน่อย",
-      "ai_grammar_summary": "〜ので = เนื่องจาก/เพราะว่า (บอกเหตุผลอย่างนุ่มนวล) / へ行きます = เดินทางไปยัง...",
-      "tokens_json": [
-        {
-          "surface": "今日は",
-          "word_id": "w-kyou",
-          "lemma": "今日",
-          "reading_kana": "きょうは",
-          "romaji": "kyou wa",
-          "jlpt_level": "N5",
-          "part_of_speech": "Noun + Particle",
-          "contextual_meaning": "today",
-          "thai_meaning": "วันนี้"
-        },
-        {
-          "surface": "天気が",
-          "word_id": "w-tenki",
-          "lemma": "天気",
-          "reading_kana": "てんきが",
-          "romaji": "tenki ga",
-          "jlpt_level": "N5",
-          "part_of_speech": "Noun + Particle",
-          "contextual_meaning": "the weather",
-          "thai_meaning": "สภาพอากาศ"
-        },
-        {
-          "surface": "とてもいいので",
-          "word_id": "w-ii",
-          "lemma": "良い",
-          "reading_kana": "とてもいいので",
-          "romaji": "totemo ii node",
-          "jlpt_level": "N5",
-          "part_of_speech": "Phrase",
-          "contextual_meaning": "because it is very good",
-          "thai_meaning": "เพราะดีมาก"
-        },
-        {
-          "surface": "カフェへ行きます",
-          "word_id": "w-kafe",
-          "lemma": "カフェ",
-          "reading_kana": "かふぇへいきます",
-          "romaji": "kafe e ikimasu",
-          "jlpt_level": "N5",
-          "part_of_speech": "Phrase",
-          "contextual_meaning": "go to a cafe",
-          "thai_meaning": "ไปที่คาเฟ่"
         }
       ]
     }

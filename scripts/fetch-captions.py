@@ -15,7 +15,7 @@ import yt_dlp
 ROOT = Path(__file__).resolve().parent.parent
 MOCK_FILE = ROOT / "src" / "data" / "mockVideos.ts"
 OUT_DIR = ROOT / "src" / "data" / "captions"
-VIDEO_SLEEP_S = 2
+VIDEO_SLEEP_S = 3
 TRACK_SLEEP_S = 1
 RETRY_SLEEP_S = 15
 
