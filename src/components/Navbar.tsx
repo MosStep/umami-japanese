@@ -37,8 +37,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
   return (
     <>
       {/* Top Header Bar (Desktop & Mobile) */}
-      <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-6 py-2.5">
-        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
+      {/* safe-top keeps the bar below the status bar / camera cutout (edge-to-edge WebView) */}
+      <header className="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-800/80 px-4 sm:px-6 safe-top">
+        <div className="max-w-7xl mx-auto flex items-center justify-between gap-3 py-2.5">
           {/* Brand / Logo */}
           <div
             onClick={() => setActiveTab('feed')}

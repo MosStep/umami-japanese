@@ -100,7 +100,12 @@ async function runOtaInit(): Promise<void> {
   } catch (err) {
     console.warn('getFailedUpdate failed:', err);
   }
+}
 
+// Tells the updater plugin this bundle rendered. Call from App after first mount (not before render):
+// a bundle that crashes while rendering never gets here and is rolled back on the next launch.
+export async function markBundleReady(): Promise<void> {
+  if (!isNative()) return;
   try {
     await CapacitorUpdater.notifyAppReady();
   } catch (err) {

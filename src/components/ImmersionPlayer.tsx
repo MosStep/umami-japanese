@@ -68,6 +68,7 @@ export const ImmersionPlayer: React.FC = () => {
     showMicroGloss,
     setShowMicroGloss,
     addXP,
+    addImmersionSeconds,
   } = useApp();
 
   const [currentLineIndex, setCurrentLineIndex] = useState<number>(0);
@@ -105,6 +106,9 @@ export const ImmersionPlayer: React.FC = () => {
   const spokenLineRef = useRef<number>(0);
   // Previous processed playback time; null after a seek so crossing is not inferred from it.
   const lastSecRef = useRef<number | null>(null);
+  // "video:line" keys already credited with viewing XP in this player session (one credit per line).
+  const creditedLinesRef = useRef<Set<string>>(new Set());
+  const pendingImmersionSecRef = useRef<number>(0);
   const syncRef = useRef({
     lines: activeSubtitleLines,
     loop: loopCurrentLine,
@@ -258,7 +262,12 @@ export const ImmersionPlayer: React.FC = () => {
 
         const changed = index !== currentLineIndexRef.current;
         if (changed) applyLineIndex(index);
-        if (active && changed) xp('viewing', 2);
+        // Viewing XP: once per line per player session (not on every replay or scrub back).
+        const creditKey = `${activeVideo.id}:${lines[index]?.id}`;
+        if (active && changed && !creditedLinesRef.current.has(creditKey)) {
+          creditedLinesRef.current.add(creditKey);
+          xp('viewing', 2);
+        }
 
         // Test loop / auto-pause against the line that was being spoken BEFORE this tick,
         // then advance the spoken line.
@@ -306,6 +315,26 @@ export const ImmersionPlayer: React.FC = () => {
 
     return () => clearInterval(syncInterval);
   }, [activeVideo.id]);
+
+  // Immersion time: count real seconds while the player reports PLAYING. Flushed every 30 s and on pause/unmount.
+  useEffect(() => {
+    if (!isPlaying) return;
+    const flush = () => {
+      const pending = pendingImmersionSecRef.current;
+      pendingImmersionSecRef.current = 0;
+      if (pending > 0) addImmersionSeconds(pending);
+    };
+    const tick = window.setInterval(() => {
+      pendingImmersionSecRef.current += 1;
+      if (pendingImmersionSecRef.current >= 30) flush();
+    }, 1000);
+    return () => {
+      window.clearInterval(tick);
+      flush();
+    };
+    // addImmersionSeconds only uses a functional state update, so a stale reference is safe here.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaying]);
 
   // Auto-scroll inside transcript container ONLY (NEVER pull or scroll the entire window down!)
   useEffect(() => {

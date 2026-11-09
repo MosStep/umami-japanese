@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useApp, AIProvider } from '../context/AppContext';
 import { APP_VERSION, APP_BUILD } from '../config/version';
+import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 import {
   X,
   Key,
@@ -32,6 +33,9 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
   const [providerChoice, setProviderChoice] = useState<AIProvider>(aiProvider);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
+  // Called before the early return below so the hook order stays stable.
+  useLockBodyScroll(showSettingsModal);
+
   if (!showSettingsModal) return null;
 
   const handleSave = (e: React.FormEvent) => {
@@ -53,7 +57,7 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-[calc(1rem_+_var(--safe-area-inset-top,0px))] bg-slate-950/80 backdrop-blur-sm animate-in fade-in">
       <div className="w-full max-w-lg rounded-2xl bg-slate-900 border border-slate-800 shadow-2xl overflow-hidden flex flex-col">
         {/* Header */}
         <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">

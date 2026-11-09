@@ -112,7 +112,7 @@ export const GamificationProfile: React.FC = () => {
             <span>Immersion Time</span>
           </div>
           <div className="text-3xl font-bold font-mono text-white">
-            {stats.total_immersion_minutes} <span className="text-sm font-sans font-normal text-slate-500">mins</span>
+            {Math.floor(stats.total_immersion_minutes)} <span className="text-sm font-sans font-normal text-slate-500">mins</span>
           </div>
         </div>
 

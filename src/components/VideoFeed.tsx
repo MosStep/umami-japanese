@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import type { VideoRecord } from '../schema/databaseSchema';
 import {
   Play,
   Sparkles,
@@ -11,6 +12,7 @@ import {
   Zap,
   RefreshCw,
   X,
+  Trash2,
 } from 'lucide-react';
 
 export const VideoFeed: React.FC = () => {
@@ -22,8 +24,12 @@ export const VideoFeed: React.FC = () => {
     albums,
     createAlbum,
     addVideoToAlbum,
+    removeCustomVideo,
+    isCustomVideo,
   } = useApp();
 
+  // User-imported clip waiting for delete confirmation
+  const [pendingDelete, setPendingDelete] = useState<VideoRecord | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedJLPT, setSelectedJLPT] = useState<string>('All');
   const [selectedAlbum, setSelectedAlbum] = useState<string>('All');
@@ -258,6 +264,22 @@ export const VideoFeed: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Delete: only for user-imported clips */}
+                {isCustomVideo(video.id) && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setPendingDelete(video);
+                    }}
+                    aria-label="ลบคลิปนี้"
+                    title="ลบคลิปนี้"
+                    className="absolute top-2 right-2 z-10 min-w-11 min-h-11 flex items-center justify-center rounded-xl bg-black/70 text-rose-300 border border-rose-500/40 backdrop-blur-md active:opacity-70"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+
                 {/* Duration Badge */}
                 <div className="absolute bottom-2.5 right-2.5 px-2.5 py-1 rounded-lg bg-black/80 text-[11px] font-mono text-slate-100 backdrop-blur-md border border-white/10 font-bold">
                   {Math.floor(video.duration / 60)}:
@@ -330,6 +352,49 @@ export const VideoFeed: React.FC = () => {
           <p className="col-span-full text-center text-sm text-slate-400 py-12">ยังไม่มีคลิปในหมวดนี้</p>
         )}
       </div>
+
+      {/* Delete confirmation for user-imported clips */}
+      {pendingDelete && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-[calc(1rem_+_var(--safe-area-inset-top,0px))] bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150"
+          onClick={() => setPendingDelete(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            className="w-full max-w-sm rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-xl bg-rose-500/15 flex items-center justify-center shrink-0">
+                <Trash2 className="w-5 h-5 text-rose-400" />
+              </div>
+              <div className="min-w-0 space-y-1">
+                <p className="text-sm font-bold text-white">ลบคลิปนี้ออกจากแอป?</p>
+                <p className="text-xs text-slate-300 break-words line-clamp-2">{pendingDelete.title}</p>
+                <p className="text-xs text-slate-400">ซับและประโยคที่ขุดจากคลิปนี้จะถูกลบด้วย</p>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => setPendingDelete(null)}
+                className="min-h-11 rounded-xl bg-slate-800 text-slate-200 text-sm font-semibold active:opacity-70"
+              >
+                ยกเลิก
+              </button>
+              <button
+                onClick={() => {
+                  removeCustomVideo(pendingDelete.id);
+                  setPendingDelete(null);
+                }}
+                className="min-h-11 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-sm font-semibold active:opacity-70"
+              >
+                ลบ
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Create New Album Modal (BUG-10) */}
       {showNewAlbumModal && (

@@ -13,6 +13,13 @@ import {
   DICTIONARY_WORDS,
 } from '../data/mockVideos';
 import { buildRealSubtitleLines, loadRealCaptions } from '../data/captions';
+import { STORAGE_KEYS } from '../config/storageKeys';
+import { runMigration108 } from '../utils/migration108';
+import { localDayKey, nextStreak } from '../utils/streak';
+
+// One-time 1.0.8 cleanup (seeded demo stats/words/cards, broken imported clips). Runs at module load,
+// before any state initializer below reads localStorage.
+runMigration108();
 
 export interface UserStats {
   streak_days: number;
@@ -50,6 +57,8 @@ interface AppContextType {
   getLineById: (videoId: string | undefined, lineId: string | undefined) => SubtitleLineRecord | undefined;
   getLinesForVideo: (videoId: string) => SubtitleLineRecord[];
   addCustomVideo: (video: VideoRecord, lines: SubtitleLineRecord[]) => void;
+  removeCustomVideo: (id: string) => void;
+  isCustomVideo: (id: string) => boolean;
 
   // Word States
   wordStates: Record<string, WordLearningStatus>;
@@ -86,6 +95,7 @@ interface AppContextType {
   // Gamification & XP
   stats: UserStats;
   addXP: (type: 'viewing' | 'reading' | 'listening' | 'shadowing', amount: number) => void;
+  addImmersionSeconds: (seconds: number) => void;
 
   // AI & External API Settings (Tenixe / Kob AI / Local)
   aiProvider: AIProvider;
@@ -100,18 +110,6 @@ interface AppContextType {
 }
 
 const AppContext = createContext<AppContextType | null>(null);
-
-const STORAGE_KEYS = {
-  WORD_STATES: 'umami_word_states_v1',
-  MINED_SENTENCES: 'umami_mined_sentences_v1',
-  STATS: 'umami_user_stats_v1',
-  ALBUMS: 'umami_albums_v1',
-  CUSTOM_VIDEOS: 'umami_custom_videos_v1',
-  CUSTOM_LINES: 'umami_custom_lines_v1',
-  API_KEY: 'umami_api_key_v1',
-  AI_MODEL: 'umami_ai_model_v1',
-  AI_PROVIDER: 'umami_ai_provider_v1',
-};
 
 const DEFAULT_ALBUMS: Album[] = [
   { id: 'alb-daily', name: 'Anime Starter Episodes', emoji: '⚔️', video_ids: ['vid-anione-jjk-01', 'vid-anione-bleach-01', 'vid-anione-aoashi-s2-01'] },
@@ -208,21 +206,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const saved = localStorage.getItem(STORAGE_KEYS.WORD_STATES);
       if (saved) return JSON.parse(saved);
     } catch {}
-    return {
-      'custom-ore': 'known',
-      'particle-wa': 'known',
-      'particle-o': 'known',
-      'particle-no': 'known',
-      'particle-de': 'known',
-      'w-ii': 'known',
-      'w-asa': 'learning',
-      'w-tokyo': 'known',
-      'w-kanpai': 'learning',
-      'w-oishii': 'known',
-      'w-nihon': 'known',
-      'w-shinjiru': 'learning',
-      'w-nakama': 'learning',
-    };
+    return {};
   });
 
   // Mined sentences collection
@@ -234,41 +218,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         if (Array.isArray(parsed)) {
           // Drop persisted sentences whose video no longer exists (deleted records or stale seeds).
           const knownVideoIds = new Set([...MOCK_VIDEOS, ...customVideos].map((v) => v.id));
-          const kept = parsed.filter((item: MinedSentenceRecord) => knownVideoIds.has(item.video_id));
-          if (kept.length > 0) return kept;
+          return parsed.filter((item: MinedSentenceRecord) => knownVideoIds.has(item.video_id));
         }
       }
     } catch {}
-    return [
-      {
-        id: 'mined-seed-1',
-        user_id: 'local_user',
-        video_id: 'vid-anione-jjk-01',
-        subtitle_line_id: 'cap-vid-anione-jjk-01-162836',
-        target_word_id: 'w-matsu',
-        user_note: 'รอ (待つ)',
-        album_id: 'alb-favorites',
-        srs_interval: 1,
-        srs_ease: 2.5,
-        srs_repetitions: 1,
-        next_review_at: new Date(Date.now() - 3600000).toISOString(),
-        created_at: new Date().toISOString(),
-      },
-      {
-        id: 'mined-seed-2',
-        user_id: 'local_user',
-        video_id: 'vid-anione-jjk-01',
-        subtitle_line_id: 'cap-vid-anione-jjk-01-126479',
-        target_word_id: 'w-hashiru',
-        user_note: 'วิ่ง (走る)',
-        album_id: 'alb-favorites',
-        srs_interval: 2,
-        srs_ease: 2.5,
-        srs_repetitions: 2,
-        next_review_at: new Date(Date.now() + 86400000).toISOString(),
-        created_at: new Date().toISOString(),
-      },
-    ];
+    return [];
   });
 
   // User Stats & Gamification XP
@@ -278,12 +232,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (saved) return JSON.parse(saved);
     } catch {}
     return {
-      streak_days: 7,
-      total_immersion_minutes: 84,
-      xp_viewing: 450,
-      xp_reading: 380,
-      xp_listening: 520,
-      xp_shadowing: 290,
+      streak_days: 0,
+      total_immersion_minutes: 0,
+      xp_viewing: 0,
+      xp_reading: 0,
+      xp_listening: 0,
+      xp_shadowing: 0,
     };
   });
 
@@ -366,6 +320,38 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       [`xp_${type}`]: prev[`xp_${type}`] + amount,
     }));
   };
+
+  // Real playing time from the player (fractional minutes; the profile shows whole minutes).
+  const addImmersionSeconds = (seconds: number) => {
+    if (!(seconds > 0)) return;
+    setStats((prev) => ({
+      ...prev,
+      total_immersion_minutes: prev.total_immersion_minutes + seconds / 60,
+    }));
+  };
+
+  // Counts one day of app use: streak +1 on the next consecutive local day, restart at 1 after a gap.
+  const recordDailyActivity = () => {
+    try {
+      const now = new Date();
+      const today = localDayKey(now);
+      const last = localStorage.getItem(STORAGE_KEYS.LAST_ACTIVE_DAY);
+      if (last === today) return;
+      localStorage.setItem(STORAGE_KEYS.LAST_ACTIVE_DAY, today);
+      setStats((prev) => ({ ...prev, streak_days: nextStreak(prev.streak_days, last, today, now) }));
+    } catch {}
+  };
+
+  useEffect(() => {
+    recordDailyActivity();
+    const onVisible = () => {
+      if (document.visibilityState === 'visible') recordDailyActivity();
+    };
+    document.addEventListener('visibilitychange', onVisible);
+    return () => document.removeEventListener('visibilitychange', onVisible);
+    // Runs once on mount; the day check inside makes repeated calls harmless.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const mineSentence = (line: SubtitleLineRecord, targetWordId?: string, note?: string) => {
     // Lines without Japanese text (Thai-only captions) cannot be mined.
@@ -470,6 +456,20 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCustomLines((prev) => ({ ...prev, [video.id]: lines }));
     setActiveVideoId(video.id);
     setActiveTab('player');
+  };
+
+  const isCustomVideo = (id: string): boolean => customVideos.some((v) => v.id === id);
+
+  // Removes a user-imported clip together with its custom lines and any mined sentences on it.
+  const removeCustomVideo = (id: string) => {
+    setCustomVideos((prev) => prev.filter((v) => v.id !== id));
+    setCustomLines((prev) => {
+      const next = { ...prev };
+      delete next[id];
+      return next;
+    });
+    setMinedSentences((prev) => prev.filter((m) => m.video_id !== id));
+    if (activeVideoId === id) setActiveVideoId('vid-anione-jjk-01');
   };
 
   // Tenixe / Kob AI / Local API Caller
@@ -594,6 +594,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         getLineById,
         getLinesForVideo,
         addCustomVideo,
+        removeCustomVideo,
+        isCustomVideo,
         wordStates,
         setWordStatus,
         getWordStatus,
@@ -618,6 +620,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         addVideoToAlbum,
         stats,
         addXP,
+        addImmersionSeconds,
         aiProvider,
         setAiProvider,
         apiKey,

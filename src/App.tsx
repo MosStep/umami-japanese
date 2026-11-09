@@ -18,6 +18,7 @@ import {
   getUpdateKind,
   initOta,
   isNative,
+  markBundleReady,
   shouldSkipBackgroundOta,
 } from './utils/otaUpdater';
 
@@ -54,6 +55,11 @@ export const App: React.FC = () => {
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [otaReady, setOtaReady] = useState<{ bundle: BundleInfo | null; version: string } | null>(null);
   const launchCheckStarted = useRef(false);
+
+  // First successful mount of the web bundle: confirm it to the updater (rolls back a bundle that crashes on render).
+  useEffect(() => {
+    void markBundleReady();
+  }, []);
 
   // Launch check: fetch manifest, then either prompt for APK or silently pre-download the web bundle.
   useEffect(() => {
