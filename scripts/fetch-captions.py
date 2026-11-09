@@ -134,35 +134,56 @@ def join_rolling(parts):
     return acc
 
 
+def merge_th_fragments(events, gap_ms=1000):
+    """Merge build-up Thai fragments: while the next event starts within gap_ms of the
+    previous one and its text contains the previous text, drop the previous event and
+    extend the next event's start back to it. Returns (events, merged_count)."""
+    out, merged = [], 0
+    for n in events:
+        while out and n["start"] - out[-1]["end"] <= gap_ms and out[-1]["text"] in n["text"]:
+            prev = out.pop()
+            n["start"] = prev["start"]
+            merged += 1
+        out.append(n)
+    return out, merged
+
+
 def build_lines(ja_events, th_events, ja_kind, th_kind):
     """Pair ja and th events into lines. Returns list of {start_ms, end_ms, ja, th}."""
     if th_kind == "manual" and ja_kind == "auto" and th_events and ja_events:
-        # Thai (manual) is the primary timeline; join overlapping ja fragments onto it.
+        # Thai (manual) is the primary timeline. Each ja auto event attaches to exactly
+        # one Thai line: the one whose [start-300, end+300] window contains its midpoint,
+        # preferring a line whose span contains the midpoint, then the nearest centre.
+        # Unattached ja events become ja-only lines so no Japanese is lost.
         lines = [{"start": t["start"], "end": t["end"], "ja_parts": [], "th": t["text"]}
                  for t in th_events]
-        leftover_ja = []
+        ja_only = []
         for j in ja_events:
-            dur = max(j["end"] - j["start"], 1)
-            mid = (j["start"] + j["end"]) / 2
-            targets = []
+            m = (j["start"] + j["end"]) / 2
+            best, best_key = None, None
             for ln in lines:
-                ov = min(ln["end"], j["end"]) - max(ln["start"], j["start"])
-                if ov > 0.5 * dur or ln["start"] <= mid < ln["end"]:
-                    targets.append(ln)
-            if targets:
-                for ln in targets:
-                    ln["ja_parts"].append(j["text"])
+                if not (ln["start"] - 300 <= m <= ln["end"] + 300):
+                    continue
+                inside = 0 if ln["start"] <= m < ln["end"] else 1
+                key = (inside, abs(m - (ln["start"] + ln["end"]) / 2))
+                if best_key is None or key < best_key:
+                    best, best_key = ln, key
+            if best is not None:
+                best["ja_parts"].append(j)
             else:
-                leftover_ja.append(j)
+                ja_only.append(j)
+        attached = sum(len(ln["ja_parts"]) for ln in lines)
         out = []
         for ln in lines:
             out.append({
                 "start_ms": ln["start"], "end_ms": ln["end"],
-                "ja": join_rolling(ln["ja_parts"]) or None, "th": ln["th"],
+                "ja": join_rolling([j["text"] for j in ln["ja_parts"]]) or None,
+                "th": ln["th"],
             })
-        for j in leftover_ja:
+        for j in ja_only:
             out.append({"start_ms": j["start"], "end_ms": j["end"], "ja": j["text"], "th": None})
         out.sort(key=lambda l: l["start_ms"])
+        build_lines.counts = {"ja_total": len(ja_events), "attached": attached, "ja_only": len(ja_only)}
         return out
 
     # Japanese is primary (ja manual, or both auto, or ja only). Each Thai event
@@ -220,13 +241,17 @@ def build_for_video(ydl, youtube_id):
 
     ja_events = drop_adjacent_dups(sorted(ja_events, key=lambda e: e["start"]))
     th_events = drop_adjacent_dups(sorted(th_events, key=lambda e: e["start"]))
+    th_events, merged = merge_th_fragments(th_events)
+    build_lines.counts = {}
     lines = build_lines(ja_events, th_events, ja_kind, th_kind)
+    counts = dict(build_lines.counts)
+    counts["th_fragments_merged"] = merged
     record = {
         "youtube_id": youtube_id,
         "source": {"ja": ja_kind, "th": th_kind},
         "lines": lines,
     }
-    return record, {"ja": ja_kind, "th": th_kind}
+    return record, {"ja": ja_kind, "th": th_kind, **counts}
 
 
 def stats(record):
@@ -280,6 +305,9 @@ def main():
                         json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
                     s = stats(record)
                     print(f"[{yid}] ja={sources['ja']} th={sources['th']} {s}")
+                    extra = {k: v for k, v in sources.items() if k not in ("ja", "th")}
+                    if extra:
+                        print(f"[{yid}] pairing counts: {extra}")
                     rows.append((yid, sources["ja"], sources["th"], s, ""))
             if n < len(ids) - 1:
                 time.sleep(VIDEO_SLEEP_S)
