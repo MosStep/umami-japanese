@@ -23,6 +23,31 @@ import {
   EyeOff,
 } from 'lucide-react';
 
+// Pure resolver for the sync loop.
+// - index: the line to show in the transcript. While a line is active this is the matched line;
+//   in a gap / before the first line / after the last line it is the most recent line whose
+//   start <= sec (or 0 before the first line).
+// - active: true only when sec falls inside a line's window
+//   [start - 0.15s, min(end + 0.3s, next.start)).
+const resolveSubtitleLine = (
+  lines: SubtitleLineRecord[],
+  sec: number
+): { index: number; active: boolean } => {
+  let lastPassed = 0;
+  let matched = -1;
+  for (let i = 0; i < lines.length; i++) {
+    const start = lines[i].start_time_ms / 1000;
+    const next = lines[i + 1];
+    const end = lines[i].end_time_ms / 1000;
+    const windowEnd = next ? Math.min(end + 0.3, next.start_time_ms / 1000) : end + 0.3;
+    if (sec >= start) lastPassed = i;
+    if (sec >= start - 0.15 && sec < windowEnd) matched = i;
+  }
+  return matched !== -1
+    ? { index: matched, active: true }
+    : { index: lastPassed, active: false };
+};
+
 export const ImmersionPlayer: React.FC = () => {
   const {
     activeVideo,
@@ -57,11 +82,8 @@ export const ImmersionPlayer: React.FC = () => {
   });
   const [revealedLines, setRevealedLines] = useState<Record<string, boolean>>({});
   const [showContextualModal, setShowContextualModal] = useState<boolean>(false);
-
-  // Reset line index whenever active video changes
-  useEffect(() => {
-    setCurrentLineIndex(0);
-  }, [activeVideo.id]);
+  // true only while playback time is inside a line's window (see resolveSubtitleLine)
+  const [isLineActive, setIsLineActive] = useState<boolean>(false);
 
   const toggleHideTranslation = () => {
     const next = !hideTranslation;
@@ -73,10 +95,40 @@ export const ImmersionPlayer: React.FC = () => {
   const iframeFallbackRef = useRef<HTMLIFrameElement>(null);
   const activeLineElementRef = useRef<HTMLDivElement | null>(null);
   const transcriptContainerRef = useRef<HTMLDivElement | null>(null);
+  // Refs read by the sync interval, so the interval is created once per video
+  const currentLineIndexRef = useRef<number>(0);
+  const pausedLineIdRef = useRef<string | null>(null); // line id we last auto-paused at
+  const seekPendingRef = useRef<{ targetSec: number; until: number } | null>(null);
+  const syncRef = useRef({
+    lines: activeSubtitleLines,
+    loop: loopCurrentLine,
+    autoPause: autoPauseAtEnd,
+    addXP,
+  });
+  syncRef.current = {
+    lines: activeSubtitleLines,
+    loop: loopCurrentLine,
+    autoPause: autoPauseAtEnd,
+    addXP,
+  };
+
+  const applyLineIndex = (idx: number) => {
+    currentLineIndexRef.current = idx;
+    setCurrentLineIndex(idx);
+  };
+
+  // Reset line index whenever active video changes
+  useEffect(() => {
+    applyLineIndex(0);
+    pausedLineIdRef.current = null;
+    seekPendingRef.current = null;
+  }, [activeVideo.id]);
+
   const activeLine = activeSubtitleLines[currentLineIndex] || activeSubtitleLines[0];
 
-  // Dynamic real-time spoken token calculation
+  // Dynamic real-time spoken token calculation (no highlight when no line is active)
   const getActiveTokenIndex = () => {
+    if (!isLineActive) return -1;
     if (!activeLine || !activeLine.tokens_json || activeLine.tokens_json.length === 0) return -1;
     const curMs = currentTimeSec * 1000;
     if (curMs < activeLine.start_time_ms) return 0;
@@ -176,43 +228,51 @@ export const ImmersionPlayer: React.FC = () => {
   // 3. Real-Time Timestamp Synchronization (HayaiLearn Real-time Sync Engine)
   useEffect(() => {
     const syncInterval = setInterval(() => {
-      if (playerRef.current && typeof playerRef.current.getCurrentTime === 'function') {
-        try {
-          const sec = playerRef.current.getCurrentTime();
-          if (typeof sec === 'number' && !isNaN(sec)) {
-            setCurrentTimeSec(sec);
+      const player = playerRef.current;
+      if (!player || typeof player.getCurrentTime !== 'function') return;
+      try {
+        const sec = player.getCurrentTime();
+        if (typeof sec !== 'number' || isNaN(sec)) return;
+        setCurrentTimeSec(sec);
 
-            // Match active subtitle line with smooth continuity (HayaiLearn Real-time Flow)
-            const matchedIndex = activeSubtitleLines.findIndex((line, idx) => {
-              const nextLine = activeSubtitleLines[idx + 1];
-              const lineEnd = nextLine
-                ? Math.min(line.end_time_ms / 1000 + 0.5, nextLine.start_time_ms / 1000)
-                : line.end_time_ms / 1000 + 0.8;
-              return sec >= (line.start_time_ms / 1000 - 0.2) && sec <= lineEnd;
-            });
+        // A seek was just issued: ignore player reads that are still far from the target
+        const pending = seekPendingRef.current;
+        if (pending) {
+          if (Date.now() < pending.until && Math.abs(sec - pending.targetSec) > 0.5) return;
+          seekPendingRef.current = null;
+        }
 
-            if (matchedIndex !== -1 && matchedIndex !== currentLineIndex) {
-              setCurrentLineIndex(matchedIndex);
-              addXP('viewing', 2);
-            }
+        const { lines, loop, autoPause, addXP: xp } = syncRef.current;
+        const { index, active } = resolveSubtitleLine(lines, sec);
+        setIsLineActive(active);
 
-            // Loop sentence logic
-            if (activeLine && loopCurrentLine && sec >= activeLine.end_time_ms / 1000) {
-              playerRef.current.seekTo(activeLine.start_time_ms / 1000, true);
-            }
+        const changed = index !== currentLineIndexRef.current;
+        if (changed) applyLineIndex(index);
+        if (active && changed) xp('viewing', 2);
 
-            // Auto-pause logic
-            if (activeLine && autoPauseAtEnd && sec >= activeLine.end_time_ms / 1000) {
-              playerRef.current.pauseVideo();
-              setIsPlaying(false);
-            }
-          }
-        } catch {}
-      }
+        const line = lines[index];
+        if (!line) return;
+        const endSec = line.end_time_ms / 1000;
+
+        // Loop sentence: uses the line matched at this moment
+        if (loop && sec >= endSec) {
+          const startSec = line.start_time_ms / 1000;
+          seekPendingRef.current = { targetSec: startSec, until: Date.now() + 1500 };
+          player.seekTo(startSec, true);
+          return;
+        }
+
+        // Auto-pause: once per line, so pressing play after a pause does not re-pause
+        if (autoPause && sec >= endSec && pausedLineIdRef.current !== line.id) {
+          pausedLineIdRef.current = line.id;
+          player.pauseVideo();
+          setIsPlaying(false);
+        }
+      } catch {}
     }, 150);
 
     return () => clearInterval(syncInterval);
-  }, [activeSubtitleLines, currentLineIndex, activeLine, loopCurrentLine, autoPauseAtEnd]);
+  }, [activeVideo.id]);
 
   // Auto-scroll inside transcript container ONLY (NEVER pull or scroll the entire window down!)
   useEffect(() => {
@@ -232,11 +292,14 @@ export const ImmersionPlayer: React.FC = () => {
   // Jump to specific subtitle line and sync video timestamp
   const seekToLine = (index: number) => {
     if (index < 0 || index >= activeSubtitleLines.length) return;
-    setCurrentLineIndex(index);
+    applyLineIndex(index);
+    setIsLineActive(true);
+    pausedLineIdRef.current = null; // re-arm auto-pause for this line
     const line = activeSubtitleLines[index];
     if (line) {
       const targetSec = line.start_time_ms / 1000;
       if (playerRef.current && typeof playerRef.current.seekTo === 'function') {
+        seekPendingRef.current = { targetSec, until: Date.now() + 1500 };
         playerRef.current.seekTo(targetSec, true);
         playerRef.current.playVideo();
       } else if (iframeFallbackRef.current?.contentWindow) {
@@ -367,7 +430,11 @@ export const ImmersionPlayer: React.FC = () => {
           </div>
 
           {/* Interactive Japanese Subtitle Dock (Sleek Glassmorphic Panel) */}
-          <div className="relative rounded-3xl bg-slate-900/95 border-2 border-slate-800 p-4 sm:p-6 space-y-3.5 shadow-2xl backdrop-blur-md text-center">
+          <div
+            className={`relative rounded-3xl bg-slate-900/95 border-2 border-slate-800 p-4 sm:p-6 space-y-3.5 shadow-2xl backdrop-blur-md text-center transition-opacity duration-200 ${
+              isLineActive ? 'opacity-100' : 'opacity-0 pointer-events-none'
+            }`}
+          >
             {activeLine ? (
               <>
                 {/* Real-Time Sync Indicator & Reading Guide Toggles */}
@@ -774,7 +841,7 @@ export const ImmersionPlayer: React.FC = () => {
             {/* Lines List */}
             <div ref={transcriptContainerRef} className="overflow-y-auto space-y-2.5 flex-1 pr-1">
               {activeSubtitleLines.map((line, idx) => {
-                const isActive = idx === currentLineIndex;
+                const isActive = isLineActive && idx === currentLineIndex;
                 const isMined = minedSentences.some(
                   (m) => m.subtitle_line_id === line.id
                 );
