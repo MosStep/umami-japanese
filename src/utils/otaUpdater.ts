@@ -21,6 +21,8 @@ export type Manifest = {
   build: number;
   min_native_build: number;
   bundle_url: string;
+  // SHA-256 (lowercase hex) of the bundle zip. Required by @capgo/capacitor-updater download().
+  checksum: string;
   release_notes: string[];
   announcement?: string;
   apk_url?: string;
@@ -29,6 +31,10 @@ export type Manifest = {
 export type UpdateKind = 'none' | 'ota' | 'apk';
 
 export const isNative = (): boolean => Capacitor.isNativePlatform();
+
+const CHECKSUM_RE = /^[0-9a-f]{64}$/;
+const isValidChecksum = (value: unknown): value is string =>
+  typeof value === 'string' && CHECKSUM_RE.test(value);
 
 // Versions whose OTA bundle failed to install or to pass notifyAppReady. The plugin rolls these back
 // and deletes them, so without this list every launch would download and apply the same bad zip again.
@@ -157,6 +163,11 @@ export function compareVersions(a: string, b: string): number {
 export function getUpdateKind(m: Manifest): UpdateKind {
   if (compareVersions(m.version, APP_VERSION_NAME) <= 0) return 'none';
   if (m.min_native_build > NATIVE_BUILD) return 'apk';
+  // Native OTA download fails without a checksum, so never offer it from a manifest that lacks one.
+  if (isNative() && !isValidChecksum(m.checksum)) {
+    console.warn('OTA manifest has no valid sha256 checksum; skipping update', m.version);
+    return 'none';
+  }
   return 'ota';
 }
 
@@ -170,10 +181,17 @@ export async function downloadOta(
   onProgress: (pct: number) => void,
 ): Promise<BundleInfo | null> {
   if (!isNative()) return null;
+  if (!isValidChecksum(m.checksum)) {
+    throw new Error('OTA manifest has no valid sha256 checksum');
+  }
 
   const handle = await CapacitorUpdater.addListener('download', (e) => onProgress(e.percent));
   try {
-    return await CapacitorUpdater.download({ url: m.bundle_url, version: m.version });
+    return await CapacitorUpdater.download({
+      url: m.bundle_url,
+      version: m.version,
+      checksum: m.checksum,
+    });
   } finally {
     await handle.remove();
   }

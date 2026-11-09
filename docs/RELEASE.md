@@ -19,6 +19,8 @@
    npm run bundle
    ```
    คำสั่งนี้จะ build ก่อนแล้วสร้างไฟล์ `release/web-bundle-<version>.zip` โดยไฟล์ `index.html` อยู่ที่ root ของ zip
+   พร้อมคำนวณ SHA-256 ของไฟล์ zip แล้วเขียนลง `public/live_catalog.json` เป็น `checksum` ให้อัตโนมัติ (และตั้ง `version`, `build`, `bundle_url`)
+   ทุกแมนิเฟสต์ OTA ต้องมี `checksum` เสมอ เพราะ `@capgo/capacitor-updater` จะปฏิเสธการดาวน์โหลดที่ไม่มี checksum (ถ้าไม่มี แอปจะไม่เสนออัปเดตนั้น)
 3. สร้าง GitHub Release ใหม่ชื่อแท็ก `v<version>` (เช่น `v1.0.8`) แล้วอัปโหลดไฟล์ `release/web-bundle-<version>.zip` เป็น asset
 4. แก้ไข `public/live_catalog.json` บน branch `main`
    - `version` และ `build` ให้ตรงกับเวอร์ชันใหม่
@@ -52,6 +54,11 @@
 หมายเหตุ: ถ้า `min_native_build` มากกว่า `NATIVE_BUILD` ของแอปที่ผู้ใช้ลงอยู่ ระบบจะไม่ดาวน์โหลด OTA bundle และจะให้ติดตั้ง APK แทน เพื่อป้องกันเว็บกับโค้ด native ไม่ตรงกัน
 
 ## 3. กฎสำคัญก่อนปล่อยทุกครั้ง
+
+### 3.0 ห้ามแก้ `checksum` ด้วยมือ และห้ามแก้ zip หลังสร้างแล้ว
+
+- `checksum` ใน `public/live_catalog.json` ต้องเป็น SHA-256 (hex ตัวพิมพ์เล็ก 64 ตัว) ของไฟล์ `release/web-bundle-<version>.zip` ที่อัปโหลดขึ้น Release เท่านั้น ให้ใช้ค่าที่ `npm run bundle` เขียนให้
+- ถ้า zip กับ `checksum` ไม่ตรงกัน การดาวน์โหลดจะล้มเหลวด้วยข้อความ "Failed to download"
 
 ### 3.1 เวอร์ชันที่ล้มเหลวจะถูกบล็อกถาวรบนเครื่องผู้ใช้
 
