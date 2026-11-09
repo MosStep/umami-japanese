@@ -1,18 +1,18 @@
 {
-  "version": "1.0.13",
-  "build": 113,
+  "version": "1.0.14",
+  "build": 114,
   "min_native_build": 113,
-  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.13/web-bundle-1.0.13.zip",
+  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.14/web-bundle-1.0.14.zip",
   "updated_at": "2026-11-09T17:29:51.000Z",
   "words_count": 125,
-  "videos_count": 64,
-  "announcement": "🎙️ v1.0.13: พูดตามใช้ได้บนมือถือ + สนทนา AI ใช้ Tenixe (ต้องติดตั้ง APK ใหม่)",
+  "videos_count": 72,
+  "announcement": "🎬 v1.0.14: +8 คลิปはじめしゃちょー และจัดระดับ N5–N1 ใหม่ทั้งหมด",
   "release_notes": [
-    "🎙️ พูดตามใช้ได้แล้วบนมือถือ (ใช้ระบบรู้จำเสียงของ Android)",
-    "🤖 สนทนา AI ใช้ Tenixe (ใส่ key ในตั้งค่า)",
-    "📦 ต้องติดตั้ง APK ครั้งนี้ (เพิ่มระบบรู้จำเสียง)"
+    "🎬 เพิ่มคลิปはじめしゃちょー อีก 8 คลิป (รวม 72 คลิป)",
+    "🏷️ จัดระดับ JLPT ใหม่ทุกคลิปด้วยเกณฑ์เดียวกัน (คำศัพท์ + ความเร็วพูด + ระดับที่ช่องระบุ)",
+    "⚡ อัปเดตนี้ติดตั้งในแอปทันที (สำหรับเครื่องที่เป็น 1.0.13 แล้ว)"
   ],
   "update_type": "apk",
   "apk_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.13/umami-app-debug.apk",
-  "checksum": "9d192daf2167d2af0bdd6dc33a78b961b43ed0af198dce59baa7a94628c2761c"
+  "checksum": "fd2e37c11a959ff1988f61acd9f31eb0828c6d1dffb3cdb6f0bae28e03c3bc22"
 }

@@ -3956,14 +3956,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "「せ」から始まる10動詞で日本語会話【N5】Japanese Listening practice",
     "channel": "Japanese super immersion",
     "category": "Podcasts",
-    "difficulty_rating": 3,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 43,
-      "N4": 19,
-      "N3": 11,
-      "N2": 6,
-      "N1": 21
+      "N5": 60,
+      "N4": 30,
+      "N3": 10,
+      "N2": 0,
+      "N1": 0
     },
     "duration": 1718,
     "thumbnail_gradient": "from-indigo-900 via-violet-950 to-slate-900",
