@@ -112,3 +112,37 @@ manual `ja` track or an auto track.
 4. Report a table: youtube_id → ja source, th source, line count.
 
 Verify: `npm run build` passes; at least the Ani-One videos have real `th` lines with timestamps beyond 22 s.
+
+## Task 4: The Dojo — mobile-first UX/UI cleanup (src/components/TheDojo.tsx)
+
+Audit at 375x812 (controller, 2026-11-09): the English marketing hero ("Master Both Input & Output" + paragraph) fills the
+whole first screen; the three mode pills ("Mode A: Flashcards (152)", "Mode B: Shadowing & Waveform", "Mode C: AI Roleplay (kob-ai)")
+are stacked inside that hero in English jargon; then a deck switch, then a filter row, so the actual flashcard starts
+below the fold. Grading buttons use emoji + long Thai text crammed in 3 tall boxes. Mixed Thai/English throughout.
+Guidance source: ui-ux-pro-max skill (touch targets >= 44px / min-h-11, >= 8px gaps, no emoji as structural icons —
+use lucide-react which is already a dependency, mobile-first then md:/lg:, visible pressed state without layout shift,
+dark-mode contrast >= 4.5:1 for text).
+
+Scope: layout/presentation only. Do NOT change SRS/XP/grading logic, state shape, handlers, data, or Mode C AI calls.
+
+1. Replace the hero with a compact header (max ~64px tall on mobile): title "โดโจ" + one short Thai subtitle line
+   "ฝึกคำศัพท์ • พูดตาม • สนทนา". Remove the English marketing paragraph and the big 道場 watermark on mobile (keep on md+ optional).
+2. Mode switch = one horizontal segmented control directly under the header, 3 equal segments, each min-h-11 with a
+   lucide icon + Thai label: "แฟลชการ์ด" (Layers), "พูดตาม" (Mic), "สนทนา AI" (MessageCircle). Selected segment clearly
+   filled; `role="tablist"`/`role="tab"`/`aria-selected`. Sticky at the top of the Dojo content (below the app navbar) so it stays reachable.
+3. Mode A: put deck (คำศัพท์ / ประโยคที่บันทึก) and filter (ทั้งหมด / กำลังเรียน / จำได้แล้ว) into ONE compact row of small chips
+   (each min-h-11 tap area), with the progress "คำที่ 1 / 152" as a thin progress bar + text above the card.
+   The flashcard must be visible without scrolling on 375x812 (word + reveal button above the fold).
+4. Grading buttons (both word deck and mined deck): one row, equal width, min-h-12, short Thai labels:
+   word deck "ยังจำไม่ได้" / "พอจำได้" / "จำได้แม่น"; mined deck keep its 4 grades with short Thai labels
+   "อีกครั้ง" / "ยาก" / "ดี" / "ง่าย". XP hint as a small second line (text-xs). Replace emoji icons in these buttons with lucide icons
+   (X, Zap/Minus, Check, etc.). Pressed state: `active:opacity-80` / `active:brightness-90` (no scale transforms that shift layout).
+5. Reveal button: full-width, min-h-12, label "แตะเพื่อดูคำตอบ". Card text: Japanese word stays large; reading + Thai meaning >= text-base.
+6. Mode B and Mode C: only apply the same header/segmented control, touch-target (min-h-11) and Thai-label fixes to their
+   controls; translate remaining English UI labels in those sections to Thai; do not restructure their logic.
+7. No text smaller than text-xs (12px); body text >= text-sm; check color contrast of slate-500-on-slate-900 style labels
+   and bump to slate-400/300 where they carry information.
+
+Verify: `npm run build` passes. Dev server (`npm run dev`, http://localhost:5173, viewport 375x812): Dojo tab shows the
+segmented control and the flashcard word + reveal button without scrolling; all three modes still switch and work
+(reveal → grade advances to next card). Report before/after notes per numbered item.
