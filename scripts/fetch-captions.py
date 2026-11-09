@@ -263,6 +263,11 @@ def build_ja_only(ydl, youtube_id, info):
     ja_events = drop_adjacent_dups(sorted(ja_events, key=lambda e: e["start"]))
     build_lines.counts = {}
     lines = build_lines(ja_events, [], ja_kind, "none")
+    counts = {"lines_before_cleanup": len(lines)}
+    if ja_kind == "auto":
+        lines, asr = clean_asr_lines(lines)
+        counts.update(asr)
+    counts["lines_after_cleanup"] = len(lines)
     en_dropped = attach_en(lines, sorted(en_events, key=lambda e: e["start"]))
     en_src = "manual" if en_events else "none"
     record = {
@@ -270,14 +275,45 @@ def build_ja_only(ydl, youtube_id, info):
         "source": {"ja": ja_kind, "th": "none", "en": en_src},
         "lines": lines,
     }
-    counts = {"en_events": len(en_events), "en_dropped": en_dropped}
+    counts.update({"en_events": len(en_events), "en_dropped": en_dropped})
     return record, {"ja": ja_kind, "th": "none", "en": en_src, **counts}
 
 
-# Videos whose Thai is only an auto translation and whose saved output (built before the
-# no-manual-Thai branch existed) pairs that auto Thai. They keep the original path so
-# their captions do not change. Do not add ids here for new videos.
-LEGACY_AUTO_TH_IDS = {"SX_ViT4Ra7k"}
+KANA = re.compile(r"[぀-ヿｦ-ﾟ]")
+KANJI = re.compile(r"[㐀-䶿一-鿿々]")
+LATIN_FRAGMENT = re.compile(r"(?<![A-Za-z])[A-Za-z]{1,2}(?![A-Za-z])")
+
+
+def clean_asr_lines(lines):
+    """Remove ASR noise from auto-Japanese lines. Returns (lines, counts).
+    1. strip Latin fragments of 1-2 letters from each line;
+    2. drop lines that are (a) <=2 characters, all kana; (b) one repeated character;
+       (c) without any kana or kanji (digits/Latin/punctuation only);
+    3. merge a line whose ja equals or is contained in the previous kept line
+       (the kept line's end_ms is extended)."""
+    counts = {"latin_stripped": 0, "drop_short_kana": 0, "drop_repeat_char": 0,
+              "drop_no_japanese": 0, "dedupe_merged": 0}
+    kept = []
+    for ln in lines:
+        text = re.sub(r"\s+", " ", LATIN_FRAGMENT.sub(" ", ln["ja"])).strip()
+        if text != ln["ja"]:
+            counts["latin_stripped"] += 1
+        if text and len(text) <= 2 and all(KANA.match(c) for c in text):
+            counts["drop_short_kana"] += 1
+            continue
+        if len(text) >= 2 and len(set(text)) == 1:
+            counts["drop_repeat_char"] += 1
+            continue
+        if not KANA.search(text) and not KANJI.search(text):
+            counts["drop_no_japanese"] += 1
+            continue
+        ln["ja"] = text
+        if kept and (text == kept[-1]["ja"] or text in kept[-1]["ja"]):
+            kept[-1]["end_ms"] = max(kept[-1]["end_ms"], ln["end_ms"])
+            counts["dedupe_merged"] += 1
+            continue
+        kept.append(ln)
+    return kept, counts
 
 
 def build_for_video(ydl, youtube_id):
@@ -285,7 +321,8 @@ def build_for_video(ydl, youtube_id):
     info = ydl.extract_info(url, download=False)
 
     th_kind, _ = pick_track(info, "th", ["th"])
-    if th_kind != "manual" and youtube_id not in LEGACY_AUTO_TH_IDS:
+    if th_kind != "manual":
+        # Uniform rule: no manual Thai -> ja-primary; auto-translated Thai is ignored.
         return build_ja_only(ydl, youtube_id, info)
 
     ja_kind, ja_formats = pick_track(info, "ja", ["ja", "ja-orig"])

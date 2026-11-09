@@ -3800,7 +3800,7 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "duration": 1448,
     "thumbnail_gradient": "from-purple-950 via-red-950 to-slate-900",
     "scene_emoji": "♟️",
-    "description": "อนิเมะคลาสสิก Code Geass: Lelouch of the Rebellion ตอนที่ 1 ฉบับทางการจาก Ani-One Asia (เสียงญี่ปุ่น)"
+    "description": "ตอนที่ 1 (วันที่ปีศาจตนใหม่ถือกำเนิด) ของ Code Geass: Lelouch of the Rebellion ฉบับทางการจาก Ani-One Asia (เสียงญี่ปุ่น)"
   },
   {
     "id": "vid-anione-codegeass-02",
@@ -3821,7 +3821,7 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "duration": 1448,
     "thumbnail_gradient": "from-purple-950 via-red-950 to-slate-900",
     "scene_emoji": "♟️",
-    "description": "อนิเมะคลาสสิก Code Geass: Lelouch of the Rebellion ตอนที่ 2 ฉบับทางการจาก Ani-One Asia (เสียงญี่ปุ่น)"
+    "description": "ตอนที่ 2 (อัศวินขาวตื่นขึ้น) ของ Code Geass: Lelouch of the Rebellion ฉบับทางการจาก Ani-One Asia (เสียงญี่ปุ่น)"
   },
   {
     "id": "vid-anione-codegeass-03",
@@ -3842,7 +3842,7 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "duration": 1448,
     "thumbnail_gradient": "from-purple-950 via-red-950 to-slate-900",
     "scene_emoji": "♟️",
-    "description": "อนิเมะคลาสสิก Code Geass: Lelouch of the Rebellion ตอนที่ 3 ฉบับทางการจาก Ani-One Asia (เสียงญี่ปุ่น)"
+    "description": "ตอนที่ 3 (เพื่อนร่วมชั้นปลอมตัว) ของ Code Geass: Lelouch of the Rebellion ฉบับทางการจาก Ani-One Asia (เสียงญี่ปุ่น)"
   }
 ];
 
