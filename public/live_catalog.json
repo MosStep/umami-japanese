@@ -1,18 +1,18 @@
 {
-  "version": "1.0.14",
-  "build": 114,
+  "version": "1.0.15",
+  "build": 115,
   "min_native_build": 113,
-  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.14/web-bundle-1.0.14.zip",
+  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.15/web-bundle-1.0.15.zip",
   "updated_at": "2026-11-09T17:29:51.000Z",
   "words_count": 125,
   "videos_count": 72,
   "announcement": "🎬 v1.0.14: +8 คลิปはじめしゃちょー และจัดระดับ N5–N1 ใหม่ทั้งหมด",
   "release_notes": [
-    "🎬 เพิ่มคลิปはじめしゃちょー อีก 8 คลิป (รวม 72 คลิป)",
-    "🏷️ จัดระดับ JLPT ใหม่ทุกคลิปด้วยเกณฑ์เดียวกัน (คำศัพท์ + ความเร็วพูด + ระดับที่ช่องระบุ)",
-    "⚡ อัปเดตนี้ติดตั้งในแอปทันที (สำหรับเครื่องที่เป็น 1.0.13 แล้ว)"
+    "🛠️ แสดงสาเหตุข้อผิดพลาดของพูดตาม/สนทนา AI บนหน้าจอ",
+    "🔁 ย้ายการตั้งค่า AI เก่า (Kob AI) ไปใช้ Tenixe อัตโนมัติ",
+    "⚡ อัปเดตนี้ติดตั้งในแอปทันที"
   ],
   "update_type": "apk",
   "apk_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.13/umami-app-debug.apk",
-  "checksum": "fd2e37c11a959ff1988f61acd9f31eb0828c6d1dffb3cdb6f0bae28e03c3bc22"
+  "checksum": "9a2340a49292dd57f50ef62e5575f6310e63a437f3a1029cccea62ced0d64824"
 }
