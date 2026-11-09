@@ -81,7 +81,7 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
                 type="button"
                 onClick={() => {
                   setProviderChoice('tenixe');
-                  setSelectedModel('nemotron-3-ultra');
+                  setSelectedModel('claude-haiku-5-5');
                 }}
                 className={`p-2.5 rounded-xl border text-left transition-all ${
                   providerChoice === 'tenixe'
@@ -96,7 +96,7 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
                   )}
                 </div>
                 <p className="text-[10px] text-slate-400 mt-0.5">
-                  Unlimited Nemotron-3
+                  Claude Haiku 5.5 (default)
                 </p>
               </button>
 
@@ -173,9 +173,9 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
             >
               {providerChoice === 'tenixe' ? (
                 <>
-                  <option value="nemotron-3-ultra">nemotron-3-ultra (Unlimited / Best Value)</option>
-                  <option value="deepseek-v4-flash">deepseek-v4-flash</option>
-                  <option value="claude-haiku-5-5">claude-haiku-5-5</option>
+                  <option value="claude-haiku-5-5">claude-haiku-5-5 (แนะนำ / เร็ว)</option>
+                  <option value="deepseek-v4-flash">deepseek-v4-flash (คิดนาน / ตอบยาว)</option>
+                  <option value="nemotron-3-ultra">nemotron-3-ultra (ช้า)</option>
                 </>
               ) : (
                 <>

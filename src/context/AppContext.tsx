@@ -146,10 +146,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return localStorage.getItem(STORAGE_KEYS.API_KEY) || '';
   });
   const [aiModel, setAiModelState] = useState<string>(() => {
-    return localStorage.getItem(STORAGE_KEYS.AI_MODEL) || 'minimax-m3.1-flash';
+    return localStorage.getItem(STORAGE_KEYS.AI_MODEL) || 'claude-haiku-5-5';
   });
   const [aiProvider, setAiProviderState] = useState<AIProvider>(() => {
-    return (localStorage.getItem(STORAGE_KEYS.AI_PROVIDER) as AIProvider) || 'kob-ai';
+    return (localStorage.getItem(STORAGE_KEYS.AI_PROVIDER) as AIProvider) || 'tenixe';
   });
 
   const setApiKey = (key: string) => {
@@ -593,57 +593,140 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (activeVideoId === id) setActiveVideoId('vid-anione-jjk-01');
   };
 
-  // Tenixe / Kob AI / Local API Caller
-  const callAICompletion = async (prompt: string, systemPrompt?: string): Promise<string> => {
-    if (aiProvider !== 'local' && apiKey.trim()) {
-      const endpoint =
-        aiProvider === 'tenixe'
-          ? 'https://api.tenixe.com/api/v1/chat/completions'
-          : 'https://kob-ai.dev/v1/chat/completions';
+  // Tenixe / Kob AI caller. Tenixe uses streaming SSE (avoids the ~55 s non-streaming cut-off).
+  const NO_KEY_MESSAGE = 'ยังไม่ได้ใส่ API key — ไปที่ ⚙️ ตั้งค่า แล้วเลือก Tenixe และวาง key ของคุณ';
+  const TENIXE_ENDPOINT = 'https://api.tenixe.com/api/v1/chat/completions';
+  const KOB_MODELS: string[] = ['nemotron-3-ultra', 'minimax-m3.1-flash', 'deepseek-v4.1-flash'];
 
-      try {
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${apiKey.trim()}`,
-          },
-          body: JSON.stringify({
-            model: aiModel || (aiProvider === 'tenixe' ? 'nemotron-3-ultra' : 'minimax-m3.1-flash'),
-            messages: [
-              {
-                role: 'system',
-                content:
-                  systemPrompt ||
-                  'You are an expert Japanese tutor for the うまみ (Umami) Japanese Immersion app. Answer in clear natural Japanese with English explanations.',
-              },
-              { role: 'user', content: prompt },
-            ],
-            temperature: 0.7,
-            max_tokens: 800,
-          }),
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          const choice = data.choices?.[0]?.message;
-          return (
-            choice?.content?.trim() ||
-            choice?.reasoning?.trim() ||
-            'AI returned an empty response.'
-          );
-        } else {
-          const errorData = await response.json().catch(() => ({}));
-          console.error('API error:', errorData);
-          return `API error (${response.status}): Falling back to local offline response.`;
-        }
-      } catch (err: any) {
-        console.error('Failed to call AI API:', err);
-      }
+  const streamTenixeChat = async (
+    key: string,
+    model: string,
+    messages: { role: string; content: string }[],
+    maxTokens: number
+  ): Promise<string> => {
+    const response = await fetch(TENIXE_ENDPOINT, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${key}`,
+      },
+      body: JSON.stringify({
+        model,
+        messages,
+        temperature: 0.7,
+        max_tokens: maxTokens,
+        stream: true,
+      }),
+    });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    if (!response.body) {
+      const data = await response.json();
+      return data.choices?.[0]?.message?.content?.trim() || '';
     }
 
-    // Default 100% Free Local Offline Answer
-    return 'Local Engine: Processed with zero-cost offline Japanese morphological analyzer.';
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let output = '';
+    let finished = false;
+
+    const handleLine = (rawLine: string) => {
+      const line = rawLine.trim();
+      if (!line.startsWith('data:')) return;
+      const payload = line.slice(5).trim();
+      if (payload === '[DONE]') {
+        finished = true;
+        return;
+      }
+      try {
+        const json = JSON.parse(payload);
+        const delta = json.choices?.[0]?.delta?.content;
+        if (typeof delta === 'string') output += delta;
+      } catch {
+        // ignore keep-alive or partial JSON lines
+      }
+    };
+
+    while (!finished) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      let idx = buffer.indexOf('\n');
+      while (idx >= 0 && !finished) {
+        handleLine(buffer.slice(0, idx));
+        buffer = buffer.slice(idx + 1);
+        idx = buffer.indexOf('\n');
+      }
+    }
+    if (!finished && buffer) handleLine(buffer);
+    try {
+      await reader.cancel();
+    } catch {
+      // stream already closed
+    }
+    return output.trim();
+  };
+
+  const callAICompletion = async (prompt: string, systemPrompt?: string): Promise<string> => {
+    const key = apiKey.trim();
+    if (aiProvider === 'local' || !key) return NO_KEY_MESSAGE;
+
+    const messages = [
+      {
+        role: 'system',
+        content:
+          systemPrompt ||
+          'You are an expert Japanese tutor for the うまみ (Umami) Japanese Immersion app. Answer in clear natural Japanese with English explanations.',
+      },
+      { role: 'user', content: prompt },
+    ];
+
+    if (aiProvider === 'tenixe') {
+      const primaryModel = aiModel || 'claude-haiku-5-5';
+      try {
+        const text = await streamTenixeChat(key, primaryModel, messages, 800);
+        if (text) return text;
+        throw new Error('empty response');
+      } catch (err) {
+        console.warn('Tenixe primary model failed, retrying with deepseek-v4-flash:', err);
+      }
+      try {
+        // Reasoning model: needs a large max_tokens budget
+        const text = await streamTenixeChat(key, 'deepseek-v4-flash', messages, 20000);
+        if (text) return text;
+      } catch (err) {
+        console.error('Tenixe fallback model failed:', err);
+      }
+      return 'AI ตอบกลับไม่สำเร็จในตอนนี้ กรุณาลองใหม่อีกครั้ง';
+    }
+
+    // Kob AI (non-streaming, unchanged behaviour)
+    try {
+      const response = await fetch('https://kob-ai.dev/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${key}`,
+        },
+        body: JSON.stringify({
+          model: KOB_MODELS.includes(aiModel) ? aiModel : 'minimax-m3.1-flash',
+          messages,
+          temperature: 0.7,
+          max_tokens: 800,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const choice = data.choices?.[0]?.message;
+        return choice?.content?.trim() || choice?.reasoning?.trim() || 'AI returned an empty response.';
+      }
+      const errorData = await response.json().catch(() => ({}));
+      console.error('API error:', errorData);
+    } catch (err: any) {
+      console.error('Failed to call AI API:', err);
+    }
+    return 'AI ตอบกลับไม่สำเร็จในตอนนี้ กรุณาลองใหม่อีกครั้ง';
   };
 
   // Automatically derive full dictionary from DICTIONARY_WORDS + all video subtitle tokens

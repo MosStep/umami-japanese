@@ -4,6 +4,11 @@ import { MinedSentenceRecord, SubtitleLineRecord } from '../schema/databaseSchem
 import { MOCK_SUBTITLE_LINES } from '../data/mockVideos';
 import { audioService } from '../utils/audioService';
 import {
+  isNativeSpeech,
+  startJapaneseRecognition,
+  stopRecognition,
+} from '../utils/speech';
+import {
   Swords,
   Mic,
   MicOff,
@@ -173,75 +178,68 @@ export const TheDojo: React.FC = () => {
     return { japanese, thai, targetWord, targetLemma, line, mined, missing };
   };
 
-  // Start Real Microphone Recording with Live Volume Waveform
-  const startRecording = async () => {
-    try {
-      setIsRecording(true);
-      setUserTranscript('');
-      setPronunciationScore(null);
-      setMoraFeedback([]);
-      setSpeechWarning(null);
-
-      // Start live mic stream with real audio volume analyzer
-      const mic = await audioService.startMicrophoneRecording((vol) => {
-        setLiveVolume(vol);
-      });
-      recordingStopRef.current = mic.stop;
-
-      // Check for browser speech recognition
-      const SpeechRecognition =
-        (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-
-      if (SpeechRecognition) {
-        try {
-          const recognition = new SpeechRecognition();
-          recognition.lang = 'ja-JP';
-          recognition.interimResults = true;
-          recognition.maxAlternatives = 1;
-
-          recognition.onresult = (event: any) => {
-            const transcript = event.results[0][0].transcript;
-            setUserTranscript(transcript);
-            setSpeechWarning(null);
-          };
-
-          recognition.onerror = () => {
-            // keep mic volume active
-          };
-
-          recognition.onend = () => {
-            stopRecording();
-          };
-
-          recognition.start();
-        } catch {
-          // If recognition fails to start, fallback to manual stop/timer
-        }
-      }
-    } catch (err) {
-      console.warn('Microphone start error:', err);
-      setIsRecording(false);
-    }
-  };
-
-  // Stop Recording and Grade Pronunciation (BUG-04: guard against empty transcript)
-  const stopRecording = () => {
+  // Start shadowing recording. Web: mic volume waveform + Web Speech API.
+  // Native (Android): Capacitor speech plugin only; the waveform is skipped because
+  // a concurrent getUserMedia stream can block the native recognizer.
+  const stopMic = () => {
     if (recordingStopRef.current) {
       recordingStopRef.current();
       recordingStopRef.current = null;
     }
+  };
+
+  const finishRecording = (spoken: string) => {
+    stopMic();
     setIsRecording(false);
     setLiveVolume(0);
-
-    const spoken = userTranscript.trim();
-    if (!spoken) {
+    const text = spoken.trim();
+    if (!text) {
       setPronunciationScore(null);
       setMoraFeedback([]);
       setSpeechWarning('ยังตรวจไม่พบเสียงพูด กรุณาลองพูดใหม่อีกครั้ง');
       return;
     }
+    setUserTranscript(text);
     setSpeechWarning(null);
-    gradeShadowing(spoken);
+    gradeShadowing(text);
+  };
+
+  const startRecording = async () => {
+    setIsRecording(true);
+    setUserTranscript('');
+    setPronunciationScore(null);
+    setMoraFeedback([]);
+    setSpeechWarning(null);
+
+    if (!isNativeSpeech()) {
+      try {
+        const mic = await audioService.startMicrophoneRecording((vol) => {
+          setLiveVolume(vol);
+        });
+        recordingStopRef.current = mic.stop;
+      } catch (err) {
+        console.warn('Microphone start error:', err);
+      }
+    }
+
+    await startJapaneseRecognition(
+      (partial) => {
+        setUserTranscript(partial);
+        setSpeechWarning(null);
+      },
+      (finalText) => finishRecording(finalText),
+      (msg) => {
+        stopMic();
+        setIsRecording(false);
+        setLiveVolume(0);
+        setSpeechWarning(msg);
+      }
+    );
+  };
+
+  // Stop Recording and Grade Pronunciation (the session's onFinal calls finishRecording)
+  const stopRecording = () => {
+    void stopRecognition();
   };
 
   // Grade shadowing character-level diff and mora cadence

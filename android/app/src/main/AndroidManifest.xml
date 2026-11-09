@@ -35,6 +35,13 @@
         </provider>
     </application>
 
+    <!-- Speech recognizer lookup (Android 11+ package visibility) -->
+    <queries>
+        <intent>
+            <action android:name="android.speech.RecognitionService" />
+        </intent>
+    </queries>
+
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
