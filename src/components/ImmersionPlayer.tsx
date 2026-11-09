@@ -52,6 +52,7 @@ export const ImmersionPlayer: React.FC = () => {
   const {
     activeVideo,
     activeSubtitleLines,
+    captionsLoading,
     getWordStatus,
     setWordStatus,
     mineSentence,
@@ -398,7 +399,7 @@ export const ImmersionPlayer: React.FC = () => {
         replayCurrentLine();
       } else if (e.key === 'm' || e.key === 'M') {
         e.preventDefault();
-        if (activeLine) {
+        if (activeLine && activeLine.raw_text) {
           mineSentence(activeLine);
         }
       } else if (['1', '2', '3'].includes(e.key) && selectedToken) {
@@ -845,13 +846,13 @@ export const ImmersionPlayer: React.FC = () => {
             <div>
               <button
                 onClick={() => mineSentence(activeLine)}
-                disabled={isCurrentLineMined || !activeLine}
+                disabled={isCurrentLineMined || !activeLine || !activeLine.raw_text}
                 className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold shadow-md transition-all active:scale-95 ${
-                  isCurrentLineMined || !activeLine
+                  isCurrentLineMined || !activeLine || !activeLine.raw_text
                     ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 cursor-not-allowed opacity-80'
                     : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/30'
                 }`}
-                title="ขุดประโยคนี้เข้า The Dojo (M)"
+                title={activeLine && !activeLine.raw_text ? 'บรรทัดนี้ไม่มีข้อความภาษาญี่ปุ่นให้ขุด' : 'ขุดประโยคนี้เข้า The Dojo (M)'}
               >
                 <Bookmark className="w-3.5 h-3.5" />
                 <span>{isCurrentLineMined ? 'ขุดแล้ว (Mined)' : 'ขุดประโยค (M)'}</span>
@@ -874,6 +875,9 @@ export const ImmersionPlayer: React.FC = () => {
 
             {/* Lines List */}
             <div ref={transcriptContainerRef} className="overflow-y-auto space-y-2.5 flex-1 pr-1">
+              {captionsLoading && (
+                <p className="text-xs text-slate-400 text-center py-6">กำลังโหลดคำบรรยาย... (Loading captions)</p>
+              )}
               {activeSubtitleLines.map((line, idx) => {
                 const isActive = isLineActive && idx === currentLineIndex;
                 const isMined = minedSentences.some(

@@ -15,7 +15,9 @@ import yt_dlp
 ROOT = Path(__file__).resolve().parent.parent
 MOCK_FILE = ROOT / "src" / "data" / "mockVideos.ts"
 OUT_DIR = ROOT / "src" / "data" / "captions"
-SLEEP_S = 2
+VIDEO_SLEEP_S = 2
+TRACK_SLEEP_S = 1
+RETRY_SLEEP_S = 15
 
 YDL_OPTS = {
     "quiet": True,
@@ -23,6 +25,10 @@ YDL_OPTS = {
     "skip_download": True,
     "noplaylist": True,
 }
+
+# A segment that is only bracket tags, e.g. [音楽] [拍手] （笑） (笑)
+INLINE_TAG = re.compile(r"\[[^\[\]]{1,12}\]")
+TAG_ONLY = re.compile(r"^(\s|\[[^\]]*\]|［[^］]*］|（[^）]*）|\([^)]*\))+$")
 
 
 def get_youtube_ids():
@@ -34,15 +40,37 @@ def get_youtube_ids():
     return seen
 
 
-def pick_track(info, lang, auto_langs):
-    """Return (kind, formats) for the best track, manual first, then auto."""
-    manual = (info.get("subtitles") or {}).get(lang)
+def clean_text(raw):
+    """Return cleaned caption text, or None if nothing speakable is left."""
+    raw = raw.replace("\n", " ")
+    if TAG_ONLY.match(raw):
+        return None
+    raw = INLINE_TAG.sub(" ", raw)  # sound tags inside a segment, e.g. 見上げ[音楽]た
+    text = re.sub(r"\s+", " ", raw).strip()
+    if not re.search(r"[^\W_]", text):  # punctuation / whitespace only
+        return None
+    return text
+
+
+def pick_track(info, lang_prefix, auto_prefixes):
+    """Return (kind, formats). Manual first (any key starting with lang_prefix),
+    then auto (first matching prefix list, then any key starting with lang_prefix)."""
+    def find(table, preferred):
+        table = table or {}
+        for key in preferred:
+            if table.get(key):
+                return table[key]
+        for key in sorted(table):
+            if key.startswith(lang_prefix) and table[key]:
+                return table[key]
+        return None
+
+    manual = find(info.get("subtitles"), [lang_prefix])
     if manual:
         return "manual", manual
-    auto = info.get("automatic_captions") or {}
-    for code in auto_langs:
-        if auto.get(code):
-            return "auto", auto[code]
+    auto = find(info.get("automatic_captions"), auto_prefixes)
+    if auto:
+        return "auto", auto
     return "none", None
 
 
@@ -55,24 +83,21 @@ def fetch_json3(ydl, formats):
 
 
 def parse_events(data):
-    """Turn json3 events into [{start, end, text}] with non-empty text."""
+    """json3 events -> [{start, end, text}] with cleaned, non-empty text."""
     events = data.get("events") or []
     out = []
     for i, ev in enumerate(events):
         if "segs" not in ev:
             continue
-        text = "".join(seg.get("utf8", "") for seg in ev["segs"])
-        text = re.sub(r"\s+", " ", text.replace("\n", " ")).strip()
+        text = clean_text("".join(seg.get("utf8", "") for seg in ev["segs"]))
         if not text:
             continue
         start = int(ev.get("tStartMs", 0))
         dur = ev.get("dDurationMs")
         if dur is None:
-            # Fall back to the next event's start, or a 2 s default.
             nxt = next((e for e in events[i + 1:] if "tStartMs" in e), None)
             dur = (nxt["tStartMs"] - start) if nxt else 2000
-        end = start + int(dur)
-        out.append({"start": start, "end": max(end, start + 1), "text": text})
+        out.append({"start": start, "end": max(start + int(dur), start + 1), "text": text})
     return out
 
 
@@ -80,17 +105,91 @@ def overlap(a, b):
     return min(a["end"], b["end"]) - max(a["start"], b["start"])
 
 
-def attach(primary, other):
-    """For each primary event, pick the other-language event with max overlap."""
-    result = []
-    for p in primary:
+def drop_adjacent_dups(events, window_ms=3000):
+    """Rolling auto captions repeat the same text in back-to-back events; merge them."""
+    out = []
+    for e in events:
+        if out and e["text"] == out[-1]["text"] and e["start"] - out[-1]["end"] <= window_ms:
+            out[-1]["end"] = max(out[-1]["end"], e["end"])
+            continue
+        out.append(e)
+    return out
+
+
+def join_rolling(parts):
+    """Join caption fragments, removing rolling-caption repetition: a fragment
+    already present is skipped, and an overlapping prefix/suffix is not repeated."""
+    acc = ""
+    for t in parts:
+        if not t or t in acc:
+            continue
+        added = False
+        for k in range(min(len(acc), len(t)), 1, -1):
+            if acc.endswith(t[:k]):
+                acc += t[k:]
+                added = True
+                break
+        if not added:
+            acc = acc + (" " if acc and t[0].isascii() and acc[-1].isascii() else "") + t
+    return acc
+
+
+def build_lines(ja_events, th_events, ja_kind, th_kind):
+    """Pair ja and th events into lines. Returns list of {start_ms, end_ms, ja, th}."""
+    if th_kind == "manual" and ja_kind == "auto" and th_events and ja_events:
+        # Thai (manual) is the primary timeline; join overlapping ja fragments onto it.
+        lines = [{"start": t["start"], "end": t["end"], "ja_parts": [], "th": t["text"]}
+                 for t in th_events]
+        leftover_ja = []
+        for j in ja_events:
+            dur = max(j["end"] - j["start"], 1)
+            mid = (j["start"] + j["end"]) / 2
+            targets = []
+            for ln in lines:
+                ov = min(ln["end"], j["end"]) - max(ln["start"], j["start"])
+                if ov > 0.5 * dur or ln["start"] <= mid < ln["end"]:
+                    targets.append(ln)
+            if targets:
+                for ln in targets:
+                    ln["ja_parts"].append(j["text"])
+            else:
+                leftover_ja.append(j)
+        out = []
+        for ln in lines:
+            out.append({
+                "start_ms": ln["start"], "end_ms": ln["end"],
+                "ja": join_rolling(ln["ja_parts"]) or None, "th": ln["th"],
+            })
+        for j in leftover_ja:
+            out.append({"start_ms": j["start"], "end_ms": j["end"], "ja": j["text"], "th": None})
+        out.sort(key=lambda l: l["start_ms"])
+        return out
+
+    # Japanese is primary (ja manual, or both auto, or ja only). Each Thai event
+    # attaches to exactly one Japanese line (max overlap); unattached Thai
+    # events become Thai-only lines so nothing is dropped.
+    if not ja_events:
+        return [{"start_ms": t["start"], "end_ms": t["end"], "ja": None, "th": t["text"]}
+                for t in th_events]
+    lines = [{"start": j["start"], "end": j["end"], "ja": j["text"], "th_parts": []}
+             for j in ja_events]
+    leftover_th = []
+    for t in th_events:
         best, best_ov = None, 0
-        for o in other:
-            ov = overlap(p, o)
+        for ln in lines:
+            ov = min(ln["end"], t["end"]) - max(ln["start"], t["start"])
             if ov > best_ov:
-                best, best_ov = o, ov
-        result.append(best["text"] if best else None)
-    return result
+                best, best_ov = ln, ov
+        if best is not None:
+            best["th_parts"].append(t["text"])
+        else:
+            leftover_th.append(t)
+    out = [{"start_ms": ln["start"], "end_ms": ln["end"], "ja": ln["ja"],
+            "th": join_rolling(ln["th_parts"]) or None} for ln in lines]
+    for t in leftover_th:
+        out.append({"start_ms": t["start"], "end_ms": t["end"], "ja": None, "th": t["text"]})
+    out.sort(key=lambda l: l["start_ms"])
+    return out
 
 
 def build_for_video(ydl, youtube_id):
@@ -100,14 +199,15 @@ def build_for_video(ydl, youtube_id):
     ja_kind, ja_formats = pick_track(info, "ja", ["ja", "ja-orig"])
     th_kind, th_formats = pick_track(info, "th", ["th"])
 
-    ja_events = []
-    th_events = []
+    ja_events, th_events = [], []
     if ja_formats:
         data = fetch_json3(ydl, ja_formats)
         if data is None:
             ja_kind = "none"
         else:
             ja_events = parse_events(data)
+    if ja_formats and th_formats:
+        time.sleep(TRACK_SLEEP_S)
     if th_formats:
         data = fetch_json3(ydl, th_formats)
         if data is None:
@@ -118,41 +218,9 @@ def build_for_video(ydl, youtube_id):
     if not ja_events and not th_events:
         return None, {"ja": "none", "th": "none"}
 
-    if ja_events:
-        primary, primary_key = ja_events, "ja"
-        other, other_key = th_events, "th"
-    else:
-        primary, primary_key = th_events, "th"
-        other, other_key = [], "ja"
-
-    lines = []
-    attached = attach(primary, other) if other else [None] * len(primary)
-    for p, att in zip(primary, attached):
-        line = {
-            "start_ms": p["start"],
-            "end_ms": p["end"],
-            "ja": None,
-            "th": None,
-        }
-        line[primary_key] = p["text"]
-        if other:
-            line[other_key] = att
-        lines.append(line)
-
-    # Lines that come only from the non-primary track when primary was ja:
-    # keep them as th-only lines so no Thai caption is dropped.
-    if ja_events and th_events:
-        covered = [False] * len(th_events)
-        for i, t in enumerate(th_events):
-            for p in ja_events:
-                if overlap(p, t) > 0:
-                    covered[i] = True
-                    break
-        for i, t in enumerate(th_events):
-            if not covered[i]:
-                lines.append({"start_ms": t["start"], "end_ms": t["end"], "ja": None, "th": t["text"]})
-        lines.sort(key=lambda l: l["start_ms"])
-
+    ja_events = drop_adjacent_dups(sorted(ja_events, key=lambda e: e["start"]))
+    th_events = drop_adjacent_dups(sorted(th_events, key=lambda e: e["start"]))
+    lines = build_lines(ja_events, th_events, ja_kind, th_kind)
     record = {
         "youtube_id": youtube_id,
         "source": {"ja": ja_kind, "th": th_kind},
@@ -161,42 +229,68 @@ def build_for_video(ydl, youtube_id):
     return record, {"ja": ja_kind, "th": th_kind}
 
 
+def stats(record):
+    lines = record["lines"]
+    th_values = [l["th"] for l in lines if l["th"]]
+    dup_th = 0
+    for prev, cur in zip(lines, lines[1:]):
+        if cur["th"] and cur["th"] == prev["th"] and cur["start_ms"] - prev["end_ms"] <= 3000:
+            dup_th += 1
+    return {
+        "lines": len(lines),
+        "ja_filled": sum(1 for l in lines if l["ja"]),
+        "th_filled": len(th_values),
+        "dup_th": dup_th,
+    }
+
+
+def fetch_with_retry(ydl, youtube_id):
+    try:
+        return build_for_video(ydl, youtube_id)
+    except Exception as exc:  # noqa: BLE001
+        if "429" not in str(exc):
+            raise
+        print(f"[{youtube_id}] HTTP 429, retrying once after {RETRY_SLEEP_S}s", file=sys.stderr)
+        time.sleep(RETRY_SLEEP_S)
+        return build_for_video(ydl, youtube_id)
+
+
 def main():
     ids = get_youtube_ids()
+    if len(sys.argv) > 1:
+        ids = [i for i in ids if i in sys.argv[1:]]
     print(f"Found {len(ids)} unique youtube_ids in {MOCK_FILE.name}")
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    summary = []
+    rows = []
 
     with yt_dlp.YoutubeDL(YDL_OPTS) as ydl:
         for n, yid in enumerate(ids):
             try:
-                record, sources = build_for_video(ydl, yid)
+                record, sources = fetch_with_retry(ydl, yid)
             except Exception as exc:  # noqa: BLE001 - continue on per-video failure
-                print(f"[{yid}] FAILED: {exc}", file=sys.stderr)
-                summary.append((yid, "error", "error", 0, str(exc)[:80]))
-                if n < len(ids) - 1:
-                    time.sleep(SLEEP_S)
-                continue
-
-            out_file = OUT_DIR / f"{yid}.json"
-            if record is None:
-                print(f"[{yid}] no ja or th track; no file written (MOCK fallback)")
-                summary.append((yid, sources["ja"], sources["th"], 0, ""))
+                msg = str(exc).splitlines()[0][:90]
+                print(f"[{yid}] FAILED: {msg}", file=sys.stderr)
+                rows.append((yid, "error", "error", None, msg))
             else:
-                out_file.write_text(
-                    json.dumps(record, ensure_ascii=False, indent=2) + "\n",
-                    encoding="utf-8",
-                )
-                print(f"[{yid}] ja={sources['ja']} th={sources['th']} lines={len(record['lines'])}")
-                summary.append((yid, sources["ja"], sources["th"], len(record["lines"]), ""))
-
+                if record is None or not record["lines"]:
+                    print(f"[{yid}] no ja or th track; no file written (MOCK fallback)")
+                    rows.append((yid, sources["ja"], sources["th"], None, "no captions"))
+                else:
+                    (OUT_DIR / f"{yid}.json").write_text(
+                        json.dumps(record, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+                    s = stats(record)
+                    print(f"[{yid}] ja={sources['ja']} th={sources['th']} {s}")
+                    rows.append((yid, sources["ja"], sources["th"], s, ""))
             if n < len(ids) - 1:
-                time.sleep(SLEEP_S)
+                time.sleep(VIDEO_SLEEP_S)
 
-    print("\n| youtube_id | ja | th | lines | note |")
-    print("|---|---|---|---|---|")
-    for yid, ja, th, count, note in summary:
-        print(f"| {yid} | {ja} | {th} | {count} | {note} |")
+    print("\n| youtube_id | ja | th | lines | ja_filled | th_filled | dup_th | note |")
+    print("|---|---|---|---|---|---|---|---|")
+    for yid, ja, th, s, note in rows:
+        if s:
+            print(f"| {yid} | {ja} | {th} | {s['lines']} | {s['ja_filled']} | {s['th_filled']} | {s['dup_th']} | |")
+        else:
+            print(f"| {yid} | {ja} | {th} | 0 | 0 | 0 | 0 | {note} |")
 
 
 if __name__ == "__main__":

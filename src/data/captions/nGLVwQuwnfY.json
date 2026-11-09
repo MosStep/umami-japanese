@@ -342,12 +342,6 @@
       "th": "โปเกมอนป่า Ga คือตัวบ่งชี้หัวเรื่อง"
     },
     {
-      "start_ms": 151306,
-      "end_ms": 152800,
-      "ja": null,
-      "th": "[ดนตรี]"
-    },
-    {
       "start_ms": 151320,
       "end_ms": 155400,
       "ja": null,
@@ -375,7 +369,7 @@
       "start_ms": 166973,
       "end_ms": 171090,
       "ja": "こちらも ポケモンを もって いれば たたかえるのだが...",
-      "th": "โคจิระ โม โปเกมอน หรือ มตเต อิเรบะ"
+      "th": "โคจิระ โม โปเกมอน หรือ มตเต อิเรบะทาทาคาเอรุ โนะ ดา กา โคจิระ โม โปเกมอน หรือ มตเต อิเรบะ"
     },
     {
       "start_ms": 172720,
@@ -597,7 +591,7 @@
       "start_ms": 297006,
       "end_ms": 300540,
       "ja": "じいさん！まちくたびれたぞー！",
-      "th": "จีซัน, มาชิคุตะบิเรตะ โซ."
+      "th": "จีซัน, มาชิคุตะบิเรตะ โซ. จีซานเป็นคำที่ใช้"
     },
     {
       "start_ms": 304080,
@@ -657,19 +651,19 @@
       "start_ms": 330690,
       "end_ms": 332273,
       "ja": "グリーンか...",
-      "th": "คา"
+      "th": null
     },
     {
       "start_ms": 332840,
       "end_ms": 336090,
       "ja": "おお そうか わしが よんだのじゃった",
-      "th": "คา"
+      "th": "คาโอ โซ กา วาชิ กา ยอนดา โน ชัตตา"
     },
     {
       "start_ms": 336773,
       "end_ms": 339056,
       "ja": "ちょっと まって おれ！",
-      "th": "โชตโต้แมทแร่ กรีน"
+      "th": "โชตโต้แมทแร่ กรีนคา กรีนเป็นชื่อของ"
     },
     {
       "start_ms": 342400,
@@ -843,7 +837,7 @@
       "start_ms": 420423,
       "end_ms": 423723,
       "ja": "そこに ３びき ポケモンが いる じゃろう！",
-      "th": "โฮร์ แมทโท."
+      "th": "โฮร์ แมทโท.โซโกะ นิ ซันบิกิ โปเกมอน กา อิรุ จาโร"
     },
     {
       "start_ms": 424120,
@@ -945,13 +939,13 @@
       "start_ms": 478640,
       "end_ms": 480440,
       "ja": "ほっほ！",
-      "th": "โฮร์ แมทโท."
+      "th": "โฮร์ แมทโท.โซโกะ นิ ซันบิกิ โปเกมอน กา อิรุ จาโร"
     },
     {
       "start_ms": 480756,
       "end_ms": 484790,
       "ja": "モンスターボールの なかに ポケモンが いれて あるんじゃ",
-      "th": "มอนสเตอร์บอล no naka ni Pokémon ga irete"
+      "th": "มอนสเตอร์บอล no naka ni Pokémon ga irete arun ja. มอนสเตอร์บอล no naka ni Pokémon"
     },
     {
       "start_ms": 487560,
@@ -1059,7 +1053,7 @@
       "start_ms": 540873,
       "end_ms": 546706,
       "ja": "むかしは わしも バリバリの ポケモン トレーナーとして ならした もの！",
-      "th": "Mukashi wa washi mo baribari no Pokémon"
+      "th": "มอนสเตอร์บอล no naka ni Pokémon ga irete arun ja. Mukashi wa washi mo baribari no Pokémonผู้ฝึกสอนชิเทะ narashita mono Mukashi"
     },
     {
       "start_ms": 547240,
@@ -1161,7 +1155,7 @@
       "start_ms": 599706,
       "end_ms": 607856,
       "ja": "おいぼれた いまは ポケモンも ３びき しか のこっとらんが おまえに １ぴき やろう！",
-      "th": "Mukashi wa washi mo baribari no Pokémon"
+      "th": "Mukashi wa washi mo baribari no Pokémonผู้ฝึกสอนชิเทะ narashita mono"
     },
     {
       "start_ms": 615720,
@@ -1308,12 +1302,6 @@
       "th": "unfair here the end too jiisan"
     },
     {
-      "start_ms": 701513,
-      "end_ms": 704560,
-      "ja": null,
-      "th": "[music]"
-    },
-    {
       "start_ms": 701640,
       "end_ms": 710480,
       "ja": null,
@@ -1359,13 +1347,13 @@
       "start_ms": 729406,
       "end_ms": 731873,
       "ja": "まー！あわてるな グリーン！",
-      "th": "zurui jiisan ore ni mo kureyo"
+      "th": "zurui jiisan ore ni mo kureyo ma awateruna green omai mo suki na mono"
     },
     {
       "start_ms": 731873,
       "end_ms": 733873,
       "ja": "おまえも すきなものを とれ！",
-      "th": "ma awateruna green omai mo suki na mono"
+      "th": "o tore ma awateruna green ma มาเถอะ"
     },
     {
       "start_ms": 738200,
@@ -1491,7 +1479,7 @@
       "start_ms": 805606,
       "end_ms": 810173,
       "ja": "マットは しょくぶつポケモン フシギダネが いいんじゃな？",
-      "th": "matto wa shokubutsu Pokemon fushigidane"
+      "th": "totemo sodateyasui zo matto wa shokubutsu Pokemon fushigidane ga ii n ja na soka fushigidane ga ii ka"
     },
     {
       "start_ms": 812720,
@@ -1701,7 +1689,7 @@
       "start_ms": 916440,
       "end_ms": 920573,
       "ja": "マットは みずのポケモン ゼニガメに きめるのじゃな？",
-      "th": "Pokemon ja matto wa mizu no Pokemon"
+      "th": "Pokemon ja matto wa mizu no Pokemon zenigame ni kimeru no ja na n zenigame"
     },
     {
       "start_ms": 921880,
@@ -1824,12 +1812,6 @@
       "th": "kimeru no ja na matto wa as for Matt"
     },
     {
-      "start_ms": 983166,
-      "end_ms": 986079,
-      "ja": null,
-      "th": "[music]"
-    },
-    {
       "start_ms": 983240,
       "end_ms": 988400,
       "ja": null,
@@ -1929,7 +1911,7 @@
       "start_ms": 1029240,
       "end_ms": 1033123,
       "ja": "マットは ほのおのポケモン ヒトカゲに するんじゃな？",
-      "th": "ii zo matto wa hono no Pokemon hitokage"
+      "th": "ii zo matto wa hono no Pokemon hitokage ni suru n ja na ho hitokage ga ii ka"
     },
     {
       "start_ms": 1035360,
@@ -2127,7 +2109,7 @@
       "start_ms": 1137373,
       "end_ms": 1141540,
       "ja": "マットは しょくぶつポケモン フシギダネが いいんじゃな？",
-      "th": "soka fushigidane ga ii ka koitsu wa"
+      "th": null
     },
     {
       "start_ms": 1142480,
@@ -2211,13 +2193,7 @@
       "start_ms": 1186956,
       "end_ms": 1190573,
       "ja": "この ポケモンは ほんとに げんきが いいぞ！",
-      "th": "ga ii n ja na"
-    },
-    {
-      "start_ms": 1190600,
-      "end_ms": 1197720,
-      "ja": null,
-      "th": "kono Pokemon wa hontoni genki ga ii zo"
+      "th": "matto wa โชกุบุสซึ โปเกมอน fushigidane ga ii n ja na kono Pokemon wa hontoni genki ga ii zo"
     },
     {
       "start_ms": 1193880,
@@ -2259,7 +2235,7 @@
       "start_ms": 1221523,
       "end_ms": 1224523,
       "ja": "フシギダネに ニックネームを つけますか？",
-      "th": "ฟุชิงิดาเนะ หรือ โมรัตตะ"
+      "th": "ฟุชิงิดาเนะ หรือ โมรัตตะฟุชิงิดาเนะ นิ ชื่อเล่น o tsukemasu ka?"
     },
     {
       "start_ms": 1224560,
@@ -2352,12 +2328,6 @@
       "th": "คุณอยากตั้งชื่อเล่นให้บูลบาซอร์ไหม"
     },
     {
-      "start_ms": 1266840,
-      "end_ms": 1270800,
-      "ja": null,
-      "th": "?"
-    },
-    {
       "start_ms": 1268120,
       "end_ms": 1272480,
       "ja": null,
@@ -2379,13 +2349,13 @@
       "start_ms": 1280406,
       "end_ms": 1282406,
       "ja": "じゃ おれは これ！",
-      "th": ", ore wa kore."
+      "th": null
     },
     {
       "start_ms": 1282406,
       "end_ms": 1286473,
       "ja": "グリーンは オーキドから ヒトカゲを もらった！",
-      "th": ", ore wa kore."
+      "th": ", ore wa kore.กรีน วา โอกิโด คารา ฮิโตคาเงะ โอ โมรัตตะ ใช่แล้ว"
     },
     {
       "start_ms": 1286480,
@@ -2590,12 +2560,6 @@
       "end_ms": 1396800,
       "ja": null,
       "th": "และสุดท้าย ฮิโตคาเงะเป็นโปเกมอนประเภทไหน"
-    },
-    {
-      "start_ms": 1394320,
-      "end_ms": 1400440,
-      "ja": null,
-      "th": "?"
     },
     {
       "start_ms": 1396800,

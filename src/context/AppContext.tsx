@@ -12,7 +12,7 @@ import {
   MOCK_SUBTITLE_LINES,
   DICTIONARY_WORDS,
 } from '../data/mockVideos';
-import { buildRealSubtitleLines } from '../data/captions';
+import { buildRealSubtitleLines, loadRealCaptions } from '../data/captions';
 
 export interface UserStats {
   streak_days: number;
@@ -46,6 +46,9 @@ interface AppContextType {
   setActiveVideoId: (id: string) => void;
   activeVideo: VideoRecord;
   activeSubtitleLines: SubtitleLineRecord[];
+  captionsLoading: boolean;
+  getLineById: (videoId: string | undefined, lineId: string | undefined) => SubtitleLineRecord | undefined;
+  getLinesForVideo: (videoId: string) => SubtitleLineRecord[];
   addCustomVideo: (video: VideoRecord, lines: SubtitleLineRecord[]) => void;
 
   // Word States
@@ -171,17 +174,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const allVideos = [...MOCK_VIDEOS, ...customVideos];
   // Precedence: user-made custom lines > real YouTube captions > hand-written MOCK lines.
   const manualLines = { ...MOCK_SUBTITLE_LINES, ...customLines };
+  // Real captions per video record id, loaded on demand. null = no caption file (MOCK fallback).
+  const [realLines, setRealLines] = useState<Record<string, SubtitleLineRecord[] | null>>({});
   const allLines = useMemo(() => {
     const real: Record<string, SubtitleLineRecord[]> = {};
-    for (const v of [...MOCK_VIDEOS, ...customVideos]) {
-      const lines = buildRealSubtitleLines(v.youtube_id, v.id, v.primary_jlpt);
-      if (lines) real[v.id] = lines;
+    for (const [id, lines] of Object.entries(realLines)) {
+      if (lines) real[id] = lines;
     }
     return { ...MOCK_SUBTITLE_LINES, ...real, ...customLines };
-  }, [customVideos, customLines]);
+  }, [realLines, customLines]);
 
   const activeVideo = allVideos.find((v) => v.id === activeVideoId) || allVideos[0];
-  const activeSubtitleLines = allLines[activeVideo.id] || [];
+  // While the active video's real captions load, show no lines (player shows a loading text)
+  // instead of the hand-written MOCK lines. Custom lines are shown immediately.
+  const captionsLoading =
+    !!activeVideo.youtube_id && !(activeVideo.id in realLines) && !customLines[activeVideo.id];
+  const activeSubtitleLines = captionsLoading ? [] : allLines[activeVideo.id] || [];
+
+  const getLinesForVideo = (videoId: string): SubtitleLineRecord[] => allLines[videoId] || [];
+  const getLineById = (videoId: string | undefined, lineId: string | undefined): SubtitleLineRecord | undefined => {
+    if (!lineId) return undefined;
+    if (videoId) return (allLines[videoId] || []).find((l) => l.id === lineId);
+    for (const list of Object.values(allLines)) {
+      const found = list.find((l) => l.id === lineId);
+      if (found) return found;
+    }
+    return undefined;
+  };
 
   // Word status tracking
   const [wordStates, setWordStates] = useState<Record<string, WordLearningStatus>>(() => {
@@ -381,7 +400,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const mineSentence = (line: SubtitleLineRecord, targetWordId?: string, note?: string) => {
-    if (!line || !line.tokens_json) return;
+    // Lines without Japanese text (Thai-only captions) cannot be mined.
+    if (!line || !line.tokens_json || !line.raw_text) return;
     const target = targetWordId || (line.tokens_json[0] ? line.tokens_json[0].word_id : 'generic');
     const existing = minedSentences.find(
       (m) => m.subtitle_line_id === line.id && m.target_word_id === target
@@ -567,6 +587,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return Array.from(map.values());
   }, [manualLines]);
 
+  // Load real captions for the active video and for every video that has mined sentences.
+  const neededVideoKey = Array.from(
+    new Set([activeVideo.id, ...minedSentences.map((m) => m.video_id)])
+  ).join('|');
+  useEffect(() => {
+    let cancelled = false;
+    neededVideoKey.split('|').forEach((videoId) => {
+      const video = allVideos.find((v) => v.id === videoId);
+      if (!video || !video.youtube_id) return;
+      loadRealCaptions(video.youtube_id).then((file) => {
+        if (cancelled) return;
+        setRealLines((prev) =>
+          videoId in prev
+            ? prev
+            : { ...prev, [videoId]: file ? buildRealSubtitleLines(file, videoId, video.primary_jlpt) : null }
+        );
+      });
+    });
+    return () => {
+      cancelled = true;
+    };
+    // allVideos is derived from state each render; the key captures what matters.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [neededVideoKey]);
+
   return (
     <AppContext.Provider
       value={{
@@ -577,6 +622,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setActiveVideoId,
         activeVideo,
         activeSubtitleLines,
+        captionsLoading,
+        getLineById,
+        getLinesForVideo,
         addCustomVideo,
         wordStates,
         setWordStatus,

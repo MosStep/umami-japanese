@@ -28,7 +28,7 @@ export const TheDojo: React.FC = () => {
     minedSentences,
     updateSRSReview,
     videos,
-    activeSubtitleLines,
+    getLineById,
     dictionaryWords,
     wordStates,
     setWordStatus,
@@ -117,20 +117,8 @@ export const TheDojo: React.FC = () => {
   };
 
   // Helper to locate full subtitle line across all available lines
-  const findLine = (videoId?: string, lineId?: string): SubtitleLineRecord | undefined => {
-    if (!lineId) return undefined;
-    if (videoId && MOCK_SUBTITLE_LINES[videoId]) {
-      const found = MOCK_SUBTITLE_LINES[videoId].find((l) => l.id === lineId);
-      if (found) return found;
-    }
-    const fromActive = activeSubtitleLines.find((l) => l.id === lineId);
-    if (fromActive) return fromActive;
-    for (const list of Object.values(MOCK_SUBTITLE_LINES)) {
-      const found = list.find((l) => l.id === lineId);
-      if (found) return found;
-    }
-    return undefined;
-  };
+  const findLine = (videoId?: string, lineId?: string): SubtitleLineRecord | undefined =>
+    getLineById(videoId, lineId);
 
   // [BUG-03] Separate Mode A Sentence Retriever (SRS Index based)
   const getModeAMinedSentence = () => {
