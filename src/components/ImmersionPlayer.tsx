@@ -809,7 +809,7 @@ export const ImmersionPlayer: React.FC = () => {
                     ) : (
                       <>
                         <div className="flex items-start gap-2 min-h-[3rem]">
-                          <p className="flex-1 text-base font-bold leading-6 text-emerald-300">
+                          <p className="flex-1 text-base font-bold leading-6 text-emerald-300 max-h-[7.5rem] overflow-y-auto overscroll-contain">
                             🇹🇭 {activeLine.thai_translation || activeLine.natural_translation}
                           </p>
                           {hideTranslation && (
