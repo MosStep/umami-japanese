@@ -3956,14 +3956,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "「せ」から始まる10動詞で日本語会話【N5】Japanese Listening practice",
     "channel": "Japanese super immersion",
     "category": "Podcasts",
-    "difficulty_rating": 3,
-    "primary_jlpt": "N3",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
     "jlpt_distribution": {
-      "N5": 43,
-      "N4": 19,
-      "N3": 11,
-      "N2": 6,
-      "N1": 21
+      "N5": 60,
+      "N4": 30,
+      "N3": 10,
+      "N2": 0,
+      "N1": 0
     },
     "duration": 1718,
     "thumbnail_gradient": "from-indigo-900 via-violet-950 to-slate-900",
@@ -5144,27 +5144,6 @@ export const MOCK_VIDEOS: VideoRecord[] = [
       "N3": 6,
       "N2": 1,
       "N1": 7
-    }
-  },
-  {
-    "id": "vid-n5-kids-anime-01",
-    "youtube_id": "cAFz4nWkJoA",
-    "title": "แอนิเมชันภาษาญี่ปุ่นน่ารัก ตอนที่ 1: ไปร้านสะดวกซื้อ",
-    "japanese_title": "Learn Japanese with Anime #1 | Convenience Store (JLPT N5)",
-    "channel": "Chibi Japanese",
-    "category": "Vlogs",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "duration": 319,
-    "thumbnail_gradient": "from-pink-950 via-rose-950 to-slate-900",
-    "scene_emoji": "👧",
-    "description": "การ์ตูนแอนิเมชันสั้นสำหรับเด็กและผู้เริ่มต้นเรียนภาษาญี่ปุ่น ตอนแวะซื้อของที่ร้านสะดวกซื้อ (JLPT N5 Beginner)",
-    "jlpt_distribution": {
-      "N5": 45,
-      "N4": 10,
-      "N3": 31,
-      "N2": 0,
-      "N1": 14
     }
   },
   {
