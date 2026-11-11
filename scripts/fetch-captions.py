@@ -322,6 +322,14 @@ def clean_asr_lines(lines):
     return kept, counts
 
 
+def _realign_module():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("realign_to_thai", Path(__file__).resolve().parent / "realign-to-thai.py")
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod
+
+
 def build_for_video(ydl, youtube_id):
     url = f"https://www.youtube.com/watch?v={youtube_id}"
     info = ydl.extract_info(url, download=False)
@@ -335,8 +343,9 @@ def build_for_video(ydl, youtube_id):
     th_kind, th_formats = pick_track(info, "th", ["th"])
 
     ja_events, th_events = [], []
+    ja_raw = th_raw = None
     if ja_formats:
-        data = fetch_json3(ydl, ja_formats)
+        data = ja_raw = fetch_json3(ydl, ja_formats)
         if data is None:
             ja_kind = "none"
         else:
@@ -344,7 +353,7 @@ def build_for_video(ydl, youtube_id):
     if ja_formats and th_formats:
         time.sleep(TRACK_SLEEP_S)
     if th_formats:
-        data = fetch_json3(ydl, th_formats)
+        data = th_raw = fetch_json3(ydl, th_formats)
         if data is None:
             th_kind = "none"
         else:
@@ -352,6 +361,18 @@ def build_for_video(ydl, youtube_id):
 
     if not ja_events and not th_events:
         return None, {"ja": "none", "th": "none"}
+
+    if ja_kind == "auto" and th_kind == "manual" and ja_events and th_events:
+        # Manual Thai is in sync with the speech; auto Japanese has rough segments. Build one line per
+        # Thai cue and fill it with the auto-Japanese words spoken during it (word timestamps), so no line
+        # shows Thai without Japanese. Logic lives in realign-to-thai.py (also used to repair old files).
+        rt = _realign_module()
+        record = rt.build_record(youtube_id, th_raw, ja_raw)
+        record.pop("_dropped", None)
+        record.pop("_words", None)
+        filled = sum(1 for ln in record["lines"] if ln["ja"])
+        return record, {"ja": ja_kind, "th": th_kind, "thai_timeline": True,
+                        "ja_null_lines": len(record["lines"]) - filled}
 
     ja_events = drop_adjacent_dups(sorted(ja_events, key=lambda e: e["start"]))
     th_events = drop_adjacent_dups(sorted(th_events, key=lambda e: e["start"]))

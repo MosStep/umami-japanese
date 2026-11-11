@@ -74,3 +74,9 @@
   > ⚠️ **ถ้าใช้แอปเวอร์ชัน 1.0.6:** กดปุ่ม "📦 ติดตั้งไฟล์ APK ใหม่" (ไม่ใช่ "⚡ อัปเดตในแอพทันที") แล้วติดตั้งไฟล์ `umami-app-debug.apk` ที่แนบใน Release นี้
 
 - เหตุผล: เครื่อง 1.0.6 ไม่สามารถรับ OTA web bundle ได้ ต้องลง APK ใหม่ก่อน
+
+## Captions gate (since 1.0.18)
+`npm run bundle` first runs `scripts/check-captions.mjs` and stops if any line has Thai but no Japanese.
+Clips with auto Japanese + manual Thai are built on the Thai timeline by `scripts/fetch-captions.py`
+(logic in `scripts/realign-to-thai.py`, which also repairs old files: `python -X utf8 scripts/realign-to-thai.py <ids>`,
+then `node scripts/tokenize-captions.mjs <ids>`, glossary, word index).

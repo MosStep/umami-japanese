@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "bundle": "npm run build && node scripts/make-bundle.mjs"
+    "bundle": "node scripts/check-captions.mjs && npm run build && node scripts/make-bundle.mjs"
   },
   "dependencies": {
     "@capacitor-community/speech-recognition": "^7.0.1",

@@ -649,6 +649,9 @@ export const ImmersionPlayer: React.FC = () => {
                 <div className={`flex flex-col gap-3 transition-opacity duration-200 ${isLineActive ? 'opacity-100' : 'opacity-50'}`}>
                   {/* Japanese line: compact ruby, stable min-height for 2 rows */}
                   <div ref={rowRef} className="relative flex flex-wrap items-end justify-center content-center gap-x-0.5 gap-y-1 min-h-[8.5rem] leading-relaxed">
+                    {activeLine.tokens_json.length === 0 && (
+                      <p className="text-sm text-slate-500">— ช่วงนี้ไม่มีซับญี่ปุ่น ดูคำแปลไทยด้านล่าง —</p>
+                    )}
                     {activeLine.tokens_json.map((token, idx) => {
                       const status = getWordStatus(token.word_id);
                       const isSpokenNow = isPlaying && idx === activeTokenIndex;
