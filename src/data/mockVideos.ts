@@ -3956,14 +3956,14 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "japanese_title": "「せ」から始まる10動詞で日本語会話【N5】Japanese Listening practice",
     "channel": "Japanese super immersion",
     "category": "Podcasts",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
     "jlpt_distribution": {
-      "N5": 60,
-      "N4": 30,
-      "N3": 10,
-      "N2": 0,
-      "N1": 0
+      "N5": 43,
+      "N4": 19,
+      "N3": 11,
+      "N2": 6,
+      "N1": 21
     },
     "duration": 1718,
     "thumbnail_gradient": "from-indigo-900 via-violet-950 to-slate-900",
@@ -5040,6 +5040,321 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "thumbnail_gradient": "from-red-950 via-neutral-900 to-black",
     "scene_emoji": "🚫",
     "description": "การประกาศกติกาห้ามทำพฤติกรรมบางอย่างตลอดทั้งปี 2025 เพื่อท้าทายตัวเองในการใช้ชีวิต"
+  },
+  {
+    "id": "vid-n5-vlog-expo-01",
+    "youtube_id": "DHNTbj4Ro9I",
+    "title": "พาเที่ยวงานโอซาก้าเอ็กซ์โป 2025 ด้วยภาษาญี่ปุ่นเข้าใจง่าย",
+    "japanese_title": "【Easy Japanese】Osaka Expo 2025 Vlog /【やさしい日本語】大阪・関西万博2025",
+    "channel": "Learn Japanese with Shufu",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 947,
+    "thumbnail_gradient": "from-blue-950 via-sky-950 to-slate-900",
+    "scene_emoji": "🎡",
+    "description": "วิดีโอบันทึกการเดินทางเที่ยวชมงานโอซาก้าเอ็กซ์โป 2025 ด้วยภาษาญี่ปุ่นระดับง่าย (やさしい日本語 N5 Beginner)",
+    "jlpt_distribution": {
+      "N5": 47,
+      "N4": 15,
+      "N3": 15,
+      "N2": 2,
+      "N1": 21
+    }
+  },
+  {
+    "id": "vid-n5-vlog-park-02",
+    "youtube_id": "2uDbZhzZrbM",
+    "title": "เดินเล่นรับลมที่สวนสาธารณะท่าเรือเซนได ฝึกฟังภาษาญี่ปุ่นง่ายๆ",
+    "japanese_title": "【A Park at Sendai Port】にほんご listening practice | Easy Japanese with subtitles | Japanese vlog",
+    "channel": "KOTONOHA Journey　ことのはの旅",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 655,
+    "thumbnail_gradient": "from-emerald-950 via-teal-950 to-zinc-900",
+    "scene_emoji": "🌳",
+    "description": "พาทุกคนไปเดินเล่นพักผ่อนที่สวนสาธารณะริมท่าเรือเซนไดพร้อมคำบรรยายภาษาญี่ปุ่นช้าๆ (Easy Japanese N5)",
+    "jlpt_distribution": {
+      "N5": 43,
+      "N4": 11,
+      "N3": 20,
+      "N2": 3,
+      "N1": 23
+    }
+  },
+  {
+    "id": "vid-n5-vlog-daily-03",
+    "youtube_id": "7Vm_fEjWST0",
+    "title": "หนึ่งวันสบายๆ พูดภาษาญี่ปุ่นเป็นธรรมชาติแบบช้าๆ สำหรับฝึกฟัง",
+    "japanese_title": "Easy Japanese Vlog | Slow, Natural Japanese for Listening Practice",
+    "channel": "Unscripted Japanese by Ami",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 247,
+    "thumbnail_gradient": "from-amber-950 via-orange-950 to-neutral-900",
+    "scene_emoji": "☕",
+    "description": "วล็อกเล่าเรื่องราวกิจวัตรประจำวันในสตูดิโอด้วยภาษาญี่ปุ่นพูดช้า ชัดเจน และเป็นธรรมชาติสำหรับผู้เริ่มต้น (Easy Japanese N5 Beginner)",
+    "jlpt_distribution": {
+      "N5": 45,
+      "N4": 12,
+      "N3": 16,
+      "N2": 3,
+      "N1": 24
+    }
+  },
+  {
+    "id": "vid-n5-story-garban-01",
+    "youtube_id": "9_3_G3cOtaE",
+    "title": "นิทานก่อนนอนภาษาญี่ปุ่นระดับ N5: การผจญภัยของเจ้าถั่วน้อยกัลบันโซ",
+    "japanese_title": "Easy Japanese Listening N5 | Little Garban",
+    "channel": "OYASUMI JAPANESE CHANNEL",
+    "category": "Podcasts",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 556,
+    "thumbnail_gradient": "from-indigo-950 via-slate-950 to-black",
+    "scene_emoji": "🌱",
+    "description": "เรื่องเล่าการผจญภัยของเจ้าถั่วกัลบันโซที่เล่าอย่างช้าๆ ผ่อนคลายด้วยคำศัพท์และไวยากรณ์ระดับ N5 (Easy Japanese N5)",
+    "jlpt_distribution": {
+      "N5": 49,
+      "N4": 13,
+      "N3": 13,
+      "N2": 2,
+      "N1": 23
+    }
+  },
+  {
+    "id": "vid-n5-story-room-02",
+    "youtube_id": "d4NKJ0c2pOA",
+    "title": "นิทานภาษาญี่ปุ่นเข้าใจง่ายระดับ N5: ห้องต้องห้าม",
+    "japanese_title": "Easy Japanese Story | The Forbidden Room (N5)",
+    "channel": "OYASUMI JAPANESE CHANNEL",
+    "category": "Podcasts",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 758,
+    "thumbnail_gradient": "from-purple-950 via-slate-950 to-black",
+    "scene_emoji": "🗝️",
+    "description": "เรื่องเล่าปริศนาห้องต้องห้ามที่เล่าอย่างช้าๆ ชัดเจน เหมาะสำหรับฝึกฟังภาษาญี่ปุ่นระดับ N5 (Easy Japanese N5)",
+    "jlpt_distribution": {
+      "N5": 76,
+      "N4": 10,
+      "N3": 6,
+      "N2": 1,
+      "N1": 7
+    }
+  },
+  {
+    "id": "vid-n5-kids-anime-01",
+    "youtube_id": "cAFz4nWkJoA",
+    "title": "แอนิเมชันภาษาญี่ปุ่นน่ารัก ตอนที่ 1: ไปร้านสะดวกซื้อ",
+    "japanese_title": "Learn Japanese with Anime #1 | Convenience Store (JLPT N5)",
+    "channel": "Chibi Japanese",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 319,
+    "thumbnail_gradient": "from-pink-950 via-rose-950 to-slate-900",
+    "scene_emoji": "👧",
+    "description": "การ์ตูนแอนิเมชันสั้นสำหรับเด็กและผู้เริ่มต้นเรียนภาษาญี่ปุ่น ตอนแวะซื้อของที่ร้านสะดวกซื้อ (JLPT N5 Beginner)",
+    "jlpt_distribution": {
+      "N5": 45,
+      "N4": 10,
+      "N3": 31,
+      "N2": 0,
+      "N1": 14
+    }
+  },
+  {
+    "id": "vid-n5-kids-drama-02",
+    "youtube_id": "i2UEIUI3XRI",
+    "title": "ละครสั้นเรียนภาษาญี่ปุ่นระดับ N5 ตอนครอบครัวและชีวิตประจำวัน",
+    "japanese_title": "Learn Japanese with Short Dramas (JLPT N5)",
+    "channel": "WAKU WAKU JAPANESE",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 672,
+    "thumbnail_gradient": "from-teal-950 via-cyan-950 to-slate-900",
+    "scene_emoji": "🎭",
+    "description": "ละครสั้นสนุกๆ สำหรับครอบครัวและเด็กเพื่อฝึกทักษะการฟังภาษาญี่ปุ่นระดับ N5 ออกเสียงชัดเจน (JLPT N5 Beginner)",
+    "jlpt_distribution": {
+      "N5": 59,
+      "N4": 13,
+      "N3": 10,
+      "N2": 2,
+      "N1": 16
+    }
+  },
+  {
+    "id": "vid-n5-food-curry-01",
+    "youtube_id": "h8aHI9R4p0I",
+    "title": "ทำข้าวแกงกะหรี่ญี่ปุ่นง่ายๆ เรียนภาษาญี่ปุ่นระดับเริ่มต้น",
+    "japanese_title": "👩🏻‍🏫🇯🇵Beginner Japanese Comprehensible Input - Curry🍛",
+    "channel": "Natural Japanese (NIJ)",
+    "category": "Street Food",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 536,
+    "thumbnail_gradient": "from-amber-950 via-yellow-950 to-stone-900",
+    "scene_emoji": "🍛",
+    "description": "ครูสอนทำข้าวแกงกะหรี่ญี่ปุ่นแสนอร่อยทีละขั้นตอนด้วยภาษาญี่ปุ่นช้าๆ พร้อมคำศัพท์ของกินในครัว (Beginner N5)",
+    "jlpt_distribution": {
+      "N5": 66,
+      "N4": 8,
+      "N3": 8,
+      "N2": 3,
+      "N1": 15
+    }
+  },
+  {
+    "id": "vid-n5-food-bento-02",
+    "youtube_id": "p4BzOpv7Qtw",
+    "title": "ฝึกฟังภาษาญี่ปุ่น N5: ทำข้าวกล่องเบนโตะ เล่าเรื่องงานและอากาศ",
+    "japanese_title": "JLPT N5 Listening Practice 🇯🇵 Work! 👩‍💻Weather, Food | やさしい日本語",
+    "channel": "Akiko_Japanese_Conversations",
+    "category": "Street Food",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 540,
+    "thumbnail_gradient": "from-orange-950 via-amber-950 to-slate-900",
+    "scene_emoji": "🍱",
+    "description": "อากิโกะเล่าเรื่องการทำข้าวกล่องเบนโตะญี่ปุ่นและชีวิตประจำวันด้วยประโยค N5 สั้นๆ ฟังเข้าใจง่าย (やさしい日本語 JLPT N5)",
+    "jlpt_distribution": {
+      "N5": 56,
+      "N4": 16,
+      "N3": 16,
+      "N2": 2,
+      "N1": 10
+    }
+  },
+  {
+    "id": "vid-n5-convo-konbini-01",
+    "youtube_id": "cNDzCgsTeyg",
+    "title": "บทสนทนาสถานการณ์จริง: แวะซื้อของที่ร้านสะดวกซื้อตอนดึก",
+    "japanese_title": "Comprehensible Japanese - Midnight Konbini / Japanese Listening Practice (Beginner N5)",
+    "channel": "Nihongo-Learning",
+    "category": "Podcasts",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 415,
+    "thumbnail_gradient": "from-cyan-950 via-blue-950 to-neutral-900",
+    "scene_emoji": "🏪",
+    "description": "ฝึกฟังบทสนทนาและการซื้อของในร้านสะดวกซื้อญี่ปุ่นยามค่ำคืนด้วยบทพูดช้าๆ ชัดเจน (やさしい日本語 初級 Beginner N5)",
+    "jlpt_distribution": {
+      "N5": 58,
+      "N4": 11,
+      "N3": 7,
+      "N2": 1,
+      "N1": 23
+    }
+  },
+  {
+    "id": "vid-n5-convo-station-02",
+    "youtube_id": "0ycXiWFBCBE",
+    "title": "สำรวจสถานีโตเกียว ซื้อของและของอร่อยด้วยภาษาญี่ปุ่นเข้าใจง่าย",
+    "japanese_title": "【Comprehensible Japanese】Explore Tokyo Station in Simple Japanese! 東京駅Vlogでやさしい日本語を学びましょう",
+    "channel": "Learn Japanese with Shufu",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 1057,
+    "thumbnail_gradient": "from-slate-900 via-neutral-900 to-stone-900",
+    "scene_emoji": "🚉",
+    "description": "เดินเที่ยวชมสถานีรถไฟโตเกียว แวะซื้อของฝากและสั่งอาหารด้วยคำศัพท์และไวยากรณ์ระดับต้น (やさしい日本語 N5 Beginner)",
+    "jlpt_distribution": {
+      "N5": 46,
+      "N4": 11,
+      "N3": 16,
+      "N2": 4,
+      "N1": 23
+    }
+  },
+  {
+    "id": "vid-n5-routine-morning-01",
+    "youtube_id": "Jh2C7JlWGKU",
+    "title": "กิจวัตรยามเช้าของฉัน ภาษาญี่ปุ่นสำหรับผู้เริ่มต้น",
+    "japanese_title": "Comprehensible Japanese Beginner - My Morning Routine (N5)",
+    "channel": "Nihongo-Learning",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 401,
+    "thumbnail_gradient": "from-yellow-950 via-orange-950 to-neutral-900",
+    "scene_emoji": "🌅",
+    "description": "เล่ากิจวัตรตั้งแต่ตื่นนอน เปิดผ้าม่าน ทานอาหารเช้า แปรงฟัน และแต่งตัวด้วยคำศัพท์พื้นฐาน (Beginner N5)",
+    "jlpt_distribution": {
+      "N5": 62,
+      "N4": 11,
+      "N3": 7,
+      "N2": 5,
+      "N1": 15
+    }
+  },
+  {
+    "id": "vid-n5-routine-news-02",
+    "youtube_id": "XcgzoXpi-ms",
+    "title": "ฝึกฟังภาษาญี่ปุ่น N5: เรื่องตู้กดเครื่องดื่มอัตโนมัติและรถไฟโตเกียว",
+    "japanese_title": "JLPT N5 Japanese Listening Practice 🇯🇵 Easy Japanese News | Vending Machines & Tokyo Train Delay",
+    "channel": "Akiko_Japanese_Conversations",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 580,
+    "thumbnail_gradient": "from-blue-950 via-indigo-950 to-slate-900",
+    "scene_emoji": "🥤",
+    "description": "เรื่องเล่าตู้กดน้ำอัตโนมัติและการขึ้นรถไฟในญี่ปุ่นด้วยภาษาญี่ปุ่นง่ายๆ ช้าๆ สำหรับ N5 (JLPT N5 Easy Japanese)",
+    "jlpt_distribution": {
+      "N5": 59,
+      "N4": 9,
+      "N3": 19,
+      "N2": 4,
+      "N1": 9
+    }
+  },
+  {
+    "id": "vid-n5-routine-daily-03",
+    "youtube_id": "74gGzUxOl-8",
+    "title": "เรียนรู้ภาษาญี่ปุ่นเพลินๆ ผ่านเรื่องเล่าในชีวิตประจำวัน",
+    "japanese_title": "You're learning Japanese without even realizing it!（Comprehensible Input N5）",
+    "channel": "Japany's",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 1083,
+    "thumbnail_gradient": "from-purple-950 via-violet-950 to-zinc-900",
+    "scene_emoji": "✨",
+    "description": "เรื่องเล่าชีวิตประจำวันและสิ่งรอบตัวด้วยประโยคพูดช้าและเป็นธรรมชาติ ช่วยให้ซึมซับภาษาญี่ปุ่นได้ง่าย (やさしい日本語 初級 Beginner N5)",
+    "jlpt_distribution": {
+      "N5": 51,
+      "N4": 13,
+      "N3": 20,
+      "N2": 1,
+      "N1": 15
+    }
+  },
+  {
+    "id": "vid-n5-game-stardew-01",
+    "youtube_id": "5VzSoYktkh8",
+    "title": "เรียนภาษาญี่ปุ่นจากเกมปลูกผัก Stardew Valley วันที่ 1",
+    "japanese_title": "Learn Japanese from Stardew Valley【Day1】(Easy Japanese Beginner N5)",
+    "channel": "Emma:)Japanese",
+    "category": "Gaming",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "duration": 1162,
+    "thumbnail_gradient": "from-emerald-950 via-green-950 to-stone-900",
+    "scene_emoji": "🎮",
+    "description": "ฝึกภาษาญี่ปุ่นไปกับการเล่นเกมปลูกผักยอดนิยมด้วยคำอธิบายช้าๆ ชัดเจนสำหรับผู้เริ่มต้น (Easy Japanese Beginner N5)",
+    "jlpt_distribution": {
+      "N5": 48,
+      "N4": 16,
+      "N3": 13,
+      "N2": 4,
+      "N1": 19
+    }
   }
 ];
 

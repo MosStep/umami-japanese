@@ -166,6 +166,41 @@ CATEGORIES = {
         "target": 8,
         "max_per_channel": 2,
     },
+    "n5_variety": {
+        "channels": [
+            # 1. Daily-life / slow vlog for learners (Vlogs)
+            "ytsearch40:やさしい日本語 vlog",
+            "ytsearch40:slow Japanese vlog N5",
+            "ytsearch40:Comprehensible Japanese beginner",
+            # 2. Simple stories / folk tales / picture books read slowly (Podcasts)
+            "ytsearch40:えほん 読み聞かせ 日本語",
+            "ytsearch40:easy Japanese story N5",
+            # 3. Kids' / family content with clear speech (Vlogs)
+            "ytsearch30:子ども向け 日本語 おはなし アニメ 字幕",
+            "ytsearch30:こども にほんご えほん 字幕",
+            # 4. Food / cooking explained simply (Street Food)
+            "ytsearch30:簡単 料理 やさしい日本語",
+            "ytsearch30:Japanese cooking easy Japanese",
+            "ytsearch30:やさしい日本語 料理 レシピ",
+            # 5. Situational conversation (shop, restaurant, station, hotel) (Podcasts)
+            "ytsearch30:コンビニ 会話 初級 日本語",
+            "ytsearch30:レストラン 会話 日本語 初級",
+            "ytsearch30:ホテル 会話 日本語 初級",
+            "ytsearch30:restaurant Japanese conversation beginner",
+            # 6. Self-introduction / hobbies / daily routine talk (Vlogs)
+            "ytsearch30:自己紹介 やさしい日本語",
+            "ytsearch30:my daily routine Japanese easy",
+            # 7. Gaming / play commentary spoken slowly (Gaming)
+            "ytsearch30:やさしい日本語 ゲーム実況",
+            "ytsearch30:Japanese learning gameplay N5",
+            "ytsearch30:日本語学習 ゲーム実況 初心者",
+            "ytsearch30:ゲーム実況 初級 日本語",
+        ],
+        "min_s": 3 * 60,
+        "max_s": 20 * 60,
+        "target": 45,
+        "max_per_channel": 2,
+    },
     "n1_talks": {
         "channels": [
             "ytsearch50:TEDx Tokyo 日本語 講演 字幕",
@@ -186,12 +221,14 @@ LIST_OPTS = {
     "skip_download": True,
     "extract_flat": "in_playlist",
     "playlistend": 60,
+    "socket_timeout": 15,
 }
 INFO_OPTS = {
     "quiet": True,
     "no_warnings": True,
     "skip_download": True,
     "noplaylist": True,
+    "socket_timeout": 15,
 }
 INFO_SLEEP_S = 3
 RETRY_WAIT_S = 60
@@ -205,36 +242,96 @@ def is_429(exc):
     return "429" in str(exc)
 
 
+def read_text_safe(path):
+    if not path.exists():
+        return ""
+    raw = path.read_bytes()
+    if raw.startswith(b'\xff\xfe') or raw.startswith(b'\xfe\xff'):
+        return raw.decode('utf-16', errors='ignore')
+    return raw.decode('utf-8-sig', errors='ignore')
+
+
 def known_ids():
+    s = set()
+    if MOCK_FILE.exists():
+        s.update(re.findall(r'"youtube_id": "([^"]+)"', read_text_safe(MOCK_FILE)))
+    cand_file = ROOT / ".superpowers" / "gemini" / "scan-n5_variety.jsonl"
+    for line in read_text_safe(cand_file).splitlines():
+        if line.strip():
+            try:
+                s.add(json.loads(line)["youtube_id"])
+            except Exception:
+                pass
+    return s
+
+
+def initial_new_counts():
+    counts = {}
+    cand_file = ROOT / ".superpowers" / "gemini" / "scan-n5_variety.jsonl"
+    for line in read_text_safe(cand_file).splitlines():
+        if line.strip():
+            try:
+                c = json.loads(line).get("channel", "")
+                if c:
+                    counts[c] = counts.get(c, 0) + 1
+            except Exception:
+                pass
+    return counts
+
+
+def existing_channels():
     if not MOCK_FILE.exists():
-        return set()
-    return set(re.findall(r'"youtube_id": "([^"]+)"', MOCK_FILE.read_text(encoding="utf-8")))
+        return {}
+    text = MOCK_FILE.read_text(encoding="utf-8")
+    m = re.search(r"export const MOCK_VIDEOS: VideoRecord\[\] = (\[[\s\S]*?\]);\s*export const MOCK_SUBTITLE_LINES", text)
+    if not m:
+        return {}
+    try:
+        videos = json.loads(m.group(1))
+        counts = {}
+        for v in videos:
+            c = v.get("channel", "")
+            counts[c] = counts.get(c, 0) + 1
+        return counts
+    except Exception:
+        return {}
 
 
 def list_channel(ydl, url):
-    try:
-        info = ydl.extract_info(url, download=False)
-    except Exception as exc:  # noqa: BLE001
-        print(f"# channel {url} failed: {str(exc).splitlines()[0][:120]}", file=sys.stderr)
-        return None, []
-    entries = [e for e in (info.get("entries") or []) if e and e.get("id")]
-    return info.get("title", url), entries
+    for attempt in (1, 2, 3):
+        try:
+            info = ydl.extract_info(url, download=False)
+            entries = [e for e in (info.get("entries") or []) if e and e.get("id")]
+            return info.get("title", url), entries
+        except Exception as exc:  # noqa: BLE001
+            if attempt == 3:
+                print(f"# channel {url} failed: {str(exc).splitlines()[0][:120]}", file=sys.stderr)
+                return None, []
+            time.sleep(5)
+    return None, []
 
 
 def video_info(ydl, vid):
-    """Return info, retrying once after a 60 s wait on HTTP 429; a second 429 aborts."""
+    """Return info, retrying once after a 60 s wait on HTTP 429; a second 429 aborts. Retries on transient network errors."""
     url = f"https://www.youtube.com/watch?v={vid}"
     for attempt in (1, 2):
         try:
             return ydl.extract_info(url, download=False)
         except Exception as exc:  # noqa: BLE001
-            if not is_429(exc):
-                print(f"# {vid} info failed: {str(exc).splitlines()[0][:120]}", file=sys.stderr)
-                return None
-            if attempt == 2:
-                raise RateLimited(vid)
-            print(f"# HTTP 429 on {vid}; waiting {RETRY_WAIT_S}s once", file=sys.stderr)
-            time.sleep(RETRY_WAIT_S)
+            if is_429(exc):
+                if attempt == 2:
+                    raise RateLimited(vid)
+                print(f"# HTTP 429 on {vid}; waiting {RETRY_WAIT_S}s once", file=sys.stderr)
+                time.sleep(RETRY_WAIT_S)
+                continue
+            if "11001" in str(exc) or "getaddrinfo" in str(exc) or "timed out" in str(exc):
+                if attempt == 2:
+                    print(f"# {vid} network error: {str(exc).splitlines()[0][:120]}", file=sys.stderr)
+                    return None
+                time.sleep(5)
+                continue
+            print(f"# {vid} info failed: {str(exc).splitlines()[0][:120]}", file=sys.stderr)
+            return None
     return None
 
 
@@ -258,12 +355,22 @@ def auto_ja_key(info):
 
 
 def main():
+    out_file = None
+    if "--append" in sys.argv:
+        idx = sys.argv.index("--append")
+        out_file = Path(sys.argv[idx + 1])
+        sys.argv.pop(idx + 1)
+        sys.argv.pop(idx)
+
     if len(sys.argv) != 2 or sys.argv[1] not in CATEGORIES:
-        sys.exit("usage: find-general.py " + "|".join(CATEGORIES))
+        sys.exit("usage: find-general.py [--append <out.jsonl>] " + "|".join(CATEGORIES))
     cat = CATEGORIES[sys.argv[1]]
     allow_auto = bool(cat.get("allow_auto"))
     max_per_ch = cat.get("max_per_channel", 3)
     seen_ids = known_ids()
+    probed_ids = set(seen_ids)
+    ch_existing = existing_channels()
+    ch_new_counts = initial_new_counts()
     accepted = []
     stats = {"channels": {}, "scanned_info": 0}
 
@@ -279,7 +386,7 @@ def main():
                 # Flat duration filter first; unknown durations get an info request.
                 plausible = []
                 for e in entries:
-                    if e["id"] in seen_ids:
+                    if e["id"] in probed_ids:
                         continue
                     dur = e.get("duration")
                     if e.get("live_status") in ("is_live", "is_upcoming", "post_live") or "/shorts/" in (e.get("url") or ""):
@@ -294,8 +401,9 @@ def main():
                     for e in plausible[:20]:  # Cap per-channel probes so we move across channels quickly
                         if len(accepted) >= cat["target"] or ch_accepted >= max_per_ch:
                             break
-                        if e["id"] in seen_ids:
+                        if e["id"] in probed_ids:
                             continue
+                        probed_ids.add(e["id"])
                         time.sleep(INFO_SLEEP_S)
                         info = video_info(ydl_info, e["id"])
                         ch_stats["info"] += 1
@@ -310,6 +418,13 @@ def main():
                         if info.get("live_status") not in (None, "not_live"):
                             continue
                         if info.get("playable_in_embed") is not True:
+                            continue
+                        ch_name = info.get("channel") or info.get("uploader") or title
+                        if ch_existing.get(ch_name, 0) >= 4:
+                            continue
+                        if ch_new_counts.get(ch_name, 0) >= max_per_ch:
+                            continue
+                        if ch_existing.get(ch_name, 0) + ch_new_counts.get(ch_name, 0) >= 4:
                             continue
                         key = manual_ja_key(info)
                         ja_kind = "manual"
@@ -336,9 +451,14 @@ def main():
                         }
                         accepted.append(row)
                         seen_ids.add(info["id"])
+                        ch_new_counts[ch_name] = ch_new_counts.get(ch_name, 0) + 1
                         ch_stats["accepted"] += 1
                         ch_accepted += 1
-                        print(json.dumps(row, ensure_ascii=False), flush=True)
+                        line_json = json.dumps(row, ensure_ascii=False)
+                        print(line_json, flush=True)
+                        if out_file:
+                            with out_file.open("a", encoding="utf-8") as f:
+                                f.write(line_json + "\n")
                     if len(accepted) >= cat["target"]:
                         break
     except RateLimited as exc:
