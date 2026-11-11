@@ -1,18 +1,18 @@
 {
-  "version": "1.0.15",
-  "build": 115,
+  "version": "1.0.16",
+  "build": 116,
   "min_native_build": 113,
-  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.15/web-bundle-1.0.15.zip",
-  "updated_at": "2026-11-09T17:29:51.000Z",
+  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.16/web-bundle-1.0.16.zip",
+  "updated_at": "2026-11-11T09:00:00.000Z",
   "words_count": 125,
-  "videos_count": 72,
-  "announcement": "🛠️ v1.0.15: แสดงสาเหตุข้อผิดพลาดของพูดตาม/สนทนา AI + ย้ายการตั้งค่า AI ไป Tenixe",
+  "videos_count": 86,
+  "announcement": "🌱 v1.0.16: คลิป N5 ใหม่ 14 คลิป หลากหลายแนว (vlog นิทาน ทำอาหาร บทสนทนา เกม)",
   "release_notes": [
-    "🛠️ แสดงสาเหตุข้อผิดพลาดของพูดตาม/สนทนา AI บนหน้าจอ",
-    "🔁 ย้ายการตั้งค่า AI เก่า (Kob AI) ไปใช้ Tenixe อัตโนมัติ",
+    "🌱 เพิ่มคลิประดับ N5 ใหม่ 14 คลิป ไม่ใช่แค่พอดแคสต์",
+    "🎌 ซับญี่ปุ่นของจริง พูดช้า มีคำแปลไทยทุกบรรทัด",
     "⚡ อัปเดตนี้ติดตั้งในแอปทันที"
   ],
   "update_type": "apk",
   "apk_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.13/umami-app-debug.apk",
-  "checksum": "9a2340a49292dd57f50ef62e5575f6310e63a437f3a1029cccea62ced0d64824"
+  "checksum": "5a7847622c5f8c4bec8015aec84fc32ba91395e6a176da2b977bb6b31d72c729"
 }
