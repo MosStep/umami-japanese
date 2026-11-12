@@ -4,6 +4,7 @@ import { useApp, FuriganaMode } from '../context/AppContext';
 import { SubtitleLineRecord, SubtitleTokenJSON } from '../schema/databaseSchema';
 import { ContextualDictionaryModal } from './ContextualDictionaryModal';
 import { audioService } from '../utils/audioService';
+import { loadExplanations, explanationFor, LineExplanation } from '../data/explanations';
 import {
   Play,
   Pause,
@@ -24,6 +25,7 @@ import {
   X,
   Eye,
   EyeOff,
+  Lightbulb,
 } from 'lucide-react';
 
 // Pure resolver for the sync loop.
@@ -78,6 +80,17 @@ export const ImmersionPlayer: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
   const [playbackSpeed, setPlaybackSpeed] = useState<number>(1.0);
   const [autoPauseAtEnd, setAutoPauseAtEnd] = useState<boolean>(false);
+  // Offline Thai explanations for this clip's lines (src/data/explanations); the panel stays open across lines.
+  const [explanations, setExplanations] = useState<Record<string, LineExplanation>>({});
+  const [showExplain, setShowExplain] = useState<boolean>(false);
+  useEffect(() => {
+    let alive = true;
+    setExplanations({});
+    loadExplanations(activeVideo.youtube_id).then((items) => alive && setExplanations(items));
+    return () => {
+      alive = false;
+    };
+  }, [activeVideo.youtube_id]);
   const [loopCurrentLine, setLoopCurrentLine] = useState<boolean>(false);
   const [showSettingsMenu, setShowSettingsMenu] = useState<boolean>(false);
   const [currentTimeSec, setCurrentTimeSec] = useState<number>(0);
@@ -150,6 +163,7 @@ export const ImmersionPlayer: React.FC = () => {
   }, [activeVideo.id]);
 
   const activeLine = activeSubtitleLines[currentLineIndex] || activeSubtitleLines[0];
+  const activeExplain = activeLine ? explanationFor(explanations, activeLine.start_time_ms, activeLine.raw_text) : undefined;
 
   // Dynamic real-time spoken token calculation (no highlight when no line is active)
   const getActiveTokenIndex = () => {
@@ -831,6 +845,43 @@ export const ImmersionPlayer: React.FC = () => {
                         )}
                         {activeLine.ai_grammar_summary && (
                           <p className="text-xs text-amber-300/90 italic line-clamp-1">💡 {activeLine.ai_grammar_summary}</p>
+                        )}
+                        {activeExplain && (
+                          <div className="pt-1">
+                            <button
+                              onClick={() => setShowExplain((v) => !v)}
+                              aria-expanded={showExplain}
+                              className={`min-h-11 px-3 rounded-xl border flex items-center gap-1.5 text-xs sm:text-sm font-semibold transition-colors active:opacity-70 ${
+                                showExplain
+                                  ? 'bg-amber-500/15 border-amber-500/40 text-amber-200'
+                                  : 'bg-slate-800 border-slate-700 text-slate-300 hover:text-white'
+                              }`}
+                            >
+                              <Lightbulb className="w-4 h-4 text-amber-400" />
+                              <span>{showExplain ? 'ซ่อนคำอธิบาย' : 'อธิบายประโยค'}</span>
+                            </button>
+                            {showExplain && (
+                              <div className="mt-2 p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 text-left max-h-[14rem] overflow-y-auto overscroll-contain">
+                                {activeExplain.fix && (
+                                  <p className="text-xs text-sky-300">
+                                    ซับอัตโนมัติอาจได้ยินผิด น่าจะเป็น: <span className="text-sm text-sky-100">{activeExplain.fix}</span>
+                                  </p>
+                                )}
+                                <p className="text-sm leading-6 text-slate-200">{activeExplain.x}</p>
+                                {activeExplain.g && activeExplain.g.length > 0 && (
+                                  <ul className="space-y-1.5 pt-1 border-t border-slate-800">
+                                    {activeExplain.g.map((pt, i) => (
+                                      <li key={i} className="text-sm leading-6">
+                                        <span className="font-bold text-amber-300">{pt.f}</span>
+                                        {pt.b && pt.b !== pt.f && <span className="text-xs text-slate-500"> ({pt.b})</span>}
+                                        <span className="text-slate-300"> — {pt.e}</span>
+                                      </li>
+                                    ))}
+                                  </ul>
+                                )}
+                              </div>
+                            )}
+                          </div>
                         )}
                       </>
                     )}
