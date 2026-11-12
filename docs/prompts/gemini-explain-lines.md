@@ -1,5 +1,20 @@
 # Task: write a Thai explanation for every subtitle line (Umami app)
 
+> **RESUME (2026-11-12):** N5 is complete and N4 is almost complete (11,069 / 21,242 lines are done and committed on
+> branch `content/explanations`). Continue on that branch — **do not** create a new one:
+> `git switch content/explanations && git pull` (if a remote branch exists; otherwise just switch).
+> 1. `node scripts/explain-tool.mjs check` to see the current coverage.
+> 2. `node scripts/explain-tool.mjs export --level N4` → finish the ~390 remaining N4 lines; then N3, N2, N1
+>    (one `export --level` per level; it only lists lines that are still missing).
+> 3. Same workflow, rules and commit-per-level as below. Quality notes learned so far:
+>    - `x` 60–200 characters; use prev/next to say what is happening and who says it to whom, then the nuance.
+>    - `auto` lines often drop/mangle a syllable (`まは寝てるから` with Thai "แม่หลับอยู่" = `ママは寝てるから`). When
+>      Thai + context make it certain, give `fix` and explain the fixed sentence.
+>    - `g.b` must be non-empty and ≤ 24 characters (a pattern like `〜てしまう`, not a sentence). `import` now drops
+>      an invalid grammar point instead of the whole line, but write them correctly.
+>    - Write the content yourself in the `.ex.json` files (writing it inside a helper `.py` that you then run is fine);
+>      never generate explanations from templates.
+
 ## Role & context
 You are a Japanese teacher + content agent in `D:\umami-japanese` (Japanese-learning app for Thai speakers). Learners
 watch clips with timed Japanese subtitles and Thai translations, and can tap each word for its reading and meaning.
