@@ -4,16 +4,18 @@ import { useEffect } from 'react';
 // The page scroll is restored only when the last lock is released.
 let lockCount = 0;
 let savedOverflow = '';
+// The app scrolls inside <main id="app-scroll"> (see App.tsx), not the body.
+const scroller = (): HTMLElement => document.getElementById('app-scroll') ?? document.body;
 
 export function useLockBodyScroll(isOpen: boolean): void {
   useEffect(() => {
     if (!isOpen) return;
-    if (lockCount === 0) savedOverflow = document.body.style.overflow;
+    if (lockCount === 0) savedOverflow = scroller().style.overflow;
     lockCount += 1;
-    document.body.style.overflow = 'hidden';
+    scroller().style.overflow = 'hidden';
     return () => {
       lockCount = Math.max(0, lockCount - 1);
-      if (lockCount === 0) document.body.style.overflow = savedOverflow;
+      if (lockCount === 0) scroller().style.overflow = savedOverflow;
     };
   }, [isOpen]);
 }

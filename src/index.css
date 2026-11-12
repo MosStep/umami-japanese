@@ -29,8 +29,11 @@
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
 
-/* No rubber-band / stretch when the page hits the top or bottom: it dragged the sticky header and bottom nav. */
+/* The document never scrolls (App's <main id="app-scroll"> does), so the WebView has nothing to stretch. */
 html,
-body {
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
   overscroll-behavior: none;
 }

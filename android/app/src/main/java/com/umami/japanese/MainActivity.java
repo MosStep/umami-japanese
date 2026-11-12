@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
+import android.view.View;
 import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
@@ -51,6 +52,9 @@ public class MainActivity extends BridgeActivity implements TextToSpeech.OnInitL
 
         try {
             WebView webView = this.getBridge().getWebView();
+
+            // No Android 12+ stretch / glow when a scroll hits the top or bottom (it dragged the app bars).
+            webView.setOverScrollMode(View.OVER_SCROLL_NEVER);
 
             // 2. Grant WebView web-level media capture permissions (navigator.mediaDevices.getUserMedia)
             webView.setWebChromeClient(new WebChromeClient() {

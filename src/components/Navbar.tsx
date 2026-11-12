@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { APP_VERSION } from '../config/version';
+import logoImg from '../assets/logo.png';
 import {
   Compass,
   Tv,
@@ -45,11 +45,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
             onClick={() => setActiveTab('feed')}
             className="flex items-center gap-2 cursor-pointer group select-none"
           >
-            <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-2xl bg-gradient-to-tr from-rose-600 via-indigo-600 to-amber-500 p-0.5 shadow-lg shadow-rose-600/30 group-hover:scale-105 transition-all">
-              <div className="w-full h-full rounded-[14px] bg-slate-950 flex items-center justify-center">
-                <span className="text-white font-black text-base sm:text-lg tracking-wider font-jp">旨</span>
-              </div>
-            </div>
+            <img src={logoImg} alt="" className="w-9 h-9 rounded-xl shadow-lg shadow-rose-600/30 group-hover:scale-105 transition-transform" />
             <span className="font-bold text-slate-100 tracking-tight text-lg font-jp">うまみ</span>
           </div>
 

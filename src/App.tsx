@@ -63,6 +63,11 @@ export const App: React.FC = () => {
     return () => window.clearTimeout(timer);
   }, []);
 
+  // Each tab opens at its top (the shared scroller would otherwise keep the previous tab's position).
+  useEffect(() => {
+    document.getElementById('app-scroll')?.scrollTo({ top: 0 });
+  }, [activeTab]);
+
   // Launch check: fetch manifest, then either prompt for APK or silently pre-download the web bundle.
   useEffect(() => {
     if (launchCheckStarted.current) return;
@@ -97,15 +102,30 @@ export const App: React.FC = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
+    // Fixed-height shell: only <main> scrolls, so pulling past the top/bottom can never drag the header or bottom nav.
+    <div className="h-[100dvh] overflow-hidden bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-indigo-500/30 selection:text-indigo-200">
       <Navbar onOpenUpdate={() => setShowUpdateModal(true)} />
 
-      <main className="flex-1 pb-[calc(5rem_+_var(--sab))] md:pb-16">
+      <main id="app-scroll" className="flex-1 min-h-0 overflow-y-auto overscroll-none pb-[calc(5rem_+_var(--sab))] md:pb-0">
         {activeTab === 'feed' && <VideoFeed />}
         {activeTab === 'player' && <ImmersionPlayer />}
         {activeTab === 'words' && <WordsDirectory />}
         {activeTab === 'dojo' && <TheDojo />}
         {activeTab === 'profile' && <GamificationProfile />}
+
+        {/* Persistent Studio Footer Bar (Desktop Only) */}
+        <footer className="hidden md:block border-t border-slate-900 bg-slate-950/80 py-4 px-6 text-center text-xs text-slate-500">
+          <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p>
+              うまみ (Umami) — Japanese Video Immersion & The Dojo
+            </p>
+            <p className="flex items-center gap-1.5 text-slate-600">
+              <span>Mobile Android APK & Web</span>
+              <span>•</span>
+              <span>Zero-Cost Local + Kob AI Ready</span>
+            </p>
+          </div>
+        </footer>
       </main>
 
       {/* Settings & Auto-Update Modals */}
@@ -125,19 +145,6 @@ export const App: React.FC = () => {
         />
       )}
 
-      {/* Persistent Studio Footer Bar (Desktop Only) */}
-      <footer className="hidden md:block border-t border-slate-900 bg-slate-950/80 py-4 px-6 text-center text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-2">
-          <p>
-            うまみ (Umami) — Japanese Video Immersion & The Dojo
-          </p>
-          <p className="flex items-center gap-1.5 text-slate-600">
-            <span>Mobile Android APK & Web</span>
-            <span>•</span>
-            <span>Zero-Cost Local + Kob AI Ready</span>
-          </p>
-        </div>
-      </footer>
     </div>
   );
 };
