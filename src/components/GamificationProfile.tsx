@@ -28,28 +28,28 @@ export const GamificationProfile: React.FC = () => {
 
   const skills = [
     {
-      title: 'Viewing Immersion',
+      title: 'ดูคลิป',
       icon: Eye,
       xp: stats.xp_viewing,
       color: 'from-blue-500 to-indigo-600',
       textColor: 'text-indigo-400',
     },
     {
-      title: 'Reading & Vocabulary',
+      title: 'อ่านและคำศัพท์',
       icon: BookOpen,
       xp: stats.xp_reading,
       color: 'from-emerald-500 to-teal-600',
       textColor: 'text-emerald-400',
     },
     {
-      title: 'Listening Comprehension',
+      title: 'ฟัง',
       icon: Headphones,
       xp: stats.xp_listening,
       color: 'from-purple-500 to-pink-600',
       textColor: 'text-purple-400',
     },
     {
-      title: 'Speaking & Shadowing',
+      title: 'พูดตาม',
       icon: Mic,
       xp: stats.xp_shadowing,
       color: 'from-rose-500 to-orange-600',
@@ -58,7 +58,7 @@ export const GamificationProfile: React.FC = () => {
   ];
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-8">
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-6">
       {/* Profile Header Banner */}
       <div className="rounded-2xl bg-gradient-to-r from-indigo-900/40 via-slate-900 to-slate-950 border border-slate-800 p-6 sm:p-8 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
         <div className="flex items-center gap-5">
@@ -68,19 +68,16 @@ export const GamificationProfile: React.FC = () => {
           <div className="space-y-1 text-center sm:text-left">
             <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">
               <Award className="w-3.5 h-3.5" />
-              <span>Level {level} Japanese Immersionist</span>
+              <span>เลเวล {level}</span>
             </div>
-            <h1 className="text-2xl font-bold text-white">Language Samurai</h1>
-            <p className="text-xs text-slate-400">
-              Immersion State: Natural Video Input + The Dojo Mastery
-            </p>
+            <h1 className="text-2xl font-bold text-white">ความคืบหน้าของฉัน</h1>
           </div>
         </div>
 
         {/* Level XP Progress */}
         <div className="w-full sm:w-64 space-y-2 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
           <div className="flex items-center justify-between text-xs font-medium">
-            <span className="text-slate-400">Next Level</span>
+            <span className="text-slate-400">เลเวลถัดไป</span>
             <span className="text-indigo-400 font-mono">
               {currentLevelXP} / 250 XP
             </span>
@@ -99,40 +96,40 @@ export const GamificationProfile: React.FC = () => {
         <div className="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-2">
           <div className="flex items-center gap-2 text-xs text-amber-400 font-semibold">
             <Flame className="w-4 h-4 fill-current" />
-            <span>Daily Streak</span>
+            <span>เรียนต่อเนื่อง</span>
           </div>
           <div className="text-3xl font-bold font-mono text-white">
-            {stats.streak_days} <span className="text-sm font-sans font-normal text-slate-500">days</span>
+            {stats.streak_days} <span className="text-sm font-sans font-normal text-slate-500">วัน</span>
           </div>
         </div>
 
         <div className="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-2">
           <div className="flex items-center gap-2 text-xs text-indigo-400 font-semibold">
             <Clock className="w-4 h-4" />
-            <span>Immersion Time</span>
+            <span>เวลาดูคลิป</span>
           </div>
           <div className="text-3xl font-bold font-mono text-white">
-            {Math.floor(stats.total_immersion_minutes)} <span className="text-sm font-sans font-normal text-slate-500">mins</span>
+            {Math.floor(stats.total_immersion_minutes)} <span className="text-sm font-sans font-normal text-slate-500">นาที</span>
           </div>
         </div>
 
         <div className="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-2">
           <div className="flex items-center gap-2 text-xs text-emerald-400 font-semibold">
             <BookOpen className="w-4 h-4" />
-            <span>Known Words</span>
+            <span>คำที่จำได้</span>
           </div>
           <div className="text-3xl font-bold font-mono text-white">
-            {knownWords} <span className="text-sm font-sans font-normal text-slate-500">words</span>
+            {knownWords} <span className="text-sm font-sans font-normal text-slate-500">คำ</span>
           </div>
         </div>
 
         <div className="rounded-2xl bg-slate-900 border border-slate-800 p-5 space-y-2">
           <div className="flex items-center gap-2 text-xs text-rose-400 font-semibold">
             <Sparkles className="w-4 h-4" />
-            <span>Mined Cards</span>
+            <span>ประโยคที่เก็บ</span>
           </div>
           <div className="text-3xl font-bold font-mono text-white">
-            {minedSentences.length} <span className="text-sm font-sans font-normal text-slate-500">cards</span>
+            {minedSentences.length} <span className="text-sm font-sans font-normal text-slate-500">ประโยค</span>
           </div>
         </div>
       </div>
@@ -142,10 +139,10 @@ export const GamificationProfile: React.FC = () => {
         <div className="flex items-center justify-between border-b border-slate-800 pb-3">
           <h3 className="text-base font-bold text-white flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-indigo-400" />
-            <span>Experience Points by Modality (4 Skills)</span>
+            <span>XP แยกตามทักษะ</span>
           </h3>
           <span className="text-xs font-mono font-bold text-indigo-300">
-            Total {totalXP} XP
+            รวม {totalXP} XP
           </span>
         </div>
 

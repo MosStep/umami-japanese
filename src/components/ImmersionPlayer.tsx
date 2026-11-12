@@ -26,6 +26,7 @@ import {
   Eye,
   EyeOff,
   Lightbulb,
+  ChevronDown,
 } from 'lucide-react';
 
 // Pure resolver for the sync loop.
@@ -83,6 +84,8 @@ export const ImmersionPlayer: React.FC = () => {
   // Offline Thai explanations for this clip's lines (src/data/explanations); the panel stays open across lines.
   const [explanations, setExplanations] = useState<Record<string, LineExplanation>>({});
   const [showExplain, setShowExplain] = useState<boolean>(false);
+  // Transcript list: always on desktop, collapsed by default on phones.
+  const [showTranscript, setShowTranscript] = useState<boolean>(false);
   useEffect(() => {
     let alive = true;
     setExplanations({});
@@ -559,7 +562,7 @@ export const ImmersionPlayer: React.FC = () => {
         {/* Left Column (Video & Subtitle Deck) */}
         <div className="lg:col-span-8 space-y-4">
           {/* Main Visual Player Frame */}
-          <div className="relative rounded-3xl overflow-hidden bg-black border-2 border-slate-800 shadow-2xl aspect-video flex flex-col justify-between group">
+          <div className="relative rounded-2xl overflow-hidden bg-black aspect-video flex flex-col justify-between group">
             {/* Real YouTube API Player Container */}
             <div id="yt-player-container" className="absolute inset-0 w-full h-full pointer-events-auto" />
 
@@ -577,26 +580,20 @@ export const ImmersionPlayer: React.FC = () => {
               />
             )}
 
-            {/* Top Video Header Overlay */}
-            <div className="relative z-10 p-3 sm:p-4 flex items-center justify-between bg-gradient-to-b from-black/85 via-black/40 to-transparent pointer-events-none">
-              <div className="flex items-center gap-2 pointer-events-auto">
-                <span className="px-2.5 py-1 rounded-xl text-xs font-extrabold bg-indigo-600/90 text-white border border-indigo-400/40 backdrop-blur-md">
-                  {activeVideo.primary_jlpt}
-                </span>
-                <span className="text-xs sm:text-sm text-slate-100 font-bold truncate max-w-[200px] sm:max-w-md drop-shadow">
-                  {activeVideo.title}
-                </span>
-              </div>
-              <div className="flex items-center gap-2 pointer-events-auto">
-                <button
-                  onClick={() => setShowSettingsMenu(true)}
-                  className="p-2 rounded-xl bg-slate-900/80 text-slate-300 hover:text-white border border-slate-800 backdrop-blur-md transition-colors"
-                  title="ตั้งค่าการแสดงซับไตเติล"
-                >
-                  <Settings className="w-4 h-4" />
-                </button>
-              </div>
-            </div>
+          </div>
+
+          {/* Title row + one settings button (subtitle, playback and reading options live there) */}
+          <div className="flex items-center gap-2 -mt-1">
+            <span className="shrink-0 px-2 py-0.5 rounded-md text-xs font-bold bg-slate-800 text-slate-200">{activeVideo.primary_jlpt}</span>
+            <p className="flex-1 min-w-0 text-sm font-semibold text-slate-200 truncate">{activeVideo.title}</p>
+            <button
+              onClick={() => setShowSettingsMenu(true)}
+              className="shrink-0 min-h-11 min-w-11 flex items-center justify-center rounded-xl text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+              aria-label="ตั้งค่าซับและการเล่น"
+              title="ตั้งค่าซับและการเล่น"
+            >
+              <Sliders className="w-5 h-5" />
+            </button>
           </div>
 
           {/* Interactive Japanese Subtitle Dock: fixed frame that never disappears.
@@ -605,58 +602,31 @@ export const ImmersionPlayer: React.FC = () => {
 
             {activeLine ? (
               <>
-                {/* Row 1: reading guide + translation toggle, one compact row */}
-                <div className="flex items-stretch gap-2">
-                  <div className="flex-1 min-w-0 grid grid-cols-3 gap-1 p-1 bg-slate-950/80 rounded-xl border border-slate-800">
-                    {(
-                      [
-                        { mode: 'hiragana', label: 'ฮิรากานะ', title: 'แสดงฟูริงะนะ / ฮิรากานะกำกับคันจิ' },
-                        { mode: 'romaji', label: 'โรมันจิ', title: 'แสดงโรมันจิกำกับคันจิ' },
-                        { mode: 'off', label: 'ปิด', title: 'ปิดตัวช่วยอ่าน (คันจิล้วน)' },
-                      ] as const
-                    ).map((opt) => (
-                      <button
-                        key={opt.mode}
-                        onClick={() => setReadingGuideMode(opt.mode)}
-                        className={`min-h-11 px-1 rounded-lg text-xs font-bold transition-all flex items-center justify-center active:opacity-70 ${
-                          readingGuideMode === opt.mode
-                            ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                            : 'text-slate-400 hover:text-slate-200'
-                        }`}
-                        title={opt.title}
-                      >
-                        {opt.label}
-                      </button>
-                    ))}
+                {/* Status row: line counter / gap label + translation toggle */}
+                <div className="flex items-center justify-between gap-2 min-h-9 text-xs font-semibold text-slate-400">
+                  <div className="flex items-center gap-1.5">
+                    {isLineActive ? (
+                      <>
+                        <Radio className="w-3.5 h-3.5 animate-pulse text-rose-500" />
+                        <span>
+                          {currentLineIndex + 1} / {activeSubtitleLines.length}
+                        </span>
+                      </>
+                    ) : (
+                      <span>{isBeforeFirstLine ? 'รอบทพูดแรก…' : '♪ ช่วงไม่มีบทพูด'}</span>
+                    )}
                   </div>
-
-                  {/* Translation spoiler toggle */}
                   <button
                     onClick={toggleHideTranslation}
-                    className={`min-h-11 px-2.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 border shrink-0 active:opacity-70 ${
-                      hideTranslation
-                        ? 'bg-amber-500/20 border-amber-500/40 text-amber-300 hover:bg-amber-500/30'
-                        : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/30'
+                    aria-pressed={!hideTranslation}
+                    className={`min-h-9 px-2.5 rounded-lg flex items-center gap-1.5 transition-colors active:opacity-70 ${
+                      hideTranslation ? 'text-amber-300 hover:bg-amber-500/10' : 'text-slate-300 hover:bg-slate-800'
                     }`}
-                    title={hideTranslation ? 'คลิกเพื่อแสดงคำแปลอัตโนมัติ' : 'คลิกเพื่อซ่อนเฉลยคำแปล (แตะเปิดดูทีละประโยค)'}
+                    title={hideTranslation ? 'แสดงคำแปลอัตโนมัติ' : 'ซ่อนคำแปล (แตะเปิดดูทีละประโยค)'}
                   >
-                    {hideTranslation ? <EyeOff className="w-3.5 h-3.5 text-amber-400" /> : <Eye className="w-3.5 h-3.5 text-emerald-400" />}
-                    <span>{hideTranslation ? 'ซ่อนเฉลย' : 'แสดงคำแปล'}</span>
+                    {hideTranslation ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    <span>{hideTranslation ? 'ซ่อนคำแปลอยู่' : 'คำแปล'}</span>
                   </button>
-                </div>
-
-                {/* Row 2: live status / gap label (keeps the frame, never removes it) */}
-                <div className="flex items-center justify-center gap-1.5 min-h-4 text-xs font-semibold text-slate-400">
-                  {isLineActive ? (
-                    <>
-                      <Radio className="w-3.5 h-3.5 animate-pulse text-rose-500" />
-                      <span>
-                        บรรทัดที่ {currentLineIndex + 1} / {activeSubtitleLines.length}
-                      </span>
-                    </>
-                  ) : (
-                    <span>{isBeforeFirstLine ? 'รอบทพูดแรก…' : '♪ ช่วงไม่มีบทพูด'}</span>
-                  )}
                 </div>
 
                 {/* Dimmed in gaps (last spoken line). Tokens stay tappable. */}
@@ -894,12 +864,13 @@ export const ImmersionPlayer: React.FC = () => {
           </div>
 
           {/* Control Dock (Playback & Keyboard Shortcuts) */}
-          <div className="rounded-3xl bg-slate-900/90 border border-slate-800 p-4 flex flex-wrap items-center justify-between gap-3 shadow-xl">
+          <div className="rounded-2xl bg-slate-900/90 border border-slate-800 p-3 flex flex-wrap items-center justify-between gap-2">
             {/* Playback Transport Buttons */}
             <div className="flex items-center gap-2">
               <button
                 onClick={() => seekToLine(Math.max(0, currentLineIndex - 1))}
-                className="p-2.5 rounded-2xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+                className="min-h-11 min-w-11 flex items-center justify-center rounded-2xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+                aria-label="ประโยคก่อนหน้า"
                 title="ย้อนกลับ 1 ประโยค (A หรือ ลูกศรซ้าย)"
               >
                 <SkipBack className="w-4 h-4" />
@@ -907,7 +878,7 @@ export const ImmersionPlayer: React.FC = () => {
 
               <button
                 onClick={togglePlayPause}
-                className="px-5 py-2.5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition-all"
+                className="min-h-11 px-5 rounded-2xl bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold flex items-center gap-2 shadow-lg shadow-indigo-600/30 transition-all"
                 title="เล่น / หยุดชั่วคราว (Space)"
               >
                 {isPlaying ? <Pause className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 fill-white" />}
@@ -916,7 +887,8 @@ export const ImmersionPlayer: React.FC = () => {
 
               <button
                 onClick={() => seekToLine(Math.min(activeSubtitleLines.length - 1, currentLineIndex + 1))}
-                className="p-2.5 rounded-2xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+                className="min-h-11 min-w-11 flex items-center justify-center rounded-2xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors"
+                aria-label="ประโยคถัดไป"
                 title="ประโยคถัดไป (D หรือ ลูกศรขวา)"
               >
                 <SkipForward className="w-4 h-4" />
@@ -924,91 +896,53 @@ export const ImmersionPlayer: React.FC = () => {
 
               <button
                 onClick={replayCurrentLine}
-                className="p-2.5 rounded-2xl bg-slate-800 text-slate-200 hover:text-white hover:bg-slate-700 transition-colors ml-1"
-                title="เล่นเสียงประโยคนี้ซ้ำ (R)"
+                className="min-h-11 min-w-11 flex items-center justify-center rounded-2xl bg-slate-800 text-slate-200 hover:text-white hover:bg-slate-700 transition-colors"
+                aria-label="เล่นประโยคนี้ซ้ำ"
+                title="เล่นประโยคนี้ซ้ำ (R)"
               >
-                <Volume2 className="w-4 h-4 text-amber-400" />
+                <RotateCcw className={`w-4 h-4 ${loopCurrentLine ? 'text-indigo-300' : 'text-amber-400'}`} />
               </button>
             </div>
 
-            {/* Loop & Auto-Pause Toggles */}
-            <div className="flex items-center gap-2 text-xs">
-              <button
-                onClick={() => setLoopCurrentLine(!loopCurrentLine)}
-                className={`px-3 py-2 rounded-xl border flex items-center gap-1.5 font-semibold transition-all ${
-                  loopCurrentLine
-                    ? 'bg-indigo-500/20 border-indigo-500/50 text-indigo-300'
-                    : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'
-                }`}
-                title="วนลูปประโยคนี้ซ้ำๆ (R)"
-              >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>วนซ้ำ (R)</span>
-              </button>
+            {/* Save sentence to practice */}
+            <button
+              onClick={() => mineSentence(activeLine)}
+              disabled={isCurrentLineMined || !activeLine || !activeLine.raw_text}
+              className={`min-h-11 px-3.5 rounded-2xl text-sm font-semibold flex items-center gap-1.5 transition-colors active:opacity-70 ${
+                isCurrentLineMined
+                  ? 'bg-emerald-500/15 text-emerald-300'
+                  : !activeLine || !activeLine.raw_text
+                  ? 'bg-slate-800 text-slate-500'
+                  : 'bg-slate-800 text-slate-100 hover:bg-slate-700'
+              }`}
+              title={activeLine && !activeLine.raw_text ? 'บรรทัดนี้ไม่มีภาษาญี่ปุ่น' : 'เก็บประโยคนี้ไปฝึก (M)'}
+            >
+              <Bookmark className={`w-4 h-4 ${isCurrentLineMined ? 'fill-emerald-300' : ''}`} />
+              <span>{isCurrentLineMined ? 'เก็บแล้ว' : 'เก็บประโยค'}</span>
+            </button>
 
-              <button
-                onClick={() => setAutoPauseAtEnd(!autoPauseAtEnd)}
-                className={`px-3 py-2 rounded-xl border flex items-center gap-1.5 font-semibold transition-all ${
-                  autoPauseAtEnd
-                    ? 'bg-amber-500/20 border-amber-500/50 text-amber-300'
-                    : 'bg-slate-800 border-slate-700 text-slate-400 hover:text-slate-200'
-                }`}
-                title="หยุดอัตโนมัติเมื่อจบบรรทัด"
-              >
-                <span>หยุดท้ายประโยค</span>
-              </button>
-
-              {/* Speed Dropdown */}
-              <select
-                value={playbackSpeed}
-                onChange={(e) => {
-                  const spd = parseFloat(e.target.value);
-                  setPlaybackSpeed(spd);
-                  if (playerRef.current && typeof playerRef.current.setPlaybackRate === 'function') {
-                    playerRef.current.setPlaybackRate(spd);
-                  }
-                }}
-                className="px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-slate-300 text-xs font-semibold focus:outline-none"
-              >
-                <option value={0.75}>0.75x</option>
-                <option value={1.0}>1.0x</option>
-                <option value={1.25}>1.25x</option>
-              </select>
-            </div>
-
-            {/* Mine Sentence Button */}
-            <div>
-              <button
-                onClick={() => mineSentence(activeLine)}
-                disabled={isCurrentLineMined || !activeLine || !activeLine.raw_text}
-                className={`inline-flex items-center gap-1.5 px-4 py-2.5 rounded-2xl text-xs font-bold shadow-md transition-all active:scale-95 ${
-                  isCurrentLineMined || !activeLine || !activeLine.raw_text
-                    ? 'bg-emerald-600/20 text-emerald-300 border border-emerald-500/30 cursor-not-allowed opacity-80'
-                    : 'bg-indigo-600 hover:bg-indigo-500 text-white shadow-indigo-600/30'
-                }`}
-                title={activeLine && !activeLine.raw_text ? 'บรรทัดนี้ไม่มีข้อความภาษาญี่ปุ่นให้ขุด' : 'ขุดประโยคนี้เข้า The Dojo (M)'}
-              >
-                <Bookmark className="w-3.5 h-3.5" />
-                <span>{isCurrentLineMined ? 'ขุดแล้ว (Mined)' : 'ขุดประโยค (M)'}</span>
-              </button>
-            </div>
           </div>
         </div>
 
         {/* Right Column (Synchronized Transcript & Line Navigator) */}
-        <div className="lg:col-span-4 rounded-3xl bg-slate-900/90 border border-slate-800 p-5 space-y-3 max-h-[640px] flex flex-col shadow-2xl">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-            <span className="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-1.5">
+        <div className={`lg:col-span-4 rounded-2xl bg-slate-900/90 border border-slate-800 p-4 space-y-3 flex flex-col ${showTranscript ? 'max-h-[640px]' : ''} lg:max-h-[640px]`}>
+          <button
+            onClick={() => setShowTranscript((v) => !v)}
+            aria-expanded={showTranscript}
+            className={`min-h-11 flex items-center justify-between lg:pointer-events-none ${showTranscript ? 'pb-3 border-b border-slate-800' : ''} lg:pb-3 lg:border-b lg:border-slate-800`}
+          >
+            <span className="text-sm font-bold text-slate-200 flex items-center gap-1.5">
               <BookOpen className="w-4 h-4 text-indigo-400" />
-              บทบรรยายแบบซิงค์สด (Transcript)
+              ประโยคทั้งหมด
             </span>
-            <span className="text-xs text-indigo-400 font-mono font-bold">
+            <span className="flex items-center gap-2 text-xs text-slate-400 font-mono">
               {currentLineIndex + 1} / {activeSubtitleLines.length}
+              <ChevronDown className={`w-4 h-4 lg:hidden transition-transform ${showTranscript ? 'rotate-180' : ''}`} />
             </span>
-          </div>
+          </button>
 
             {/* Lines List */}
-            <div ref={transcriptContainerRef} className="overflow-y-auto space-y-2.5 flex-1 pr-1">
+            <div ref={transcriptContainerRef} className={`overflow-y-auto space-y-2.5 flex-1 pr-1 ${showTranscript ? '' : 'hidden'} lg:block`}>
               {captionsLoading && (
                 <p className="text-xs text-slate-400 text-center py-6">กำลังโหลดคำบรรยาย... (Loading captions)</p>
               )}
@@ -1061,7 +995,7 @@ export const ImmersionPlayer: React.FC = () => {
             <div className="flex items-center justify-between pb-3 border-b border-slate-800">
               <div className="flex items-center gap-2 text-white font-bold text-sm">
                 <Settings className="w-4 h-4 text-indigo-400" />
-                <span>ตั้งค่าการแสดงซับไตเติล</span>
+                <span>ตั้งค่าซับและการเล่น</span>
               </div>
               <button
                 onClick={() => setShowSettingsMenu(false)}
@@ -1070,6 +1004,63 @@ export const ImmersionPlayer: React.FC = () => {
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            {/* Reading guide above kanji */}
+            <div className="space-y-1.5">
+              <span className="text-slate-300 block text-xs font-semibold">ตัวช่วยอ่านบนคันจิ</span>
+              <div className="grid grid-cols-3 gap-1.5">
+                {(
+                  [
+                    { mode: 'hiragana', label: 'ฮิรางานะ' },
+                    { mode: 'romaji', label: 'โรมันจิ' },
+                    { mode: 'off', label: 'ปิด' },
+                  ] as const
+                ).map((opt) => (
+                  <button
+                    key={opt.mode}
+                    onClick={() => setReadingGuideMode(opt.mode)}
+                    aria-pressed={readingGuideMode === opt.mode}
+                    className={`min-h-10 rounded-xl text-xs font-bold transition-all ${
+                      readingGuideMode === opt.mode ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Playback: speed, loop, auto-pause */}
+            <div className="space-y-1.5">
+              <span className="text-slate-300 block text-xs font-semibold">ความเร็ว</span>
+              <div className="grid grid-cols-4 gap-1.5">
+                {[0.5, 0.75, 1.0, 1.25].map((spd) => (
+                  <button
+                    key={spd}
+                    onClick={() => {
+                      setPlaybackSpeed(spd);
+                      if (playerRef.current && typeof playerRef.current.setPlaybackRate === 'function') {
+                        playerRef.current.setPlaybackRate(spd);
+                      }
+                    }}
+                    aria-pressed={playbackSpeed === spd}
+                    className={`min-h-10 rounded-xl text-xs font-bold transition-all ${
+                      playbackSpeed === spd ? 'bg-indigo-600 text-white' : 'bg-slate-800 text-slate-400 hover:text-slate-200'
+                    }`}
+                  >
+                    {spd}x
+                  </button>
+                ))}
+              </div>
+            </div>
+            <label className="flex items-center justify-between p-3 rounded-2xl bg-slate-950 border border-slate-800 cursor-pointer">
+              <span className="text-xs text-slate-200 font-semibold">วนซ้ำประโยคเดิม</span>
+              <input type="checkbox" checked={loopCurrentLine} onChange={(e) => setLoopCurrentLine(e.target.checked)} className="w-4 h-4 accent-indigo-500 rounded" />
+            </label>
+            <label className="flex items-center justify-between p-3 rounded-2xl bg-slate-950 border border-slate-800 cursor-pointer">
+              <span className="text-xs text-slate-200 font-semibold">หยุดเมื่อจบแต่ละประโยค</span>
+              <input type="checkbox" checked={autoPauseAtEnd} onChange={(e) => setAutoPauseAtEnd(e.target.checked)} className="w-4 h-4 accent-indigo-500 rounded" />
+            </label>
 
             {/* Furigana Mode */}
             <div className="space-y-1.5">

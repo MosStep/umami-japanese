@@ -24,3 +24,7 @@
 .safe-area-bottom {
   padding-bottom: max(0.75rem, var(--sab));
 }
+
+/* Horizontal chip rows: scroll without a visible scrollbar */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { scrollbar-width: none; }

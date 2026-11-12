@@ -50,24 +50,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
                 <span className="text-white font-black text-base sm:text-lg tracking-wider font-jp">旨</span>
               </div>
             </div>
-            <div>
-              <div className="flex items-center gap-1.5">
-                <span className="font-bold text-slate-100 tracking-tight text-base sm:text-lg font-jp">
-                  うまみ <span className="text-xs text-rose-400 font-sans font-medium">(Umami)</span>
-                </span>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    if (onOpenUpdate) onOpenUpdate();
-                  }}
-                  className="text-[10px] sm:text-xs font-mono font-extrabold px-1.5 py-0.5 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 hover:bg-indigo-500/30 transition-all flex items-center gap-1 active:scale-95 cursor-pointer"
-                  title="ตรวจสอบอัปเดตเวอร์ชัน"
-                >
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                  <span>{APP_VERSION}</span>
-                </button>
-              </div>
-            </div>
+            <span className="font-bold text-slate-100 tracking-tight text-lg font-jp">うまみ</span>
           </div>
 
           {/* Desktop Navigation Tabs (Hidden on Mobile, replaced by Bottom Bar) */}
@@ -81,7 +64,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
               }`}
             >
               <Compass className="w-4 h-4" />
-              <span>Videos</span>
+              <span>วิดีโอ</span>
             </button>
 
             <button
@@ -93,7 +76,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
               }`}
             >
               <Tv className="w-4 h-4" />
-              <span>Player</span>
+              <span>กำลังดู</span>
             </button>
 
             <button
@@ -105,7 +88,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
               }`}
             >
               <BookA className="w-4 h-4" />
-              <span>Words</span>
+              <span>คำศัพท์</span>
             </button>
 
             <button
@@ -117,7 +100,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
               }`}
             >
               <Swords className="w-4 h-4 text-rose-400" />
-              <span>The Dojo</span>
+              <span>ฝึก</span>
               {minedSentences.length > 0 && (
                 <span className="ml-1 px-1.5 py-0.2 rounded-full text-[10px] bg-rose-500/30 text-rose-300 font-semibold border border-rose-500/40">
                   {minedSentences.length}
@@ -126,43 +109,23 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
             </button>
           </nav>
 
-          {/* Right Controls: Streak + XP + Kob AI Key Button */}
-          <div className="flex items-center gap-2 sm:gap-3">
-            {/* Daily Streak */}
-            <div
+          {/* Right: streak + settings (version, AI key, updates live in Settings) */}
+          <div className="flex items-center gap-1">
+            <button
               onClick={() => setActiveTab('profile')}
-              className="flex items-center gap-1 px-2 py-1 rounded-lg bg-slate-900 border border-slate-800 text-xs text-amber-300 cursor-pointer hover:border-amber-500/40"
-              title="Daily Streak"
+              className="min-h-11 flex items-center gap-1 px-2.5 rounded-xl text-sm text-amber-300 hover:bg-slate-900 transition-colors"
+              aria-label={`เรียนต่อเนื่อง ${stats.streak_days} วัน`}
             >
-              <Flame className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-              <span className="font-semibold">{stats.streak_days}d</span>
-            </div>
-
-            {/* Total XP */}
-            <div
-              onClick={() => setActiveTab('profile')}
-              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/30 text-xs text-indigo-300 font-medium cursor-pointer"
-            >
-              <Sparkles className="w-3 h-3 text-indigo-400" />
-              <span className="font-mono font-semibold">{totalXP}</span>
-            </div>
-
-
-
-            {/* AI Engine & Kob API Settings Button */}
+              <Flame className="w-4 h-4 fill-amber-400 text-amber-400" />
+              <span className="font-semibold">{stats.streak_days}</span>
+            </button>
             <button
               onClick={() => setShowSettingsModal(true)}
-              className={`p-1.5 sm:px-2.5 sm:py-1 rounded-lg border text-xs font-medium flex items-center gap-1.5 transition-colors ${
-                aiProvider === 'kob-ai'
-                  ? 'bg-indigo-600/20 border-indigo-500/40 text-indigo-300'
-                  : 'bg-slate-900 border-slate-800 text-slate-400 hover:text-slate-200'
-              }`}
-              title="Configure AI & Kob API Key"
+              className="min-h-11 min-w-11 flex items-center justify-center rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-900 transition-colors"
+              aria-label="ตั้งค่า"
+              title="ตั้งค่า"
             >
-              <Key className="w-3.5 h-3.5 text-indigo-400" />
-              <span className="hidden sm:inline">
-                {aiProvider === 'kob-ai' ? 'Kob AI' : 'Offline'}
-              </span>
+              <Settings className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -179,7 +142,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
           }`}
         >
           <Compass className="w-5 h-5 mb-0.5" />
-          <span className="text-[10px]">Videos</span>
+          <span className="text-[11px]">วิดีโอ</span>
         </button>
 
         <button
@@ -191,7 +154,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
           }`}
         >
           <Tv className="w-5 h-5 mb-0.5" />
-          <span className="text-[10px]">Player</span>
+          <span className="text-[11px]">กำลังดู</span>
         </button>
 
         <button
@@ -203,7 +166,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
           }`}
         >
           <BookA className="w-5 h-5 mb-0.5" />
-          <span className="text-[10px]">Words</span>
+          <span className="text-[11px]">คำศัพท์</span>
         </button>
 
         <button
@@ -215,7 +178,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
           }`}
         >
           <Swords className="w-5 h-5 mb-0.5 text-rose-400" />
-          <span className="text-[10px]">Dojo</span>
+          <span className="text-[11px]">ฝึก</span>
           {minedSentences.length > 0 && (
             <span className="absolute top-1 right-2 w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
           )}
@@ -230,7 +193,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
           }`}
         >
           <Sparkles className="w-5 h-5 mb-0.5" />
-          <span className="text-[10px]">Profile</span>
+          <span className="text-[11px]">ฉัน</span>
         </button>
       </nav>
     </>

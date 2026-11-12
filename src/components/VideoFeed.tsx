@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useApp } from '../context/AppContext';
+import { useApp, isResumableClip } from '../context/AppContext';
 import type { VideoRecord } from '../schema/databaseSchema';
 import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 import {
@@ -11,7 +11,7 @@ import {
   BookOpen,
   Layers,
   Zap,
-  RefreshCw,
+  SlidersHorizontal,
   X,
   Trash2,
 } from 'lucide-react';
@@ -19,6 +19,7 @@ import {
 export const VideoFeed: React.FC = () => {
   const {
     videos,
+    activeVideoId,
     setActiveVideoId,
     setActiveTab,
     getKnownWordPercentage,
@@ -43,8 +44,9 @@ export const VideoFeed: React.FC = () => {
   useLockBodyScroll(showNewAlbumModal);
   const [newAlbumName, setNewAlbumName] = useState('');
   const [newAlbumEmoji, setNewAlbumEmoji] = useState('📁');
-  const [isSyncing, setIsSyncing] = useState<boolean>(false);
-  const [syncToast, setSyncToast] = useState<string | null>(null);
+  // Category + album filters live in a bottom sheet; only level chips stay on the page.
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+  useLockBodyScroll(showFilters);
 
   const categoryDefs = [
     { id: 'All', label: 'ทั้งหมด' },
@@ -71,27 +73,6 @@ export const VideoFeed: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleLiveSync = async () => {
-    setIsSyncing(true);
-    setSyncToast(null);
-    try {
-      const res = await fetch(
-        'https://raw.githubusercontent.com/MosStep/umami-japanese/main/public/live_catalog.json',
-        { cache: 'no-store' }
-      );
-      if (res.ok) {
-        setSyncToast(`ซิงค์คลาวด์สำเร็จ! มีคลิปพร้อมเรียน ${videos.length} รายการ`);
-      } else {
-        setSyncToast(`ระบบใช้คลังคลิปใหม่ล่าสุด ${videos.length} รายการแล้ว`);
-      }
-    } catch {
-      setSyncToast(`ระบบออฟไลน์: ใช้ข้อมูลคลิปในเครื่อง ${videos.length} รายการ`);
-    } finally {
-      setIsSyncing(false);
-      setTimeout(() => setSyncToast(null), 4000);
-    }
-  };
-
   // Filter videos based on category, JLPT level, album, and comprehensible threshold
   const filteredVideos = videos.filter((v) => {
     if (selectedCategory !== 'All' && v.category !== selectedCategory) return false;
@@ -112,147 +93,105 @@ export const VideoFeed: React.FC = () => {
   const waitingCaptions =
     comprehensibleOnly && (wordIndexStatus === 'idle' || wordIndexStatus === 'loading');
 
+  const resumeVideo = isResumableClip(activeVideoId) ? videos.find((v) => v.id === activeVideoId) : undefined;
+  const extraFilterCount = (selectedCategory !== 'All' ? 1 : 0) + (selectedAlbum !== 'All' ? 1 : 0);
+
   const handleSelectVideo = (videoId: string) => {
     setActiveVideoId(videoId);
     setActiveTab('player');
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8 space-y-6 sm:space-y-8 animate-in fade-in duration-300">
-      {/* Top Banner: Japanese Immersion Feed Header */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-950 border border-indigo-500/20 p-6 sm:p-8 shadow-2xl">
-        <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-indigo-500/15 text-indigo-300 border border-indigo-500/30">
-              <Sparkles className="w-3.5 h-3.5 text-indigo-400" />
-              <span>うまみ (Umami) • วิดีโอภาษาญี่ปุ่นแท้สไตล์ HayaiLearn</span>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6 animate-in fade-in duration-300">
+      {/* Continue watching: the last opened clip */}
+      {resumeVideo && (
+        <button
+          onClick={() => handleSelectVideo(resumeVideo.id)}
+          className="w-full sm:max-w-md flex items-center gap-3 p-2.5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 text-left transition-colors active:opacity-80"
+        >
+          <div className="relative w-28 shrink-0 aspect-video rounded-xl overflow-hidden bg-slate-950">
+            <img
+              src={`https://img.youtube.com/vi/${resumeVideo.youtube_id}/mqdefault.jpg`}
+              alt=""
+              className="w-full h-full object-cover"
+              onError={(e) => ((e.target as HTMLElement).style.display = 'none')}
+            />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+              <Play className="w-6 h-6 fill-white text-white" />
             </div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">
-              เรียนภาษาญี่ปุ่นจากบริบทจริง (Video Immersion)
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              แตะคำศัพท์ในซับไตเติลเพื่อดูความหมายทันที ขุดประโยค (Mine Sentence) เข้าสู่ Spaced Repetition (SRS)
-              และฝึก Shadowing วัดสำเนียงแบบเรียลไทม์ ครอบคลุมตั้งแต่ N5 จนถึง N1
-            </p>
           </div>
-
-          {/* Quick Actions */}
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={handleLiveSync}
-              disabled={isSyncing}
-              className="px-4 py-3 rounded-2xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 text-xs sm:text-sm font-bold transition-all flex items-center gap-2 shadow-md shadow-indigo-600/20 active:scale-95"
-              title="ซิงค์คลิปใหม่ล่าสุดจากคลาวด์โดยไม่ต้องติดตั้ง APK ใหม่"
-            >
-              <RefreshCw className={`w-4 h-4 text-indigo-400 ${isSyncing ? 'animate-spin' : ''}`} />
-              <span>{isSyncing ? 'กำลังซิงค์...' : '🔄 ซิงค์คลิปใหม่ (Live Sync)'}</span>
-            </button>
-
-            <button
-              onClick={() => setComprehensibleOnly(!comprehensibleOnly)}
-              className={`px-4 py-3 rounded-2xl border text-xs sm:text-sm font-bold transition-all flex items-center gap-2 ${
-                comprehensibleOnly
-                  ? 'bg-emerald-600/20 border-emerald-500/40 text-emerald-300 shadow-md shadow-emerald-600/20'
-                  : 'bg-slate-900/80 border-slate-800 text-slate-400 hover:text-white'
-              }`}
-            >
-              <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-              <span>เข้าใจง่ายสุด (≥60% Known)</span>
-            </button>
+          <div className="min-w-0 flex-1">
+            <p className="text-xs font-semibold text-indigo-300">ดูต่อ</p>
+            <p className="text-sm font-bold text-slate-100 line-clamp-2">{resumeVideo.title}</p>
           </div>
-        </div>
+        </button>
+      )}
 
-        {/* Sync Toast Feedback */}
-        {syncToast && (
-          <div className="mt-4 p-3 rounded-xl bg-indigo-500/20 border border-indigo-500/40 text-xs font-bold text-indigo-200 animate-in fade-in flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-indigo-400 shrink-0" />
-            <span>{syncToast}</span>
-          </div>
-        )}
-      </div>
-
-      {/* Categories & JLPT Level Filter Lanes */}
-      <div className="space-y-3 border-b border-slate-800/80 pb-4">
-        {/* JLPT Level Quick Filter */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
-          <span className="text-xs font-bold text-slate-400 mr-2 shrink-0">ระดับ JLPT:</span>
+      {/* Level chips (one row) + filter sheet button */}
+      <div className="flex items-center gap-2">
+        <div className="flex-1 min-w-0 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
           {jlptLevels.map((lvl) => {
             const empty = lvl !== 'All' && !jlptHasClips(lvl);
             return (
               <button
                 key={lvl}
                 onClick={() => setSelectedJLPT(lvl)}
-                className={`px-3 py-1.5 min-h-11 rounded-xl text-xs font-bold transition-all shrink-0 active:opacity-70 ${
+                aria-pressed={selectedJLPT === lvl}
+                className={`px-3.5 min-h-10 rounded-full text-sm font-semibold transition-colors shrink-0 active:opacity-70 ${
                   selectedJLPT === lvl
-                    ? 'bg-rose-600 text-white shadow-md shadow-rose-600/30'
+                    ? 'bg-slate-100 text-slate-900'
                     : empty
-                    ? 'border border-dashed border-slate-700 text-slate-500 hover:text-slate-400'
-                    : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200'
+                    ? 'border border-dashed border-slate-700 text-slate-500'
+                    : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700'
                 }`}
               >
-                {lvl === 'All' ? 'ทุกระดับ (All)' : lvl}
+                {lvl === 'All' ? 'ทั้งหมด' : lvl}
               </button>
             );
           })}
+          <button
+            onClick={() => setComprehensibleOnly(!comprehensibleOnly)}
+            aria-pressed={comprehensibleOnly}
+            className={`px-3.5 min-h-10 rounded-full text-sm font-semibold transition-colors shrink-0 flex items-center gap-1.5 active:opacity-70 ${
+              comprehensibleOnly ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800/80 text-slate-300 hover:bg-slate-700'
+            }`}
+          >
+            <CheckCircle2 className="w-4 h-4" />
+            เข้าใจง่าย
+          </button>
         </div>
-
-        {/* Category Tabs & Albums */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pt-1">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0 w-full sm:w-auto">
-            {categories.map((cat) => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition-all ${
-                  selectedCategory === cat.id
-                    ? 'bg-indigo-600 text-white shadow-md shadow-indigo-600/30'
-                    : 'bg-slate-900/60 text-slate-400 hover:text-slate-200 hover:bg-slate-800'
-                }`}
-              >
-                {cat.label}
-              </button>
-            ))}
-          </div>
-
-          {/* Albums Filter */}
-          <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto text-xs">
-            <span className="text-slate-500 flex items-center gap-1 font-medium">
-              <FolderHeart className="w-3.5 h-3.5 text-rose-400" />
-              อัลบั้ม:
+        <button
+          onClick={() => setShowFilters(true)}
+          className="relative shrink-0 min-h-10 min-w-10 px-3 rounded-full bg-slate-800/80 text-slate-200 hover:bg-slate-700 flex items-center gap-1.5 text-sm font-semibold"
+          aria-label="ตัวกรองเพิ่มเติม"
+        >
+          <SlidersHorizontal className="w-4 h-4" />
+          <span className="hidden sm:inline">ตัวกรอง</span>
+          {extraFilterCount > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-5 h-5 px-1 rounded-full bg-indigo-500 text-[11px] font-bold text-white flex items-center justify-center">
+              {extraFilterCount}
             </span>
-            <button
-              onClick={() => setSelectedAlbum('All')}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-colors ${
-                selectedAlbum === 'All'
-                  ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/40'
-                  : 'text-slate-400 hover:bg-slate-800'
-              }`}
-            >
-              ทั้งหมด
-            </button>
-            {albums.map((alb) => (
-              <button
-                key={alb.id}
-                onClick={() => setSelectedAlbum(alb.id)}
-                className={`px-3 py-1.5 rounded-lg font-semibold transition-colors shrink-0 ${
-                  selectedAlbum === alb.id
-                    ? 'bg-indigo-600/20 text-indigo-300 border border-indigo-500/40'
-                    : 'text-slate-400 hover:bg-slate-800'
-                }`}
-              >
-                {alb.emoji} {alb.name}
-              </button>
-            ))}
-            <button
-              onClick={() => setShowNewAlbumModal(true)}
-              className="px-3 py-1.5 rounded-lg bg-rose-600/20 text-rose-300 border border-rose-500/40 hover:bg-rose-600/30 font-bold transition-all flex items-center gap-1 active:scale-95 shrink-0"
-              title="สร้างอัลบั้มคอลเลกชันใหม่"
-            >
-              <span>+ สร้างอัลบั้ม</span>
-            </button>
-          </div>
-        </div>
+          )}
+        </button>
       </div>
+
+      {/* Active extra filters, so a hidden filter never surprises */}
+      {extraFilterCount > 0 && (
+        <div className="flex items-center gap-2 text-xs text-slate-400 -mt-2">
+          <span>กรองอยู่:</span>
+          {selectedCategory !== 'All' && <span className="text-slate-200">{categories.find((c) => c.id === selectedCategory)?.label}</span>}
+          {selectedAlbum !== 'All' && <span className="text-slate-200">{albums.find((a) => a.id === selectedAlbum)?.name}</span>}
+          <button
+            onClick={() => {
+              setSelectedCategory('All');
+              setSelectedAlbum('All');
+            }}
+            className="ml-auto min-h-9 px-2 text-indigo-300 font-semibold"
+          >
+            ล้าง
+          </button>
+        </div>
+      )}
 
       {waitingCaptions && (
         <p className="text-xs text-indigo-300 flex items-center gap-2" role="status">
@@ -262,7 +201,7 @@ export const VideoFeed: React.FC = () => {
       )}
 
       {/* Video Cards Grid (HayaiLearn Responsive Style) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         {filteredVideos.map((video) => {
           const knownPct = getKnownWordPercentage(video.id);
 
@@ -270,7 +209,7 @@ export const VideoFeed: React.FC = () => {
             <div
               key={video.id}
               onClick={() => handleSelectVideo(video.id)}
-              className="group cursor-pointer rounded-3xl bg-slate-900/80 border border-slate-800 hover:border-indigo-500/50 transition-all duration-300 overflow-hidden flex flex-col shadow-xl hover:shadow-2xl hover:shadow-indigo-500/10 hover:-translate-y-1"
+              className="group cursor-pointer rounded-2xl bg-slate-900/60 border border-slate-800/80 hover:border-indigo-500/50 transition-colors duration-200 overflow-hidden flex flex-col active:opacity-80"
             >
               {/* Real YouTube Thumbnail Area with Gradient Overlay */}
               <div className="relative aspect-video w-full bg-slate-950 overflow-hidden">
@@ -316,69 +255,30 @@ export const VideoFeed: React.FC = () => {
                   {(video.duration % 60).toString().padStart(2, '0')}
                 </div>
 
-                {/* Difficulty & JLPT Badges */}
-                <div className="absolute top-2.5 left-2.5 flex items-center gap-1.5">
-                  <span className="px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-black/75 text-amber-300 border border-amber-500/40 backdrop-blur-md">
-                    Lv.{video.difficulty_rating}
-                  </span>
-                  <span className="px-2.5 py-1 rounded-lg text-[11px] font-extrabold bg-indigo-600/90 text-white border border-indigo-400/40 backdrop-blur-md shadow-sm">
-                    {video.primary_jlpt}
-                  </span>
-                </div>
+                {/* JLPT badge */}
+                <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md text-xs font-bold bg-black/75 text-white backdrop-blur-md">
+                  {video.primary_jlpt}
+                </span>
               </div>
 
-              {/* Card Meta Content */}
-              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-3">
-                <div className="space-y-1.5">
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 font-medium">
-                    <span className="truncate max-w-[140px]">{video.channel}</span>
-                    <span className="text-indigo-400 font-semibold">• {video.category}</span>
-                  </div>
-                  <h3 className="font-bold text-slate-100 text-sm sm:text-base line-clamp-1 group-hover:text-indigo-300 transition-colors">
-                    {video.title}
-                  </h3>
-                  <p className="font-jp text-xs text-slate-400 line-clamp-1">
-                    {video.japanese_title}
-                  </p>
-                </div>
-
-                {/* Known Words % Progress Bar (HayaiLearn Indicator) */}
-                <div className="space-y-1.5 pt-2 border-t border-slate-800/80">
-                  <div className="flex items-center justify-between text-xs">
-                    <span className="text-slate-400 flex items-center gap-1.5 font-medium">
-                      <BookOpen className="w-3.5 h-3.5 text-emerald-400" />
-                      คำศัพท์ที่รู้ (Known)
+              {/* Card meta: title, channel, known-word share */}
+              <div className="px-3.5 py-3 flex-1 flex flex-col gap-2">
+                <h3 className="font-bold text-slate-100 text-[15px] leading-snug line-clamp-2 group-hover:text-indigo-300 transition-colors">
+                  {video.title}
+                </h3>
+                <div className="flex items-center gap-2 text-xs text-slate-400">
+                  <span className="truncate">{video.channel}</span>
+                  <span className="ml-auto shrink-0 flex items-center gap-1.5" title="คำศัพท์ในคลิปที่คุณรู้แล้ว">
+                    <span className="w-12 h-1.5 rounded-full bg-slate-800 overflow-hidden">
+                      <span
+                        className={`block h-full ${knownPct !== null && knownPct >= 70 ? 'bg-emerald-400' : knownPct !== null && knownPct >= 50 ? 'bg-amber-400' : 'bg-slate-500'}`}
+                        style={{ width: `${knownPct ?? 0}%` }}
+                      />
                     </span>
-                    <span
-                      className={`font-mono font-bold ${
-                        knownPct === null
-                          ? 'text-slate-500'
-                          : knownPct >= 70
-                          ? 'text-emerald-400'
-                          : knownPct >= 50
-                          ? 'text-amber-400'
-                          : 'text-slate-400'
-                      }`}
-                    >
-                      {knownPct !== null
-                        ? `${knownPct}%`
-                        : wordIndexStatus === 'idle' || wordIndexStatus === 'loading'
-                        ? '…'
-                        : '—'}
+                    <span className="font-mono text-slate-300">
+                      {knownPct !== null ? `รู้ ${knownPct}%` : wordIndexStatus === 'idle' || wordIndexStatus === 'loading' ? '…' : '—'}
                     </span>
-                  </div>
-                  <div className="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
-                    <div
-                      className={`h-full transition-all duration-300 ${
-                        knownPct !== null && knownPct >= 70
-                          ? 'bg-gradient-to-r from-emerald-500 to-teal-400'
-                          : knownPct !== null && knownPct >= 50
-                          ? 'bg-gradient-to-r from-amber-500 to-yellow-400'
-                          : 'bg-slate-600'
-                      }`}
-                      style={{ width: `${knownPct ?? 0}%` }}
-                    />
-                  </div>
+                  </span>
                 </div>
               </div>
             </div>
@@ -394,6 +294,85 @@ export const VideoFeed: React.FC = () => {
           </p>
         )}
       </div>
+
+      {/* Filter sheet: category + album (less used, so off the main page) */}
+      {showFilters && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/70 backdrop-blur-sm" onClick={() => setShowFilters(false)}>
+          <div
+            role="dialog"
+            aria-label="ตัวกรอง"
+            onClick={(e) => e.stopPropagation()}
+            className="w-full sm:max-w-lg max-h-[80vh] overflow-y-auto rounded-t-3xl sm:rounded-3xl bg-slate-900 border border-slate-800 p-5 pb-[calc(1.25rem_+_env(safe-area-inset-bottom))] space-y-5"
+          >
+            <div className="flex items-center justify-between">
+              <h2 className="text-base font-bold text-white">ตัวกรอง</h2>
+              <button onClick={() => setShowFilters(false)} aria-label="ปิด" className="min-h-11 min-w-11 flex items-center justify-center rounded-xl text-slate-400 hover:bg-slate-800">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-slate-300">หมวด</p>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setSelectedCategory(cat.id)}
+                    aria-pressed={selectedCategory === cat.id}
+                    className={`px-3.5 min-h-10 rounded-full text-sm font-semibold transition-colors ${
+                      selectedCategory === cat.id ? 'bg-slate-100 text-slate-900' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    }`}
+                  >
+                    {cat.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <div className="space-y-2">
+              <p className="text-sm font-semibold text-slate-300 flex items-center gap-1.5">
+                <FolderHeart className="w-4 h-4 text-rose-400" /> อัลบั้มของฉัน
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  onClick={() => setSelectedAlbum('All')}
+                  aria-pressed={selectedAlbum === 'All'}
+                  className={`px-3.5 min-h-10 rounded-full text-sm font-semibold transition-colors ${
+                    selectedAlbum === 'All' ? 'bg-slate-100 text-slate-900' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                  }`}
+                >
+                  ทั้งหมด
+                </button>
+                {albums.map((alb) => (
+                  <button
+                    key={alb.id}
+                    onClick={() => setSelectedAlbum(alb.id)}
+                    aria-pressed={selectedAlbum === alb.id}
+                    className={`px-3.5 min-h-10 rounded-full text-sm font-semibold transition-colors ${
+                      selectedAlbum === alb.id ? 'bg-slate-100 text-slate-900' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
+                    }`}
+                  >
+                    {alb.emoji} {alb.name}
+                  </button>
+                ))}
+                <button
+                  onClick={() => {
+                    setShowFilters(false);
+                    setShowNewAlbumModal(true);
+                  }}
+                  className="px-3.5 min-h-10 rounded-full text-sm font-semibold border border-dashed border-slate-600 text-slate-300 hover:bg-slate-800"
+                >
+                  + สร้างอัลบั้ม
+                </button>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowFilters(false)}
+              className="w-full min-h-12 rounded-2xl bg-indigo-600 hover:bg-indigo-500 text-white font-bold"
+            >
+              ดู {filteredVideos.length} คลิป
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Delete confirmation for user-imported clips */}
       {pendingDelete && (

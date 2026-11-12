@@ -56,14 +56,12 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
         {/* Header */}
         <div className="px-5 py-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/50">
           <div className="flex items-center gap-2">
-            <Key className="w-4 h-4 text-indigo-400" />
-            <h2 className="text-sm font-bold text-white uppercase tracking-wider">
-              AI Intelligence Engine Setup
-            </h2>
+            <h2 className="text-base font-bold text-white">ตั้งค่า</h2>
           </div>
           <button
             onClick={() => setShowSettingsModal(false)}
-            className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800"
+            aria-label="ปิด"
+            className="min-h-11 min-w-11 flex items-center justify-center text-slate-400 hover:text-white rounded-xl hover:bg-slate-800"
           >
             <X className="w-5 h-5" />
           </button>
@@ -71,10 +69,45 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
 
         {/* Content */}
         <form onSubmit={handleSave} className="p-5 space-y-5">
+          {/* App Version & Auto-Update Section */}
+          {onOpenUpdate && (
+            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between">
+              <div>
+                <span className="text-[11px] font-bold text-slate-300 block">
+                  เวอร์ชันแอป
+                </span>
+                <span className="text-[10px] text-slate-500 font-mono">
+                  {APP_VERSION} (Build {APP_BUILD})
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowSettingsModal(false);
+                  onOpenUpdate();
+                }}
+                className="min-h-11 px-3 rounded-xl bg-rose-600/20 border border-rose-500/30 text-rose-300 hover:bg-rose-600/30 text-xs font-semibold flex items-center gap-1.5 transition-colors"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>ตรวจอัปเดต</span>
+              </button>
+            </div>
+          )}
+
+          {/* AI for the roleplay chat: rarely changed, so folded away */}
+          <details className="group rounded-xl border border-slate-800 bg-slate-950/50">
+            <summary className="min-h-11 px-3.5 flex items-center justify-between cursor-pointer list-none text-sm font-semibold text-slate-200">
+              <span className="flex items-center gap-2">
+                <Key className="w-4 h-4 text-indigo-400" />
+                AI สำหรับฝึกคุย (ขั้นสูง)
+              </span>
+              <span className="text-xs text-slate-500 group-open:hidden">แตะเพื่อเปิด</span>
+            </summary>
+            <div className="p-3.5 pt-1 space-y-5">
           {/* Engine Mode Toggle */}
           <div className="space-y-2">
             <label className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-              Active Provider
+              ผู้ให้บริการ AI
             </label>
             <div className="grid grid-cols-3 gap-2">
               <button
@@ -154,7 +187,7 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
             </label>
             <input
               type="password"
-              placeholder="Paste your API Key here..."
+              placeholder="วางคีย์ API ที่นี่"
               value={inputKey}
               onChange={(e) => setInputKey(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm font-mono text-slate-100 focus:outline-none focus:border-indigo-500"
@@ -164,7 +197,7 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
           {/* Model Selection */}
           <div className="space-y-1.5">
             <label className="text-xs font-semibold text-slate-300">
-              Selected Model
+              โมเดล
             </label>
             <select
               value={selectedModel}
@@ -187,30 +220,8 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
             </select>
           </div>
 
-          {/* App Version & Auto-Update Section */}
-          {onOpenUpdate && (
-            <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between">
-              <div>
-                <span className="text-[11px] font-bold text-slate-300 block">
-                  うまみ App Version
-                </span>
-                <span className="text-[10px] text-slate-500 font-mono">
-                  {APP_VERSION} (Build {APP_BUILD})
-                </span>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowSettingsModal(false);
-                  onOpenUpdate();
-                }}
-                className="px-3 py-1.5 rounded-xl bg-rose-600/20 border border-rose-500/30 text-rose-300 hover:bg-rose-600/30 text-xs font-semibold flex items-center gap-1.5 transition-colors"
-              >
-                <Sparkles className="w-3.5 h-3.5" />
-                <span>Check Updates</span>
-              </button>
             </div>
-          )}
+          </details>
 
           {/* Action Buttons */}
           <div className="flex items-center justify-end gap-3 pt-2 border-t border-slate-800">
@@ -219,7 +230,7 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
               onClick={() => setShowSettingsModal(false)}
               className="px-4 py-2 rounded-xl text-xs font-medium text-slate-400 hover:bg-slate-800"
             >
-              Cancel
+              ยกเลิก
             </button>
             <button
               type="submit"
@@ -228,10 +239,10 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
               {savedSuccess ? (
                 <>
                   <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-                  <span>Saved!</span>
+                  <span>บันทึกแล้ว</span>
                 </>
               ) : (
-                <span>Save Configuration</span>
+                <span>บันทึก</span>
               )}
             </button>
           </div>

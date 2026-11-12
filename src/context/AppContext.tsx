@@ -138,9 +138,32 @@ const DEFAULT_ALBUMS: Album[] = [
   { id: 'alb-favorites', name: 'Must-Watch Anime', emoji: '🌟', video_ids: ['vid-anione-jjk-01', 'vid-anione-jjk-02', 'vid-anione-bleach-01'] },
 ];
 
+export const LAST_VIDEO_KEY = 'umami_last_video';
+const DEFAULT_VIDEO_ID = 'vid-anione-jjk-01';
+// Read once at startup: whether the user opened a clip in an earlier session (storage may be unavailable).
+const storedLastVideo: string | null = (() => {
+  try {
+    return localStorage.getItem(LAST_VIDEO_KEY);
+  } catch {
+    return null;
+  }
+})();
+/** True when the feed should offer "ดูต่อ" for this clip id. */
+export const isResumableClip = (id: string) => storedLastVideo !== null || id !== DEFAULT_VIDEO_ID;
+
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [activeTab, setActiveTab] = useState<'feed' | 'player' | 'words' | 'dojo' | 'profile'>('feed');
-  const [activeVideoId, setActiveVideoId] = useState<string>('vid-anione-jjk-01');
+  // Last opened clip survives restarts (feed shows it as "ดูต่อ"); storage can be unavailable, so guard it.
+  const [activeVideoId, setActiveVideoId] = useState<string>(storedLastVideo || DEFAULT_VIDEO_ID);
+  useEffect(() => {
+    // Don't record the built-in default as "watched" before the user picked anything.
+    if (storedLastVideo === null && activeVideoId === DEFAULT_VIDEO_ID) return;
+    try {
+      localStorage.setItem(LAST_VIDEO_KEY, activeVideoId);
+    } catch {
+      /* private mode / blocked storage: keep the in-memory value */
+    }
+  }, [activeVideoId]);
   const [showSettingsModal, setShowSettingsModal] = useState<boolean>(false);
 
   // External API Config (Kob AI active by default with user key)

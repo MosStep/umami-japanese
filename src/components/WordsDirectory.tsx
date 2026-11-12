@@ -57,31 +57,17 @@ export const WordsDirectory: React.FC = () => {
   });
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-5 sm:py-8 space-y-5 animate-in fade-in duration-200">
-      {/* Header Banner */}
-      <div className="rounded-3xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 border border-indigo-500/20 p-5 sm:p-6 shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2">
-            <BookA className="w-5 h-5 text-indigo-400" />
-            <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
-              คลังคำศัพท์ (Vocabulary Vault)
-            </h1>
-          </div>
-          <p className="text-xs sm:text-sm text-slate-300 mt-1">
-            คำศัพท์จริงจากวิดีโอ แตะเพื่อฟังเสียงต้นฉบับและเปลี่ยนสถานะการจำได้ทันที
-          </p>
-        </div>
-
-        {/* Learning Progress Pills */}
-        <div className="flex items-center gap-2 text-xs">
-          <div className="px-3 py-1.5 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 font-bold flex items-center gap-1.5">
-            <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            <span>จำได้ {countKnown}</span>
-          </div>
-          <div className="px-3 py-1.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-amber-300 font-bold flex items-center gap-1.5">
-            <Flame className="w-4 h-4 text-amber-400" />
-            <span>กำลังเรียน {countLearning}</span>
-          </div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4 animate-in fade-in duration-200">
+      {/* Title + progress, one row */}
+      <div className="flex items-center justify-between gap-3">
+        <h1 className="text-xl font-bold text-white">คำศัพท์</h1>
+        <div className="flex items-center gap-3 text-sm">
+          <span className="flex items-center gap-1 text-emerald-300 font-semibold">
+            <CheckCircle2 className="w-4 h-4" /> จำได้ {countKnown}
+          </span>
+          <span className="flex items-center gap-1 text-amber-300 font-semibold">
+            <Flame className="w-4 h-4" /> กำลังเรียน {countLearning}
+          </span>
         </div>
       </div>
 
