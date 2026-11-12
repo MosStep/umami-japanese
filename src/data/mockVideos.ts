@@ -5334,6 +5334,258 @@ export const MOCK_VIDEOS: VideoRecord[] = [
       "N2": 4,
       "N1": 19
     }
+  },
+  {
+    "id": "vid-anime-ramen-akaneko-01",
+    "youtube_id": "5luX0337j94",
+    "title": "ราเมงอากาเนโกะ ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【ラーメン赤猫】第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 43,
+      "N4": 14,
+      "N3": 14,
+      "N2": 6,
+      "N1": 23
+    },
+    "duration": 1400,
+    "thumbnail_gradient": "from-red-950 via-orange-950 to-slate-900",
+    "scene_emoji": "🍜",
+    "description": "ทามาโกะหญิงสาวที่ตอบอย่างตรงไปตรงมาว่าชอบสุนัข ได้รับเข้าทำงานพาร์ตไทม์คอยดูแลเหล่าแมวพนักงานในร้านราเมงอากาเนโกะที่มีแต่แมวบริหารร้าน"
+  },
+  {
+    "id": "vid-anime-ramen-akaneko-02",
+    "youtube_id": "BNWs_UfzFXA",
+    "title": "ราเมงอากาเนโกะ ตอนที่ 2 (Ani-One Asia)",
+    "japanese_title": "【ラーメン赤猫】第2話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 46,
+      "N4": 11,
+      "N3": 15,
+      "N2": 4,
+      "N1": 24
+    },
+    "duration": 1400,
+    "thumbnail_gradient": "from-red-950 via-orange-950 to-slate-900",
+    "scene_emoji": "🍜",
+    "description": "เรื่องราวการทำงานในร้านราเมงอากาเนโกะที่เต็มไปด้วยความอบอุ่น การดูแลขนให้เหล่าพนักงานแมว และบทสนทนาประจำวันกับลูกค้า"
+  },
+  {
+    "id": "vid-anime-pseudo-harem-01",
+    "youtube_id": "mTrFxmtFiig",
+    "title": "ฮาเร็มนี้มีแต่เธอ ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【疑似ハーレム】第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 38,
+      "N4": 17,
+      "N3": 16,
+      "N2": 3,
+      "N1": 26
+    },
+    "duration": 1432,
+    "thumbnail_gradient": "from-pink-950 via-rose-950 to-slate-900",
+    "scene_emoji": "🏫",
+    "description": "นานาคุระ ริน รุ่นน้องชมรมการแสดงที่แอบชอบรุ่นพี่คิตาฮามะ เอย์จิ จึงแกล้งสวมบทบาทสารพัดบุคลิกให้เหมือนฮาเร็มในชีวิตจริง"
+  },
+  {
+    "id": "vid-anime-pseudo-harem-02",
+    "youtube_id": "ZC3S742N5vY",
+    "title": "ฮาเร็มนี้มีแต่เธอ ตอนที่ 2 (Ani-One Asia)",
+    "japanese_title": "【疑似ハーレム】第2話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 42,
+      "N4": 15,
+      "N3": 13,
+      "N2": 4,
+      "N1": 26
+    },
+    "duration": 1431,
+    "thumbnail_gradient": "from-pink-950 via-rose-950 to-slate-900",
+    "scene_emoji": "🏫",
+    "description": "ชีวิตประจำวันในชมรมการแสดงโรงเรียนมัธยมปลายกับบทสนทนาหยอกล้อสุดน่ารักระหว่างรินและรุ่นพี่เอย์จิ"
+  },
+  {
+    "id": "vid-anime-crush-work-01",
+    "youtube_id": "ZNaymNmP8u8",
+    "title": "บริษัทนี้มีคนแอบรัก ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【この会社に好きな人がいます】第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 4,
+    "primary_jlpt": "N2",
+    "jlpt_distribution": {
+      "N5": 39,
+      "N4": 13,
+      "N3": 17,
+      "N2": 5,
+      "N1": 26
+    },
+    "duration": 1431,
+    "thumbnail_gradient": "from-blue-950 via-indigo-950 to-slate-900",
+    "scene_emoji": "💼",
+    "description": "ทาเทอิชิ พนักงานหนุ่มฝ่ายบัญชีและมิตสึยะ สาวฝ่ายวางแผนที่เป็นคู่กัดกันในที่ทำงาน แต่ความจริงแล้วทั้งคู่แอบคบกันเป็นความลับ"
+  },
+  {
+    "id": "vid-anime-crush-work-02",
+    "youtube_id": "6B4Oir6aA4k",
+    "title": "บริษัทนี้มีคนแอบรัก ตอนที่ 2 (Ani-One Asia)",
+    "japanese_title": "【この会社に好きな人がいます】第2話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 4,
+    "primary_jlpt": "N2",
+    "jlpt_distribution": {
+      "N5": 34,
+      "N4": 16,
+      "N3": 17,
+      "N2": 6,
+      "N1": 27
+    },
+    "duration": 1432,
+    "thumbnail_gradient": "from-blue-950 via-indigo-950 to-slate-900",
+    "scene_emoji": "💼",
+    "description": "เรื่องราวการทำงานในบริษัทขนมและการเก็บความลับความสัมพันธ์ของคู่รักวัยทำงานในออฟฟิศ"
+  },
+  {
+    "id": "vid-anime-umaru-01",
+    "youtube_id": "td_9L0hmu6k",
+    "title": "น้องสาวสุดติ่ง อุมารุจัง ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【干物妹！うまるちゃん】第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 36,
+      "N4": 12,
+      "N3": 20,
+      "N2": 5,
+      "N1": 27
+    },
+    "duration": 1445,
+    "thumbnail_gradient": "from-amber-950 via-orange-950 to-zinc-900",
+    "scene_emoji": "🏠",
+    "description": "โดมะ อุมารุ นักเรียนมัธยมปลายที่ภายนอกดูสมบูรณ์แบบทุกด้าน แต่พอกลับถึงบ้านจะกลายร่างเป็นน้องสาวจอมขี้เกียจที่อยู่กับพี่ชายไทเฮ"
+  },
+  {
+    "id": "vid-anime-umaru-02",
+    "youtube_id": "J__555ipXA8",
+    "title": "น้องสาวสุดติ่ง อุมารุจัง ตอนที่ 2 (Ani-One Asia)",
+    "japanese_title": "【干物妹！うまるちゃん】第2話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 36,
+      "N4": 13,
+      "N3": 19,
+      "N2": 4,
+      "N1": 28
+    },
+    "duration": 1445,
+    "thumbnail_gradient": "from-amber-950 via-orange-950 to-zinc-900",
+    "scene_emoji": "🏠",
+    "description": "ชีวิตประจำวันแสนวุ่นวายในบ้านและที่โรงเรียนของอุมารุกับเพื่อนร่วมชั้นและพี่ชายสุดใจดี"
+  },
+  {
+    "id": "vid-anime-tadaima-okaeri-01",
+    "youtube_id": "5p6GA_IH7Vc",
+    "title": "กลับมาแล้วครับ ยินดีต้อนรับกลับบ้าน ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【ただいま、おかえり】第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 37,
+      "N4": 18,
+      "N3": 17,
+      "N2": 5,
+      "N1": 23
+    },
+    "duration": 1421,
+    "thumbnail_gradient": "from-emerald-950 via-teal-950 to-slate-900",
+    "scene_emoji": "🏠",
+    "description": "เรื่องราวชีวิตครอบครัวอันอบอุ่นของมาซากิ พ่อบ้านที่ดูแลลูกน้อยวัยเกือบสองขวบและย้ายมาใช้ชีวิตในเมืองชานเมืองร่วมกับฮิโรมุผู้เป็นสามี"
+  },
+  {
+    "id": "vid-anime-tadaima-okaeri-02",
+    "youtube_id": "qVpjaVH2Bfc",
+    "title": "กลับมาแล้วครับ ยินดีต้อนรับกลับบ้าน ตอนที่ 2 (Ani-One Asia)",
+    "japanese_title": "【ただいま、おかえり】第2話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 38,
+      "N4": 19,
+      "N3": 17,
+      "N2": 5,
+      "N1": 21
+    },
+    "duration": 1421,
+    "thumbnail_gradient": "from-emerald-950 via-teal-950 to-slate-900",
+    "scene_emoji": "🏠",
+    "description": "ชีวิตประจำวันแสนละมุนของการเลี้ยงลูก การทำกับข้าว และการพูดคุยกับเพื่อนบ้านในครอบครัวฟุจิโยชิ"
+  },
+  {
+    "id": "vid-anime-sorairo-utility-01",
+    "youtube_id": "yRq7g_UKzco",
+    "title": "โซระอิโระ ยูทิลิตี้ ตอนที่ 1 (Ani-One Asia)",
+    "japanese_title": "【空色ユーティリティ】第1話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 39,
+      "N4": 16,
+      "N3": 15,
+      "N2": 3,
+      "N1": 27
+    },
+    "duration": 1421,
+    "thumbnail_gradient": "from-sky-950 via-cyan-950 to-slate-900",
+    "scene_emoji": "⛳",
+    "description": "อาโอบะ มินามิ เด็กสาวมัธยมปลายที่ยังหาสิ่งที่ชอบไม่เจอ บังเอิญได้ลองเล่นกอล์ฟที่สนามฝึกซ้อมและพบกับเพื่อนใหม่"
+  },
+  {
+    "id": "vid-anime-sorairo-utility-02",
+    "youtube_id": "IXLb9Buv66o",
+    "title": "โซระอิโระ ยูทิลิตี้ ตอนที่ 2 (Ani-One Asia)",
+    "japanese_title": "【空色ユーティリティ】第2話 (Ani-One Asia)",
+    "channel": "Ani-One Asia",
+    "category": "Anime",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 44,
+      "N4": 14,
+      "N3": 13,
+      "N2": 4,
+      "N1": 25
+    },
+    "duration": 1421,
+    "thumbnail_gradient": "from-sky-950 via-cyan-950 to-slate-900",
+    "scene_emoji": "⛳",
+    "description": "มิตรภาพและการฝึกซ้อมกอล์ฟหลังเลิกเรียนของมินามิ ฮารุกะ และอายากะในบรรยากาศสบายๆ"
   }
 ];
 
