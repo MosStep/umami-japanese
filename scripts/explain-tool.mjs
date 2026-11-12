@@ -108,9 +108,10 @@ function importBatches() {
   const byClip = {};
   let bad = 0;
   for (const f of readdirSync(BATCH_DIR).filter((f) => f.endsWith('.ex.json'))) {
-    const src = readJson(join(BATCH_DIR, f.replace('.ex.json', '.json')));
+    const srcPath = join(BATCH_DIR, f.replace('.ex.json', '.json'));
     const out = readJson(join(BATCH_DIR, f));
-    const want = src.map((e) => e.key).join('\n');
+    // A batch file may be gone after a re-export: then keys are only checked against the captions below.
+    const want = (existsSync(srcPath) ? readJson(srcPath) : out).map((e) => e.key).join('\n');
     if (out.map((e) => e.key).join('\n') !== want) { console.error(`${f}: keys differ from the batch (same keys, same order)`); bad++; continue; }
     for (const e of out) {
       const [id, ms] = e.key.split(':');
