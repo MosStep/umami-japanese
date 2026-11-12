@@ -14,7 +14,10 @@ import {
 } from '../data/mockVideos';
 import {
   buildRealSubtitleLines,
+  GLOSS_ID_PREFIX,
+  glossaryFor,
   linkWordIndexKey,
+  loadGlossary,
   loadCaptionFile,
   loadWordIndex,
   type WordIndex,
@@ -41,7 +44,19 @@ export interface UserStats {
   migr_108_xp?: boolean;
   // Local calendar day (YYYY-MM-DD) of the last app use; drives the streak.
   last_active_day?: string;
+  // Per local day (YYYY-MM-DD): watched minutes and XP earned. Last 90 days kept; drives the daily goal and week view.
+  daily_minutes?: Record<string, number>;
+  daily_xp?: Record<string, number>;
 }
+
+/** Adds `amount` to today's entry of a per-day map, keeping only the newest 90 days. */
+const bumpToday = (map: Record<string, number> | undefined, amount: number): Record<string, number> => {
+  const today = localDayKey(new Date());
+  const next = { ...(map ?? {}), [today]: (map?.[today] ?? 0) + amount };
+  const days = Object.keys(next).sort();
+  for (const d of days.slice(0, Math.max(0, days.length - 90))) delete next[d];
+  return next;
+};
 
 export interface Album {
   id: string;
@@ -402,7 +417,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       for (const key of keys) {
         const entry = linkWordIndexKey(key);
         const rk = entry ? `id:${entry.id}` : `lemma:${key.slice(0, key.indexOf('|'))}`;
-        resolved.set(rk, entry ? wordStates[entry.id] === 'known' : false);
+        // Unlinked words carry the stable id g:<lemma>|<reading> (data/captions glossWordId), same as the key.
+        const known = entry ? wordStates[entry.id] === 'known' : wordStates[`g:${key}`] === 'known';
+        resolved.set(rk, (resolved.get(rk) ?? false) || known);
       }
       if (resolved.size === 0) {
         out[youtubeId] = null;
@@ -461,6 +478,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setStats((prev) => ({
       ...prev,
       [`xp_${type}`]: prev[`xp_${type}`] + amount,
+      daily_xp: bumpToday(prev.daily_xp, amount),
     }));
   };
 
@@ -470,6 +488,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setStats((prev) => ({
       ...prev,
       total_immersion_minutes: prev.total_immersion_minutes + seconds / 60,
+      daily_minutes: bumpToday(prev.daily_minutes, seconds / 60),
     }));
   };
 
@@ -791,6 +810,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
+  const [glossaryReady, setGlossaryReady] = useState(false);
+  useEffect(() => {
+    loadGlossary().then(() => setGlossaryReady(true));
+  }, []);
+
   // Automatically derive full dictionary from DICTIONARY_WORDS + all video subtitle tokens
   const dictionaryWords = React.useMemo(() => {
     const map = new Map<string, DictionaryWordRecord>();
@@ -818,8 +842,28 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
     });
 
+    // Words marked in real clips (stable ids g:<lemma>|<reading>) join the deck, with their glossary meaning.
+    Object.keys(wordStates).forEach((id) => {
+      if (!id.startsWith(GLOSS_ID_PREFIX) || map.has(id)) return;
+      const [lemma, reading = ''] = id.slice(GLOSS_ID_PREFIX.length).split('|');
+      if (!lemma) return;
+      map.set(id, {
+        id,
+        lemma,
+        reading_kana: reading || lemma,
+        romaji: '',
+        pitch_accent: '',
+        pitch_morae: [],
+        jlpt_level: 'N5',
+        frequency_rank: 999,
+        part_of_speech: 'คำจากคลิป',
+        core_meanings: glossaryFor(lemma, reading) ?? [],
+      });
+    });
+
     return Array.from(map.values());
-  }, [manualLines]);
+    // glossaryReady: rebuild once the glossary has loaded so clip words get their meanings.
+  }, [manualLines, wordStates, glossaryReady]);
 
   // Load real captions for the active video and for every video that has mined sentences.
   const neededVideoKey = Array.from(

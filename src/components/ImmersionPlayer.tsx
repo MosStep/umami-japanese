@@ -4,7 +4,7 @@ import { useApp, FuriganaMode } from '../context/AppContext';
 import { SubtitleLineRecord, SubtitleTokenJSON } from '../schema/databaseSchema';
 import { ContextualDictionaryModal } from './ContextualDictionaryModal';
 import { audioService } from '../utils/audioService';
-import { loadExplanations, explanationFor, LineExplanation } from '../data/explanations';
+import { loadExplanations, explanationFor, hasExplanations, LineExplanation } from '../data/explanations';
 import {
   Play,
   Pause,
@@ -816,7 +816,7 @@ export const ImmersionPlayer: React.FC = () => {
                         {activeLine.ai_grammar_summary && (
                           <p className="text-xs text-amber-300/90 italic line-clamp-1">💡 {activeLine.ai_grammar_summary}</p>
                         )}
-                        {activeExplain && (
+                        {activeLine.raw_text && (
                           <div className="pt-1">
                             <button
                               onClick={() => setShowExplain((v) => !v)}
@@ -830,7 +830,16 @@ export const ImmersionPlayer: React.FC = () => {
                               <Lightbulb className="w-4 h-4 text-amber-400" />
                               <span>{showExplain ? 'ซ่อนคำอธิบาย' : 'อธิบายประโยค'}</span>
                             </button>
-                            {showExplain && (
+                            {showExplain && !activeExplain && (
+                              <p className="mt-2 p-3 rounded-xl bg-slate-900/80 border border-slate-800 text-left text-sm text-slate-400">
+                                {!hasExplanations(activeVideo.youtube_id)
+                                  ? 'คลิปนี้ยังไม่มีคำอธิบาย — ตอนนี้มีครบในคลิป N5 และเกือบครบใน N4 (ดูป้าย 💡 บนการ์ดคลิป) ระดับอื่นกำลังทยอยเพิ่ม'
+                                  : activeLine.raw_text.replace(/\s+/g, '').length < 5
+                                  ? 'ประโยคสั้น — แตะที่คำเพื่อดูความหมายได้เลย'
+                                  : 'บรรทัดนี้ยังไม่มีคำอธิบาย'}
+                              </p>
+                            )}
+                            {showExplain && activeExplain && (
                               <div className="mt-2 p-3 rounded-xl bg-slate-900/80 border border-slate-800 space-y-2 text-left max-h-[14rem] overflow-y-auto overscroll-contain">
                                 {activeExplain.fix && (
                                   <p className="text-xs text-sky-300">

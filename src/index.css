@@ -28,3 +28,9 @@
 /* Horizontal chip rows: scroll without a visible scrollbar */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { scrollbar-width: none; }
+
+/* No rubber-band / stretch when the page hits the top or bottom: it dragged the sticky header and bottom nav. */
+html,
+body {
+  overscroll-behavior: none;
+}

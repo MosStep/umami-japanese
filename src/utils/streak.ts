@@ -14,3 +14,6 @@ export function nextStreak(prevStreak: number, lastDay: string | null, today: st
   if (lastDay !== null && lastDay === localDayKey(yesterday)) return prevStreak + 1;
   return 1;
 }
+
+/** Daily watch goal in minutes (home banner and profile). */
+export const DAILY_GOAL_MIN = 10;

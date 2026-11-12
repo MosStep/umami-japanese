@@ -3,6 +3,7 @@ import { useApp } from '../context/AppContext';
 import { MinedSentenceRecord, SubtitleLineRecord } from '../schema/databaseSchema';
 import { MOCK_SUBTITLE_LINES } from '../data/mockVideos';
 import { audioService } from '../utils/audioService';
+import { AGAIN_GAP, NEW_PER_SESSION, buildReviewQueue, gradeWord, loadWordSrs, saveWordSrs, WordSrsMap } from '../utils/wordSrs';
 import {
   isNativeSpeech,
   startJapaneseRecognition,
@@ -43,6 +44,8 @@ export const TheDojo: React.FC = () => {
     callAICompletion,
     aiProvider,
     aiModel,
+    setActiveVideoId,
+    setActiveTab,
   } = useApp();
 
   const [activeMode, setActiveMode] = useState<'srs' | 'shadowing' | 'roleplay'>('srs');
@@ -50,7 +53,11 @@ export const TheDojo: React.FC = () => {
   // Mode A: Flashcards & SRS State
   const [srsDeckType, setSrsDeckType] = useState<'words' | 'mined'>('words');
   const [wordFilter, setWordFilter] = useState<'all' | 'learning' | 'known'>('all');
-  const [wordIndex, setWordIndex] = useState<number>(0);
+  // Word cards: a queue of word ids built once per session/filter (not re-sorted while you study).
+  const [srsMap, setSrsMap] = useState<WordSrsMap>(loadWordSrs);
+  const [wordQueue, setWordQueue] = useState<string[]>([]);
+  const [queueTotal, setQueueTotal] = useState<number>(0);
+  const [queueNonce, setQueueNonce] = useState<number>(0);
   const [srsIndex, setSrsIndex] = useState<number>(0);
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
   const [quizMode, setQuizMode] = useState<'cloze' | 'listening'>('cloze');
@@ -114,7 +121,49 @@ export const TheDojo: React.FC = () => {
     });
   }, [dictionaryWords, wordStates, wordFilter]);
 
-  const currentWord = filteredWords[wordIndex] || filteredWords[0];
+  // 'all' = today's review (due + a few new words); 'learning' / 'known' = browse those lists in a loop.
+  useEffect(() => {
+    const ids =
+      wordFilter === 'all'
+        ? buildReviewQueue(dictionaryWords.map((w) => w.id), loadWordSrs())
+        : filteredWords.map((w) => w.id);
+    setWordQueue(ids);
+    setQueueTotal(ids.length);
+    setIsRevealed(false);
+    // filteredWords is read once per rebuild on purpose: grading must not reshuffle the cards under you.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wordFilter, dictionaryWords.length, queueNonce]);
+
+  // One real example sentence per word (scripts/build-word-examples.mjs), loaded only when the Dojo opens.
+  const [examples, setExamples] = useState<Record<string, [string, string, string, number]> | null>(null);
+  useEffect(() => {
+    import('../data/word-examples.json')
+      .then((m) => setExamples(m.default as unknown as Record<string, [string, string, string, number]>))
+      .catch(() => setExamples({}));
+  }, []);
+  const exampleFor = (w: { id: string; lemma: string; reading_kana: string }) =>
+    examples?.[w.id.startsWith('g:') ? w.id.slice(2) : `${w.lemma}|${w.reading_kana}`];
+  const openExampleClip = (youtubeId: string) => {
+    const v = videos.find((x) => x.youtube_id === youtubeId);
+    if (!v) return;
+    setActiveVideoId(v.id);
+    setActiveTab('player');
+  };
+
+  const dueTodayCount = buildReviewQueue(dictionaryWords.map((w) => w.id), srsMap).length;
+  const currentWord = dictionaryWords.find((w) => w.id === wordQueue[0]);
+  const reviewedInQueue = queueTotal - wordQueue.length;
+  // Cards get harder as a word matures: read it → hear it → recall it from Thai (today's review only).
+  const cardStage: 'read' | 'listen' | 'recall' = (() => {
+    if (wordFilter !== 'all' || !currentWord) return 'read';
+    const ivl = srsMap[currentWord.id]?.ivl ?? 0;
+    return ivl >= 8 ? 'recall' : ivl >= 2 ? 'listen' : 'read';
+  })();
+  useEffect(() => {
+    if (currentWord && cardStage === 'listen' && !isRevealed) audioService.playJapanese(currentWord.lemma);
+    // play once when a listening card appears
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentWord?.id, cardStage]);
   const currentMined = minedSentences[srsIndex] || minedSentences[0];
 
   // Guaranteed native audio playback across all devices
@@ -281,24 +330,29 @@ export const TheDojo: React.FC = () => {
   };
 
   const handleWordGrade = (grade: 'again' | 'good' | 'easy') => {
-    if (currentWord) {
-      if (grade === 'again') {
-        setWordStatus(currentWord.id, 'learning');
-      } else if (grade === 'good') {
-        setWordStatus(currentWord.id, 'learning');
-        addXP('reading', 5);
-      } else if (grade === 'easy') {
-        setWordStatus(currentWord.id, 'known');
-        addXP('reading', 15);
-      }
-    }
-    setIsRevealed(false);
-    if (wordIndex < filteredWords.length - 1) {
-      setWordIndex((prev) => prev + 1);
+    if (!currentWord) return;
+    if (grade === 'again') {
+      setWordStatus(currentWord.id, 'learning');
+    } else if (grade === 'good') {
+      setWordStatus(currentWord.id, 'learning');
+      addXP('reading', 5);
     } else {
-      setWordIndex(0);
+      setWordStatus(currentWord.id, 'known');
+      addXP('reading', 15);
     }
+    const nextMap = { ...srsMap, [currentWord.id]: gradeWord(srsMap[currentWord.id], grade) };
+    setSrsMap(nextMap);
+    saveWordSrs(nextMap);
+    setIsRevealed(false);
+    setWordQueue((q) => {
+      const [head, ...rest] = q;
+      if (wordFilter !== 'all') return [...rest, head]; // browsing: rotate
+      if (grade === 'again') return [...rest.slice(0, AGAIN_GAP), head, ...rest.slice(AGAIN_GAP)];
+      return rest;
+    });
+    if (wordFilter === 'all' && grade === 'again') setQueueTotal((t) => t + 1);
   };
+
 
   // Scenarios for AI Roleplay
   const scenarios = [
@@ -542,14 +596,13 @@ Output exactly in this JSON format:
                 aria-pressed={wordFilter === 'all'}
                 onClick={() => {
                   setWordFilter('all');
-                  setWordIndex(0);
                   setIsRevealed(false);
                 }}
                 className={chipClass(wordFilter === 'all', 'bg-slate-200 border-slate-200 text-slate-900')}
               >
                 <span className="flex flex-col leading-tight">
-                  <span>ทั้งหมด</span>
-                  <span className="text-xs font-normal">{dictionaryWords.length} คำ</span>
+                  <span>ทบทวนวันนี้</span>
+                  <span className="text-xs font-normal">{dueTodayCount} คำ</span>
                 </span>
               </button>
               <button
@@ -557,7 +610,6 @@ Output exactly in this JSON format:
                 aria-pressed={wordFilter === 'learning'}
                 onClick={() => {
                   setWordFilter('learning');
-                  setWordIndex(0);
                   setIsRevealed(false);
                 }}
                 className={chipClass(wordFilter === 'learning', 'bg-amber-600 border-amber-500 text-white')}
@@ -572,7 +624,6 @@ Output exactly in this JSON format:
                 aria-pressed={wordFilter === 'known'}
                 onClick={() => {
                   setWordFilter('known');
-                  setWordIndex(0);
                   setIsRevealed(false);
                 }}
                 className={chipClass(wordFilter === 'known', 'bg-emerald-600 border-emerald-500 text-white')}
@@ -589,23 +640,37 @@ Output exactly in this JSON format:
           {srsDeckType === 'words' ? (
             /* WORDS VAULT DECK */
             <div className="space-y-3">
-              {filteredWords.length > 0 && renderProgress('คำที่', wordIndex, filteredWords.length)}
+              {currentWord && renderProgress(wordFilter === 'all' ? 'ทบทวนแล้ว' : 'คำที่', wordFilter === 'all' ? reviewedInQueue : 0, queueTotal)}
               <div className="rounded-3xl bg-slate-900/90 border-2 border-slate-800 shadow-2xl overflow-hidden p-4 sm:p-8 space-y-4">
                 {currentWord ? (
                   <>
-                    {/* Flashcard Body */}
+                    {/* Flashcard Body: front depends on the stage, back shows reading, meaning and a real example */}
                     <div className="py-2 sm:py-4 space-y-3 text-center">
-                      <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-slate-800/80 text-cyan-300 border border-slate-700">
-                        <span>{currentWord.jlpt_level}</span>
-                        {currentWord.part_of_speech && <span>• {currentWord.part_of_speech}</span>}
-                      </div>
-
-                      <p className="font-jp text-4xl sm:text-5xl font-extrabold text-white leading-relaxed tracking-wider">
-                        {currentWord.lemma}
+                      <p className="text-xs font-semibold text-slate-400">
+                        {cardStage === 'read' ? 'ดูคำ แล้วนึกความหมาย' : cardStage === 'listen' ? 'ฟังเสียง แล้วนึกความหมาย' : 'ดูความหมาย แล้วนึกคำภาษาญี่ปุ่น'}
                       </p>
 
+                      {cardStage === 'listen' && !isRevealed ? (
+                        <button
+                          type="button"
+                          onClick={() => playAudio(currentWord.lemma)}
+                          aria-label="ฟังอีกครั้ง"
+                          className="mx-auto w-24 h-24 rounded-full bg-rose-600/20 border-2 border-rose-500/50 text-rose-300 flex items-center justify-center active:opacity-80"
+                        >
+                          <Volume2 className="w-10 h-10" aria-hidden="true" />
+                        </button>
+                      ) : cardStage === 'recall' && !isRevealed ? (
+                        <p className="text-2xl sm:text-3xl font-bold text-emerald-300 leading-relaxed">
+                          {currentWord.core_meanings?.join(', ') || '—'}
+                        </p>
+                      ) : (
+                        <p className="font-jp text-4xl sm:text-5xl font-extrabold text-white leading-relaxed tracking-wider">
+                          {currentWord.lemma}
+                        </p>
+                      )}
+
                       {isRevealed && (
-                        <div className="space-y-2 pt-1 animate-in fade-in duration-150">
+                        <div className="space-y-3 pt-1 animate-in fade-in duration-150">
                           <div className="flex items-center justify-center gap-2">
                             <p className="text-lg font-jp text-indigo-300 font-bold">
                               {currentWord.reading_kana} {currentWord.romaji ? `(${currentWord.romaji})` : ''}
@@ -613,33 +678,44 @@ Output exactly in this JSON format:
                             <button
                               type="button"
                               onClick={() => playAudio(currentWord.lemma)}
-                              aria-label="ฟังอีกครั้ง"
+                              aria-label="ฟังคำนี้"
                               className="min-h-11 min-w-11 inline-flex items-center justify-center rounded-xl bg-slate-800 text-rose-300 hover:bg-slate-700 active:opacity-80 transition-colors"
                             >
                               <Volume2 className="w-4 h-4" aria-hidden="true" />
                             </button>
                           </div>
-                          <p className="text-lg sm:text-xl text-emerald-300 font-bold">
-                            🇹🇭 {currentWord.core_meanings?.join(', ') || 'ความหมายภาษาญี่ปุ่น'}
-                          </p>
-                          <div className="inline-block">
-                            <span
-                              className={`px-2.5 py-1 rounded-lg text-xs font-bold ${
-                                getWordStatus(currentWord.id) === 'known'
-                                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40'
-                                  : getWordStatus(currentWord.id) === 'learning'
-                                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
-                                  : 'bg-slate-800 text-slate-300 border border-slate-700'
-                              }`}
-                            >
-                              สถานะ:{' '}
-                              {getWordStatus(currentWord.id) === 'known'
-                                ? 'จำได้แล้ว'
-                                : getWordStatus(currentWord.id) === 'learning'
-                                ? 'กำลังเรียน'
-                                : 'ใหม่'}
-                            </span>
-                          </div>
+                          {cardStage !== 'recall' && (
+                            <p className="text-lg sm:text-xl text-emerald-300 font-bold">
+                              {currentWord.core_meanings?.join(', ') || '—'}
+                            </p>
+                          )}
+                          {(() => {
+                            const ex = exampleFor(currentWord);
+                            if (!ex) return null;
+                            return (
+                              <div className="text-left rounded-2xl bg-slate-950/70 border border-slate-800 p-3 space-y-1.5">
+                                <p className="text-xs font-semibold text-slate-400">ตัวอย่างจากคลิป</p>
+                                <p className="font-jp text-base text-slate-100 leading-relaxed">{ex[0]}</p>
+                                <p className="text-sm text-slate-400">{ex[1]}</p>
+                                <div className="flex gap-2 pt-1">
+                                  <button
+                                    type="button"
+                                    onClick={() => playAudio(ex[0])}
+                                    className="min-h-10 px-3 rounded-xl bg-slate-800 text-slate-200 text-sm font-semibold flex items-center gap-1.5 hover:bg-slate-700"
+                                  >
+                                    <Volume2 className="w-4 h-4" aria-hidden="true" /> ฟังประโยค
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => openExampleClip(ex[2])}
+                                    className="min-h-10 px-3 rounded-xl bg-slate-800 text-slate-200 text-sm font-semibold hover:bg-slate-700"
+                                  >
+                                    ดูในคลิป
+                                  </button>
+                                </div>
+                              </div>
+                            );
+                          })()}
                         </div>
                       )}
                     </div>
@@ -698,7 +774,22 @@ Output exactly in this JSON format:
                     )}
                   </>
                 ) : (
-                  <div className="text-center py-8 text-slate-300">ไม่พบคำศัพท์ในตัวกรองนี้</div>
+                  wordFilter === 'all' ? (
+                    <div className="text-center py-8 space-y-3">
+                      <p className="text-4xl" aria-hidden="true">🎉</p>
+                      <p className="text-lg font-bold text-white">ทบทวนครบแล้วสำหรับวันนี้</p>
+                      <p className="text-sm text-slate-400">คำที่ทบทวนแล้วจะกลับมาให้ทวนอีกตามรอบ (1, 2, 4, 8… วัน)</p>
+                      <button
+                        type="button"
+                        onClick={() => setQueueNonce((n) => n + 1)}
+                        className="min-h-12 px-5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-bold"
+                      >
+                        เรียนคำใหม่อีก {NEW_PER_SESSION} คำ
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="text-center py-8 text-slate-300">ยังไม่มีคำในกลุ่มนี้</div>
+                  )
                 )}
               </div>
             </div>

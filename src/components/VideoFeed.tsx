@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useApp, isResumableClip } from '../context/AppContext';
 import type { VideoRecord } from '../schema/databaseSchema';
 import { useLockBodyScroll } from '../utils/useLockBodyScroll';
+import { hasExplanations } from '../data/explanations';
+import { DAILY_GOAL_MIN, localDayKey } from '../utils/streak';
+import heroImg from '../assets/hero-street.webp';
 import {
   Play,
   Sparkles,
-  FolderHeart,
   CheckCircle2,
   Clock,
   BookOpen,
@@ -19,15 +21,13 @@ import {
 export const VideoFeed: React.FC = () => {
   const {
     videos,
+    stats,
     activeVideoId,
     setActiveVideoId,
     setActiveTab,
     getKnownWordPercentage,
     ensureWordIndexLoaded,
     wordIndexStatus,
-    albums,
-    createAlbum,
-    addVideoToAlbum,
     removeCustomVideo,
     isCustomVideo,
   } = useApp();
@@ -38,13 +38,8 @@ export const VideoFeed: React.FC = () => {
   useLockBodyScroll(!!pendingDelete);
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
   const [selectedJLPT, setSelectedJLPT] = useState<string>('All');
-  const [selectedAlbum, setSelectedAlbum] = useState<string>('All');
   const [comprehensibleOnly, setComprehensibleOnly] = useState<boolean>(false);
-  const [showNewAlbumModal, setShowNewAlbumModal] = useState<boolean>(false);
-  useLockBodyScroll(showNewAlbumModal);
-  const [newAlbumName, setNewAlbumName] = useState('');
-  const [newAlbumEmoji, setNewAlbumEmoji] = useState('📁');
-  // Category + album filters live in a bottom sheet; only level chips stay on the page.
+  // Category filter lives in a bottom sheet; only level chips stay on the page.
   const [showFilters, setShowFilters] = useState<boolean>(false);
   useLockBodyScroll(showFilters);
 
@@ -73,14 +68,10 @@ export const VideoFeed: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Filter videos based on category, JLPT level, album, and comprehensible threshold
+  // Filter videos by category, JLPT level and the "easy to understand" threshold
   const filteredVideos = videos.filter((v) => {
     if (selectedCategory !== 'All' && v.category !== selectedCategory) return false;
     if (selectedJLPT !== 'All' && v.primary_jlpt !== selectedJLPT) return false;
-    if (selectedAlbum !== 'All') {
-      const alb = albums.find((a) => a.id === selectedAlbum);
-      if (alb && !alb.video_ids.includes(v.id)) return false;
-    }
     if (comprehensibleOnly) {
       // Same function as the card. Not-yet-loaded (null) clips are excluded until their captions arrive.
       const knownPct = getKnownWordPercentage(v.id);
@@ -93,8 +84,13 @@ export const VideoFeed: React.FC = () => {
   const waitingCaptions =
     comprehensibleOnly && (wordIndexStatus === 'idle' || wordIndexStatus === 'loading');
 
+  const todayMin = Math.floor(stats.daily_minutes?.[localDayKey(new Date())] ?? 0);
+  const goalPct = Math.min(100, Math.round((todayMin / DAILY_GOAL_MIN) * 100));
+  const hour = new Date().getHours();
+  const greeting = hour < 11 ? 'おはよう！ อรุณสวัสดิ์' : hour < 17 ? 'こんにちは！ สวัสดีตอนบ่าย' : 'こんばんは！ สวัสดีตอนเย็น';
+
   const resumeVideo = isResumableClip(activeVideoId) ? videos.find((v) => v.id === activeVideoId) : undefined;
-  const extraFilterCount = (selectedCategory !== 'All' ? 1 : 0) + (selectedAlbum !== 'All' ? 1 : 0);
+  const extraFilterCount = selectedCategory !== 'All' ? 1 : 0;
 
   const handleSelectVideo = (videoId: string) => {
     setActiveVideoId(videoId);
@@ -103,6 +99,34 @@ export const VideoFeed: React.FC = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6 animate-in fade-in duration-300">
+      {/* Welcome banner: greeting, today's goal, streak */}
+      <section className="relative overflow-hidden rounded-3xl h-44 sm:h-56 bg-slate-900">
+        <img src={heroImg} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/50 to-transparent" />
+        <div className="relative h-full p-4 sm:p-6 flex flex-col justify-end gap-2">
+          <p className="text-sm font-semibold text-amber-200 font-jp">{greeting}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-white leading-tight">
+            {todayMin >= DAILY_GOAL_MIN ? 'ถึงเป้าวันนี้แล้ว เก่งมาก! 🎉' : 'วันนี้ดูคลิปญี่ปุ่นกันสักตอน'}
+          </h1>
+          <div className="flex items-center gap-3">
+            <div className="flex-1 max-w-xs">
+              <div className="flex justify-between text-xs text-slate-300 mb-1">
+                <span>เป้าวันนี้</span>
+                <span className="font-mono">
+                  {Math.min(todayMin, DAILY_GOAL_MIN)}/{DAILY_GOAL_MIN} นาที
+                </span>
+              </div>
+              <div className="h-2 rounded-full bg-white/15 overflow-hidden" role="progressbar" aria-valuenow={goalPct} aria-valuemin={0} aria-valuemax={100} aria-label="เป้าดูคลิปวันนี้">
+                <div className="h-full rounded-full bg-gradient-to-r from-amber-400 to-rose-500 transition-all" style={{ width: `${goalPct}%` }} />
+              </div>
+            </div>
+            <span className="shrink-0 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-sm text-sm font-bold text-amber-300">
+              🔥 {stats.streak_days} วัน
+            </span>
+          </div>
+        </div>
+      </section>
+
       {/* Continue watching: the last opened clip */}
       {resumeVideo && (
         <button
@@ -180,12 +204,8 @@ export const VideoFeed: React.FC = () => {
         <div className="flex items-center gap-2 text-xs text-slate-400 -mt-2">
           <span>กรองอยู่:</span>
           {selectedCategory !== 'All' && <span className="text-slate-200">{categories.find((c) => c.id === selectedCategory)?.label}</span>}
-          {selectedAlbum !== 'All' && <span className="text-slate-200">{albums.find((a) => a.id === selectedAlbum)?.name}</span>}
           <button
-            onClick={() => {
-              setSelectedCategory('All');
-              setSelectedAlbum('All');
-            }}
+            onClick={() => setSelectedCategory('All')}
             className="ml-auto min-h-9 px-2 text-indigo-300 font-semibold"
           >
             ล้าง
@@ -255,10 +275,17 @@ export const VideoFeed: React.FC = () => {
                   {(video.duration % 60).toString().padStart(2, '0')}
                 </div>
 
-                {/* JLPT badge */}
-                <span className="absolute top-2 left-2 px-2 py-0.5 rounded-md text-xs font-bold bg-black/75 text-white backdrop-blur-md">
-                  {video.primary_jlpt}
-                </span>
+                {/* JLPT badge + "has line explanations" badge */}
+                <div className="absolute top-2 left-2 flex items-center gap-1">
+                  <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-black/75 text-white backdrop-blur-md">
+                    {video.primary_jlpt}
+                  </span>
+                  {hasExplanations(video.youtube_id) && (
+                    <span className="px-1.5 py-0.5 rounded-md text-xs font-bold bg-amber-400/90 text-slate-950" title="มีคำอธิบายประโยค">
+                      💡 อธิบาย
+                    </span>
+                  )}
+                </div>
               </div>
 
               {/* Card meta: title, channel, known-word share */}
@@ -295,7 +322,7 @@ export const VideoFeed: React.FC = () => {
         )}
       </div>
 
-      {/* Filter sheet: category + album (less used, so off the main page) */}
+      {/* Filter sheet: category (less used, so off the main page) */}
       {showFilters && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-slate-950/70 backdrop-blur-sm" onClick={() => setShowFilters(false)}>
           <div
@@ -325,43 +352,6 @@ export const VideoFeed: React.FC = () => {
                     {cat.label}
                   </button>
                 ))}
-              </div>
-            </div>
-            <div className="space-y-2">
-              <p className="text-sm font-semibold text-slate-300 flex items-center gap-1.5">
-                <FolderHeart className="w-4 h-4 text-rose-400" /> อัลบั้มของฉัน
-              </p>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  onClick={() => setSelectedAlbum('All')}
-                  aria-pressed={selectedAlbum === 'All'}
-                  className={`px-3.5 min-h-10 rounded-full text-sm font-semibold transition-colors ${
-                    selectedAlbum === 'All' ? 'bg-slate-100 text-slate-900' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                  }`}
-                >
-                  ทั้งหมด
-                </button>
-                {albums.map((alb) => (
-                  <button
-                    key={alb.id}
-                    onClick={() => setSelectedAlbum(alb.id)}
-                    aria-pressed={selectedAlbum === alb.id}
-                    className={`px-3.5 min-h-10 rounded-full text-sm font-semibold transition-colors ${
-                      selectedAlbum === alb.id ? 'bg-slate-100 text-slate-900' : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                    }`}
-                  >
-                    {alb.emoji} {alb.name}
-                  </button>
-                ))}
-                <button
-                  onClick={() => {
-                    setShowFilters(false);
-                    setShowNewAlbumModal(true);
-                  }}
-                  className="px-3.5 min-h-10 rounded-full text-sm font-semibold border border-dashed border-slate-600 text-slate-300 hover:bg-slate-800"
-                >
-                  + สร้างอัลบั้ม
-                </button>
               </div>
             </div>
             <button
@@ -417,94 +407,6 @@ export const VideoFeed: React.FC = () => {
         </div>
       )}
 
-      {/* Create New Album Modal (BUG-10) */}
-      {showNewAlbumModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 pt-[calc(1rem_+_var(--sat))] bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-150">
-          <div className="w-full max-w-sm rounded-3xl bg-slate-900 border-2 border-indigo-500/40 p-6 shadow-2xl space-y-5 animate-in zoom-in-95">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-800">
-              <div className="flex items-center gap-2 text-white font-bold text-sm">
-                <FolderHeart className="w-4 h-4 text-rose-400" />
-                <span>สร้างอัลบั้มคอลเลกชันใหม่</span>
-              </div>
-              <button
-                onClick={() => setShowNewAlbumModal(false)}
-                className="p-1 rounded-xl text-slate-400 hover:text-white hover:bg-slate-800"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-
-            <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                if (!newAlbumName.trim()) return;
-                createAlbum(newAlbumName.trim(), newAlbumEmoji || '📁');
-                setNewAlbumName('');
-                setNewAlbumEmoji('📁');
-                setShowNewAlbumModal(false);
-              }}
-              className="space-y-4"
-            >
-              {/* Emoji selector */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300 block">
-                  เลือกไอคอน Emoji ประจำอัลบั้ม:
-                </label>
-                <div className="flex items-center gap-2 flex-wrap">
-                  {['📁', '🌟', '🍜', '🎮', '🌸', '☕', '⚔️', '🏮', '🎧', '🗼'].map((em) => (
-                    <button
-                      key={em}
-                      type="button"
-                      onClick={() => setNewAlbumEmoji(em)}
-                      className={`w-9 h-9 rounded-xl text-lg flex items-center justify-center transition-all ${
-                        newAlbumEmoji === em
-                          ? 'bg-indigo-600 scale-110 shadow-md ring-2 ring-indigo-400'
-                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                      }`}
-                    >
-                      {em}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Name Input */}
-              <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-slate-300 block">
-                  ชื่ออัลบั้ม:
-                </label>
-                <input
-                  type="text"
-                  placeholder="เช่น คลิปที่ชอบดูซ้ำ, ร้านอาหารโตเกียว..."
-                  value={newAlbumName}
-                  onChange={(e) => setNewAlbumName(e.target.value)}
-                  className="w-full px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 font-medium"
-                  autoFocus
-                  required
-                />
-              </div>
-
-              {/* Action buttons */}
-              <div className="flex items-center justify-end gap-2 pt-2">
-                <button
-                  type="button"
-                  onClick={() => setShowNewAlbumModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-400 hover:bg-slate-800"
-                >
-                  ยกเลิก
-                </button>
-                <button
-                  type="submit"
-                  disabled={!newAlbumName.trim()}
-                  className="px-5 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-lg shadow-indigo-600/30 transition-all active:scale-95 disabled:opacity-50"
-                >
-                  สร้างอัลบั้ม
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
     </div>
   );
 };

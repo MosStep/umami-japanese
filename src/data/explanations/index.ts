@@ -29,6 +29,9 @@ interface ExplanationFile {
 }
 
 const loaders = import.meta.glob('./*.json') as Record<string, () => Promise<{ default: ExplanationFile }>>;
+/** Whether this clip ships any explanations (known without loading the file). */
+export const hasExplanations = (youtubeId: string): boolean => `./${youtubeId}.json` in loaders;
+
 const cache = new Map<string, Promise<Record<string, LineExplanation>>>();
 
 export const loadExplanations = (youtubeId: string): Promise<Record<string, LineExplanation>> => {

@@ -96,7 +96,7 @@ export const linkWordIndexKey = (key: string): DictionaryWordRecord | undefined 
   return linkDictionaryEntry(DICT_BY_LEMMA, key.slice(0, cut), key.slice(cut + 1));
 };
 
-const glossaryFor = (lemma: string, reading: string): string[] | undefined => {
+export const glossaryFor = (lemma: string, reading: string): string[] | undefined => {
   const text = glossary?.[`${lemma}|${reading}`];
   if (!text) return undefined;
   const parts = text.split(', ').map((s) => s.trim()).filter(Boolean);
@@ -128,6 +128,13 @@ const splitJapanese = (text: string): string[] =>
   text
     .split(/[\s、。！？!?,.「」『』（）()［］\[\]【】…・〜~"'“”‘’:：;；]+/)
     .filter((part) => part.length > 0 && /[\p{L}\p{N}]/u.test(part));
+
+/**
+ * Stable id for a caption word that has no dictionary entry: the same word in any clip shares one id, so
+ * "จำได้ / กำลังเรียน" follows the word (known %, flashcards). Format: g:<lemma>|<reading> (= word-index key).
+ */
+export const GLOSS_ID_PREFIX = 'g:';
+export const glossWordId = (lemma: string, reading: string): string => `${GLOSS_ID_PREFIX}${lemma}|${reading}`;
 
 const fallbackTokens = (lineId: string, ja: string, jlpt: JLPTLevel): SubtitleTokenJSON[] =>
   splitJapanese(ja).map((surface, tokenIndex) => ({
@@ -182,7 +189,7 @@ const tokensFromRaw = (lineId: string, raw: RawCaptionToken[], jlpt: JLPTLevel):
       const gloss = glossaryFor(lemma, reading);
       return {
         ...base,
-        word_id: `${lineId}-${tokenIndex}`,
+        word_id: lemma ? glossWordId(lemma, reading) : `${lineId}-${tokenIndex}`,
         reading_kana: reading,
         romaji,
         jlpt_level: jlpt,
