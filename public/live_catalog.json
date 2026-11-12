@@ -1,18 +1,18 @@
 {
-  "version": "1.0.18",
-  "build": 118,
+  "version": "1.0.19",
+  "build": 119,
   "min_native_build": 113,
-  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.18/web-bundle-1.0.18.zip",
-  "updated_at": "2026-11-11T14:00:00.000Z",
+  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.19/web-bundle-1.0.19.zip",
+  "updated_at": "2026-11-12T12:00:00.000Z",
   "words_count": 125,
-  "videos_count": 86,
-  "announcement": "🎌 v1.0.18: ซับญี่ปุ่นคลิปอนิเมะตรงกับคำแปลไทยและเสียงพูดแล้ว",
+  "videos_count": 98,
+  "announcement": "🍜 v1.0.19: อนิเมะแนวชีวิตประจำวันใหม่ 12 ตอน ใช้ภาษาญี่ปุ่นจริงในชีวิตได้",
   "release_notes": [
-    "🎌 คลิปอนิเมะ 12 คลิป: ซับญี่ปุ่นจัดใหม่ตามจังหวะซับไทย ขึ้นพร้อมกันตรงกับปาก",
-    "🧩 ไม่มีบรรทัดญี่ปุ่นว่างเปล่าแล้ว ช่วงที่ไม่มีซับญี่ปุ่นจะบอกไว้ชัด ๆ",
+    "🍜 อนิเมะแนวชีวิตประจำวัน 12 ตอน 6 เรื่อง: ร้านราเมง ออฟฟิศ โรงเรียน ครอบครัว กอล์ฟ",
+    "🗣️ ภาษาที่ใช้คุยกันจริง ส่วนใหญ่ระดับ N4–N3 พร้อมซับไทยทุกบรรทัด",
     "⚡ อัปเดตนี้ติดตั้งในแอปทันที"
   ],
   "update_type": "apk",
   "apk_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.13/umami-app-debug.apk",
-  "checksum": "e7e2f9fce3e8a45cffdf00371e2c660bd9aba683c221c4369cfdfe389ef283ef"
+  "checksum": "b3eafe8e2c4f31a88297584c21ffcbf478d31f55c42a56852db292dd1bd4681f"
 }
