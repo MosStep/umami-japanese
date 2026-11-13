@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useApp, AIProvider } from '../context/AppContext';
 import { APP_VERSION, APP_BUILD } from '../config/version';
 import { useLockBodyScroll } from '../utils/useLockBodyScroll';
+import { BackupReminderSettings } from './BackupReminderSettings';
 import {
   X,
   Key,
@@ -68,7 +69,7 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
         </div>
 
         {/* Content */}
-        <form onSubmit={handleSave} className="p-5 space-y-5">
+        <form onSubmit={handleSave} className="p-5 space-y-5 overflow-y-auto overscroll-contain max-h-[calc(100dvh_-_7rem_-_var(--sat))]">
           {/* App Version & Auto-Update Section */}
           {onOpenUpdate && (
             <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center justify-between">
@@ -93,6 +94,8 @@ export const SettingsModal: React.FC<Props> = ({ onOpenUpdate }) => {
               </button>
             </div>
           )}
+
+          <BackupReminderSettings />
 
           {/* AI for the roleplay chat: rarely changed, so folded away */}
           <details className="group rounded-xl border border-slate-800 bg-slate-950/50">

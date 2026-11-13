@@ -60,3 +60,15 @@ export const buildReviewQueue = (
   const fresh = wordIds.filter((id) => !srs[id]).slice(0, newCount);
   return [...due, ...fresh];
 };
+
+/** Words due by `at` (already reviewed at least once) and words never reviewed, for the feed card and reminders. */
+export const countDue = (wordIds: string[], srs: WordSrsMap, at = Date.now()): { due: number; fresh: number } => {
+  let due = 0;
+  let fresh = 0;
+  for (const id of wordIds) {
+    const r = srs[id];
+    if (!r) fresh++;
+    else if (r.due <= at) due++;
+  }
+  return { due, fresh: Math.min(fresh, NEW_PER_SESSION) };
+};

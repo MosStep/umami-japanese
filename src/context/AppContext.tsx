@@ -24,7 +24,7 @@ import {
 } from '../data/captions';
 import { STORAGE_KEYS } from '../config/storageKeys';
 import { runMigration108 } from '../utils/migration108';
-import { localDayKey, nextStreak } from '../utils/streak';
+import { advanceStudyStreak, currentStudyStreak, freezeAvailable, isStudyDay, localDayKey } from '../utils/streak';
 import { runMigrationAi } from '../utils/migrationAi';
 
 // One-time 1.0.8 cleanup (seeded demo stats/words/cards, broken imported clips). Runs at module load,
@@ -47,6 +47,14 @@ export interface UserStats {
   // Per local day (YYYY-MM-DD): watched minutes and XP earned. Last 90 days kept; drives the daily goal and week view.
   daily_minutes?: Record<string, number>;
   daily_xp?: Record<string, number>;
+  // Flashcards graded per local day (word + sentence decks).
+  daily_reviews?: Record<string, number>;
+  // Study streak (1.0.24+): streak_days counts days with real study (see utils/streak.ts isStudyDay).
+  last_study_day?: string;
+  // Days bridged by a streak freeze (YYYY-MM-DD, newest last).
+  freeze_days?: string[];
+  // Set once the old app-open streak was carried over into the study streak.
+  streak_v2?: boolean;
 }
 
 /** Adds `amount` to today's entry of a per-day map, keeping only the newest 90 days. */
@@ -128,6 +136,14 @@ interface AppContextType {
   stats: UserStats;
   addXP: (type: 'viewing' | 'reading' | 'listening' | 'shadowing', amount: number) => void;
   addImmersionSeconds: (seconds: number) => void;
+  /** Counts one graded flashcard for today's study goal. */
+  recordReview: () => void;
+  /** Study streak to show today (0 once it is broken). */
+  streak: number;
+  /** Today already counts for the streak. */
+  studiedToday: boolean;
+  /** A freeze can still cover one missed day this week. */
+  hasFreeze: boolean;
 
   // AI & External API Settings (Tenixe / Kob AI / Local)
   aiProvider: AIProvider;
@@ -300,7 +316,14 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [stats, setStats] = useState<UserStats>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEYS.STATS);
-      if (saved) return JSON.parse(saved);
+      if (saved) {
+        const parsed = JSON.parse(saved) as UserStats;
+        // 1.0.24: keep the old app-open streak once, as if those days were study days.
+        if (!parsed.streak_v2) {
+          return { ...parsed, last_study_day: parsed.last_study_day ?? parsed.last_active_day, streak_v2: true };
+        }
+        return parsed;
+      }
     } catch {}
     return {
       streak_days: 0,
@@ -309,6 +332,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       xp_reading: 0,
       xp_listening: 0,
       xp_shadowing: 0,
+      streak_v2: true,
     };
   });
 
@@ -492,7 +516,31 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   };
 
-  // Counts one day of app use: streak +1 on the next consecutive local day, restart at 1 after a gap.
+  const recordReview = () => {
+    setStats((prev) => ({ ...prev, daily_reviews: bumpToday(prev.daily_reviews, 1) }));
+  };
+
+  // Study streak: once today's minutes/reviews reach the study threshold, today joins the streak.
+  const todayKey = localDayKey(new Date());
+  const studiedToday = isStudyDay(stats.daily_minutes?.[todayKey], stats.daily_reviews?.[todayKey]);
+  useEffect(() => {
+    if (!studiedToday) return;
+    setStats((prev) => {
+      if (prev.last_study_day === todayKey) return prev;
+      const next = advanceStudyStreak(
+        { streak: prev.streak_days, lastStudyDay: prev.last_study_day, freezeDays: prev.freeze_days },
+        todayKey,
+      );
+      return { ...prev, streak_days: next.streak, last_study_day: next.lastStudyDay, freeze_days: next.freezeDays };
+    });
+  }, [studiedToday, todayKey]);
+  const streak = currentStudyStreak(
+    { streak: stats.streak_days, lastStudyDay: stats.last_study_day, freezeDays: stats.freeze_days },
+    todayKey,
+  );
+  const hasFreeze = freezeAvailable(stats.freeze_days, todayKey);
+
+  // Records the last day the app was opened (the streak itself now follows study days).
   // The last-active day lives inside the stats object (one write with the streak). A legacy separate key
   // from 1.0.8 test builds is read once when the stats do not have it yet, and removed after it is persisted.
   const recordDailyActivity = () => {
@@ -502,14 +550,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const legacyLast = localStorage.getItem(STORAGE_KEYS.LAST_ACTIVE_DAY);
       setStats((prev) => {
         const last = prev.last_active_day ?? legacyLast;
-        if (last === today) {
-          return prev.last_active_day === today ? prev : { ...prev, last_active_day: today };
-        }
-        return {
-          ...prev,
-          streak_days: nextStreak(prev.streak_days, last ?? null, today, now),
-          last_active_day: today,
-        };
+        if (last === today && prev.last_active_day === today) return prev;
+        return { ...prev, last_active_day: today };
       });
     } catch {}
   };
@@ -558,6 +600,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const updateSRSReview = (minedId: string, grade: 'again' | 'hard' | 'good' | 'easy') => {
+    recordReview();
     setMinedSentences((prev) =>
       prev.map((card) => {
         if (card.id !== minedId) return card;
@@ -933,6 +976,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         stats,
         addXP,
         addImmersionSeconds,
+        recordReview,
+        streak,
+        studiedToday,
+        hasFreeze,
         aiProvider,
         setAiProvider,
         apiKey,

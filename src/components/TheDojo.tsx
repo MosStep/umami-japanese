@@ -41,6 +41,7 @@ export const TheDojo: React.FC = () => {
     setWordStatus,
     getWordStatus,
     addXP,
+    recordReview,
     callAICompletion,
     aiProvider,
     aiModel,
@@ -331,6 +332,7 @@ export const TheDojo: React.FC = () => {
 
   const handleWordGrade = (grade: 'again' | 'good' | 'easy') => {
     if (!currentWord) return;
+    recordReview();
     if (grade === 'again') {
       setWordStatus(currentWord.id, 'learning');
     } else if (grade === 'good') {

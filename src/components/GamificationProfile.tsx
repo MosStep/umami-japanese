@@ -1,6 +1,6 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { DAILY_GOAL_MIN, localDayKey } from '../utils/streak';
+import { DAILY_GOAL_MIN, STUDY_MIN_MINUTES, STUDY_MIN_REVIEWS, isStudyDay, localDayKey } from '../utils/streak';
 import mascotImg from '../assets/mascot-fox.webp';
 import { BookOpen, Eye, Headphones, Mic, TrendingUp, Trophy, Lock } from 'lucide-react';
 
@@ -20,7 +20,7 @@ const lastDays = (n: number): Date[] => {
 };
 
 export const GamificationProfile: React.FC = () => {
-  const { stats, wordStates, minedSentences, setActiveTab } = useApp();
+  const { stats, wordStates, minedSentences, setActiveTab, streak, studiedToday, hasFreeze } = useApp();
 
   const knownWords = Object.values(wordStates).filter((s) => s === 'known').length;
   const learningWords = Object.values(wordStates).filter((s) => s === 'learning').length;
@@ -35,29 +35,33 @@ export const GamificationProfile: React.FC = () => {
   const goalPct = Math.min(100, Math.round((todayMin / DAILY_GOAL_MIN) * 100));
   const goalDone = todayMin >= DAILY_GOAL_MIN;
 
-  // Days inside the current streak (ending on the last active day) count as active even before per-day data existed.
+  // Days inside the current streak (ending on the last study day) count as studied even before per-day data existed.
   const streakDays = new Set<string>();
-  if (stats.last_active_day && stats.streak_days > 0) {
-    const [y, m, d] = stats.last_active_day.split('-').map(Number);
-    for (let i = 0; i < Math.min(stats.streak_days, 7); i++) streakDays.add(localDayKey(new Date(y, m - 1, d - i)));
+  const freezeDays = new Set(stats.freeze_days ?? []);
+  if (stats.last_study_day && streak > 0) {
+    const [y, m, d] = stats.last_study_day.split('-').map(Number);
+    for (let i = 0; i < Math.min(streak, 7); i++) streakDays.add(localDayKey(new Date(y, m - 1, d - i)));
   }
   const week = lastDays(7).map((d) => {
     const key = localDayKey(d);
-    const active = streakDays.has(key) || (stats.daily_minutes?.[key] ?? 0) >= 1 || (stats.daily_xp?.[key] ?? 0) > 0;
-    return { key, label: WEEKDAY_TH[d.getDay()], active, today: key === todayKey };
+    const frozen = freezeDays.has(key);
+    const active = !frozen && (streakDays.has(key) || isStudyDay(stats.daily_minutes?.[key], stats.daily_reviews?.[key]));
+    return { key, label: WEEKDAY_TH[d.getDay()], active, frozen, today: key === todayKey };
   });
 
   const mascotLine = goalDone
     ? 'วันนี้ถึงเป้าแล้ว เก่งมาก! พรุ่งนี้มาต่อกันนะ'
-    : stats.streak_days > 1
-    ? `ต่อเนื่องมา ${stats.streak_days} วันแล้ว ดูอีก ${DAILY_GOAL_MIN - todayMin} นาทีก็ถึงเป้าวันนี้!`
+    : streak > 1 && !studiedToday
+    ? `ต่อเนื่องมา ${streak} วันแล้ว ดูอีก ${Math.max(1, STUDY_MIN_MINUTES - todayMin)} นาที หรือทบทวน ${STUDY_MIN_REVIEWS} คำ เพื่อรักษาไว้!`
+    : streak > 1
+    ? `ต่อเนื่องมา ${streak} วันแล้ว ดูอีก ${DAILY_GOAL_MIN - todayMin} นาทีก็ถึงเป้าวันนี้!`
     : `ดูคลิปวันละ ${DAILY_GOAL_MIN} นาที แล้วภาษาญี่ปุ่นจะค่อย ๆ ติดหูเอง`;
 
   // Milestones: each shows progress toward its target.
   const milestones = [
-    { title: 'เรียนต่อเนื่อง 3 วัน', value: stats.streak_days, target: 3, emoji: '🔥' },
-    { title: 'เรียนต่อเนื่อง 7 วัน', value: stats.streak_days, target: 7, emoji: '🔥' },
-    { title: 'เรียนต่อเนื่อง 30 วัน', value: stats.streak_days, target: 30, emoji: '🏮' },
+    { title: 'เรียนต่อเนื่อง 3 วัน', value: streak, target: 3, emoji: '🔥' },
+    { title: 'เรียนต่อเนื่อง 7 วัน', value: streak, target: 7, emoji: '🔥' },
+    { title: 'เรียนต่อเนื่อง 30 วัน', value: streak, target: 30, emoji: '🏮' },
     { title: 'จำได้ 10 คำ', value: knownWords, target: 10, emoji: '📗' },
     { title: 'จำได้ 100 คำ', value: knownWords, target: 100, emoji: '📚' },
     { title: 'ดูคลิปรวม 60 นาที', value: minutes, target: 60, emoji: '🎬' },
@@ -130,19 +134,23 @@ export const GamificationProfile: React.FC = () => {
 
         <div>
           <div className="flex items-center justify-between mb-2">
-            <p className="text-sm font-semibold text-slate-200">🔥 เรียนต่อเนื่อง {stats.streak_days} วัน</p>
-            <p className="text-xs text-slate-500">7 วันล่าสุด</p>
+            <p className="text-sm font-semibold text-slate-200">🔥 เรียนต่อเนื่อง {streak} วัน</p>
+            <p className="text-xs text-slate-500">{hasFreeze ? '🧊 พักได้ 1 วัน' : '🧊 ใช้วันพักแล้ว'}</p>
           </div>
           <div className="grid grid-cols-7 gap-1.5">
             {week.map((d) => (
               <div key={d.key} className="flex flex-col items-center gap-1">
                 <div
                   className={`w-9 h-9 rounded-full grid place-items-center text-base ${
-                    d.active ? 'bg-amber-500/20 border border-amber-400/60' : 'bg-slate-800 border border-slate-700'
+                    d.active
+                      ? 'bg-amber-500/20 border border-amber-400/60'
+                      : d.frozen
+                      ? 'bg-sky-500/15 border border-sky-400/50'
+                      : 'bg-slate-800 border border-slate-700'
                   } ${d.today ? 'ring-2 ring-indigo-400 ring-offset-2 ring-offset-slate-900' : ''}`}
-                  aria-label={`${d.label} ${d.active ? 'เรียนแล้ว' : 'ยังไม่ได้เรียน'}`}
+                  aria-label={`${d.label} ${d.active ? 'เรียนแล้ว' : d.frozen ? 'ใช้วันพัก' : 'ยังไม่ได้เรียน'}`}
                 >
-                  {d.active ? '🔥' : ''}
+                  {d.active ? '🔥' : d.frozen ? '🧊' : ''}
                 </div>
                 <span className={`text-[11px] ${d.today ? 'text-indigo-300 font-bold' : 'text-slate-500'}`}>{d.label}</span>
               </div>

@@ -8,6 +8,10 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
   },
   plugins: {
+    LocalNotifications: {
+      smallIcon: 'ic_stat_umami',
+      iconColor: '#A855F7',
+    },
     CapacitorUpdater: {
       autoUpdate: false,
       appReadyTimeout: 10000,

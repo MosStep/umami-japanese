@@ -21,6 +21,7 @@ import {
   markBundleReady,
   shouldSkipBackgroundOta,
 } from './utils/otaUpdater';
+import { REMINDERS_CHANGED_EVENT, onReminderTap, syncReminders } from './utils/reminders';
 
 const OtaReadyToast: React.FC<{ version: string; onRestart: () => void; onDismiss: () => void }> = ({
   version,
@@ -51,7 +52,7 @@ const OtaReadyToast: React.FC<{ version: string; onRestart: () => void; onDismis
 );
 
 export const App: React.FC = () => {
-  const { activeTab } = useApp();
+  const { activeTab, setActiveTab, dictionaryWords, streak, studiedToday } = useApp();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [otaReady, setOtaReady] = useState<{ bundle: BundleInfo | null; version: string } | null>(null);
   const launchCheckStarted = useRef(false);
@@ -62,6 +63,33 @@ export const App: React.FC = () => {
     const timer = window.setTimeout(() => void markBundleReady(), 2500);
     return () => window.clearTimeout(timer);
   }, []);
+
+  // Daily reminders: rescheduled with fresh due counts on launch, when the app goes to the background,
+  // and after the settings change. A tapped reminder opens the practice tab.
+  const reminderCtx = useRef({ wordIds: [] as string[], streak: 0, studiedToday: false });
+  reminderCtx.current = { wordIds: dictionaryWords.map((w) => w.id), streak, studiedToday };
+  useEffect(() => {
+    const sync = () => void syncReminders(reminderCtx.current);
+    const timer = window.setTimeout(sync, 4000);
+    const onHidden = () => {
+      if (document.visibilityState === 'hidden') sync();
+    };
+    document.addEventListener('visibilitychange', onHidden);
+    window.addEventListener(REMINDERS_CHANGED_EVENT, sync);
+    const stopTap = onReminderTap((tab) => setActiveTab(tab));
+    return () => {
+      window.clearTimeout(timer);
+      document.removeEventListener('visibilitychange', onHidden);
+      window.removeEventListener(REMINDERS_CHANGED_EVENT, sync);
+      stopTap();
+    };
+    // setActiveTab is stable enough for a tap handler; the context ref carries the latest values.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  // Studying today removes today's reminder right away.
+  useEffect(() => {
+    if (studiedToday) void syncReminders(reminderCtx.current);
+  }, [studiedToday]);
 
   // Each tab opens at its top (the shared scroller would otherwise keep the previous tab's position).
   useEffect(() => {

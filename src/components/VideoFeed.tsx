@@ -3,7 +3,9 @@ import { useApp, isResumableClip } from '../context/AppContext';
 import type { VideoRecord } from '../schema/databaseSchema';
 import { useLockBodyScroll } from '../utils/useLockBodyScroll';
 import { hasExplanations } from '../data/explanations';
-import { DAILY_GOAL_MIN, localDayKey } from '../utils/streak';
+import { DAILY_GOAL_MIN, STUDY_MIN_MINUTES, STUDY_MIN_REVIEWS, dayDiff, localDayKey } from '../utils/streak';
+import { countDue, loadWordSrs } from '../utils/wordSrs';
+import { lastBackupDay } from '../utils/backup';
 import heroImg from '../assets/hero-street.webp';
 import {
   Play,
@@ -30,6 +32,11 @@ export const VideoFeed: React.FC = () => {
     wordIndexStatus,
     removeCustomVideo,
     isCustomVideo,
+    dictionaryWords,
+    wordStates,
+    streak,
+    studiedToday,
+    setShowSettingsModal,
   } = useApp();
 
   // User-imported clip waiting for delete confirmation
@@ -90,6 +97,32 @@ export const VideoFeed: React.FC = () => {
   const greeting = hour < 11 ? 'おはよう！ อรุณสวัสดิ์' : hour < 17 ? 'こんにちは！ สวัสดีตอนบ่าย' : 'こんばんは！ สวัสดีตอนเย็น';
 
   const resumeVideo = isResumableClip(activeVideoId) ? videos.find((v) => v.id === activeVideoId) : undefined;
+
+  // "Today" card: due words, one clip (resume, else a well-fitting one), streak status, backup nudge.
+  const [srsSnapshot] = useState(loadWordSrs);
+  const { due: dueWords, fresh: freshWords } = countDue(dictionaryWords.map((w) => w.id), srsSnapshot);
+  const todayKey = localDayKey(new Date());
+  const todayReviews = stats.daily_reviews?.[todayKey] ?? 0;
+  const minLeft = Math.max(1, Math.ceil(STUDY_MIN_MINUTES - (stats.daily_minutes?.[todayKey] ?? 0)));
+  const reviewsLeft = Math.max(1, STUDY_MIN_REVIEWS - todayReviews);
+  const suggestedVideo =
+    resumeVideo ??
+    (() => {
+      let best: VideoRecord | undefined;
+      let bestPct = -1;
+      for (const v of videos) {
+        const pct = getKnownWordPercentage(v.id);
+        if (pct !== null && pct >= 60 && pct <= 95 && pct > bestPct) {
+          best = v;
+          bestPct = pct;
+        }
+      }
+      return best ?? videos.find((v) => v.primary_jlpt === 'N5') ?? videos[0];
+    })();
+  const knownWordCount = Object.values(wordStates).filter((s) => s === 'known' || s === 'learning').length;
+  const backupDay = lastBackupDay();
+  const backupDue =
+    (knownWordCount >= 20 || streak >= 3) && (!backupDay || dayDiff(backupDay, todayKey) >= 14);
   const extraFilterCount = selectedCategory !== 'All' ? 1 : 0;
 
   const handleSelectVideo = (videoId: string) => {
@@ -121,35 +154,78 @@ export const VideoFeed: React.FC = () => {
               </div>
             </div>
             <span className="shrink-0 px-3 py-1.5 rounded-full bg-black/40 backdrop-blur-sm text-sm font-bold text-amber-300">
-              🔥 {stats.streak_days} วัน
+              🔥 {streak} วัน
             </span>
           </div>
         </div>
       </section>
 
-      {/* Continue watching: the last opened clip */}
-      {resumeVideo && (
-        <button
-          onClick={() => handleSelectVideo(resumeVideo.id)}
-          className="w-full sm:max-w-md flex items-center gap-3 p-2.5 rounded-2xl bg-slate-900 border border-slate-800 hover:border-indigo-500/50 text-left transition-colors active:opacity-80"
-        >
-          <div className="relative w-28 shrink-0 aspect-video rounded-xl overflow-hidden bg-slate-950">
-            <img
-              src={`https://img.youtube.com/vi/${resumeVideo.youtube_id}/mqdefault.jpg`}
-              alt=""
-              className="w-full h-full object-cover"
-              onError={(e) => ((e.target as HTMLElement).style.display = 'none')}
-            />
-            <div className="absolute inset-0 flex items-center justify-center bg-black/30">
-              <Play className="w-6 h-6 fill-white text-white" />
+      {/* Today: one place to start (review due words, one clip), streak status, backup nudge */}
+      <section className="sm:max-w-md rounded-2xl bg-slate-900 border border-slate-800 p-3 space-y-2" aria-label="วันนี้">
+        <div className="flex items-center justify-between gap-2 px-0.5">
+          <h2 className="text-sm font-bold text-slate-100">วันนี้</h2>
+          <span className={`text-xs font-semibold ${studiedToday ? 'text-emerald-300' : 'text-amber-300'}`}>
+            {studiedToday
+              ? '✓ วันนี้นับวันต่อเนื่องแล้ว'
+              : `ดูอีก ${minLeft} นาที หรือทบทวน ${reviewsLeft} คำ`}
+          </span>
+        </div>
+        {dictionaryWords.length > 0 && (
+          <button
+            onClick={() => setActiveTab('dojo')}
+            className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-amber-500/50 text-left active:opacity-80"
+          >
+            <div className="w-11 h-11 shrink-0 rounded-xl bg-amber-500/15 grid place-items-center">
+              <Layers className="w-5 h-5 text-amber-300" />
             </div>
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="text-xs font-semibold text-indigo-300">ดูต่อ</p>
-            <p className="text-sm font-bold text-slate-100 line-clamp-2">{resumeVideo.title}</p>
-          </div>
-        </button>
-      )}
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-bold text-slate-100">ทบทวนคำศัพท์</p>
+              <p className="text-xs text-slate-400">
+                {dueWords > 0
+                  ? `${dueWords} คำรอทบทวน${freshWords > 0 ? ` · คำใหม่ ${freshWords}` : ''}`
+                  : freshWords > 0
+                  ? `เรียนคำใหม่ ${freshWords} คำ`
+                  : 'ทบทวนครบแล้ว ✓'}
+              </p>
+            </div>
+            {dueWords > 0 && (
+              <span className="shrink-0 min-w-7 h-7 px-2 rounded-full bg-amber-500 text-slate-950 text-sm font-bold grid place-items-center">
+                {dueWords}
+              </span>
+            )}
+          </button>
+        )}
+        {suggestedVideo && (
+          <button
+            onClick={() => handleSelectVideo(suggestedVideo.id)}
+            className="w-full flex items-center gap-3 p-2.5 rounded-xl bg-slate-950/60 border border-slate-800 hover:border-indigo-500/50 text-left active:opacity-80"
+          >
+            <div className="relative w-24 shrink-0 aspect-video rounded-lg overflow-hidden bg-slate-950">
+              <img
+                src={`https://img.youtube.com/vi/${suggestedVideo.youtube_id}/mqdefault.jpg`}
+                alt=""
+                className="w-full h-full object-cover"
+                onError={(e) => ((e.target as HTMLElement).style.display = 'none')}
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                <Play className="w-5 h-5 fill-white text-white" />
+              </div>
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-xs font-semibold text-indigo-300">{resumeVideo ? 'ดูต่อ' : 'คลิปแนะนำ'}</p>
+              <p className="text-sm font-bold text-slate-100 line-clamp-2">{suggestedVideo.title}</p>
+            </div>
+          </button>
+        )}
+        {backupDue && (
+          <button
+            onClick={() => setShowSettingsModal(true)}
+            className="w-full min-h-10 px-3 rounded-xl text-left text-xs text-sky-300 hover:bg-slate-800/60"
+          >
+            💾 {backupDay ? `สำรองข้อมูลล่าสุด ${dayDiff(backupDay, todayKey)} วันก่อน` : 'ยังไม่เคยสำรองข้อมูล'} · แตะเพื่อสำรองกันหาย
+          </button>
+        )}
+      </section>
 
       {/* Level chips (one row) + filter sheet button */}
       <div className="flex items-center gap-2">

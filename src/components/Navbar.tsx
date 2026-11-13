@@ -26,6 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
     wordStates,
     setShowSettingsModal,
     aiProvider,
+    streak,
   } = useApp();
 
   const knownWords = Object.values(wordStates).filter((s) => s === 'known').length;
@@ -110,10 +111,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenUpdate }) => {
             <button
               onClick={() => setActiveTab('profile')}
               className="min-h-11 flex items-center gap-1 px-2.5 rounded-xl text-sm text-amber-300 hover:bg-slate-900 transition-colors"
-              aria-label={`เรียนต่อเนื่อง ${stats.streak_days} วัน`}
+              aria-label={`เรียนต่อเนื่อง ${streak} วัน`}
             >
               <Flame className="w-4 h-4 fill-amber-400 text-amber-400" />
-              <span className="font-semibold">{stats.streak_days}</span>
+              <span className="font-semibold">{streak}</span>
             </button>
             <button
               onClick={() => setShowSettingsModal(true)}
