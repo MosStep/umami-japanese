@@ -6,6 +6,7 @@ import { hasExplanations } from '../data/explanations';
 import { DAILY_GOAL_MIN, STUDY_MIN_MINUTES, STUDY_MIN_REVIEWS, dayDiff, localDayKey } from '../utils/streak';
 import { countDue, loadWordSrs } from '../utils/wordSrs';
 import { lastBackupDay } from '../utils/backup';
+import { loadClipsDone } from '../utils/clipProgress';
 import heroImg from '../assets/hero-street.webp';
 import {
   Play,
@@ -19,6 +20,9 @@ import {
   X,
   Trash2,
 } from 'lucide-react';
+
+const FIT_MIN = 80;
+const FIT_MAX = 95;
 
 export const VideoFeed: React.FC = () => {
   const {
@@ -75,17 +79,31 @@ export const VideoFeed: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Filter videos by category, JLPT level and the "easy to understand" threshold
-  const filteredVideos = videos.filter((v) => {
+  // "พอดีตัว" (i+1): clips where you already know FIT_MIN-FIT_MAX% of the words: a few new words, still followable.
+  // When none fits yet, the closest clips below FIT_MAX are shown instead (best first).
+  const baseVideos = videos.filter((v) => {
     if (selectedCategory !== 'All' && v.category !== selectedCategory) return false;
     if (selectedJLPT !== 'All' && v.primary_jlpt !== selectedJLPT) return false;
-    if (comprehensibleOnly) {
-      // Same function as the card. Not-yet-loaded (null) clips are excluded until their captions arrive.
-      const knownPct = getKnownWordPercentage(v.id);
-      if (knownPct === null || knownPct < 60) return false;
-    }
     return true;
   });
+  const fitPct = (v: VideoRecord) => getKnownWordPercentage(v.id);
+  const fitting = baseVideos.filter((v) => {
+    const p = fitPct(v);
+    return p !== null && p >= FIT_MIN && p <= FIT_MAX;
+  });
+  const fitFallback = comprehensibleOnly && fitting.length === 0;
+  const filteredVideos = !comprehensibleOnly
+    ? baseVideos
+    : (fitFallback
+        ? baseVideos.filter((v) => {
+            const p = fitPct(v);
+            return p !== null && p < FIT_MAX;
+          })
+        : fitting
+      )
+        .sort((a, b) => (fitPct(b) ?? 0) - (fitPct(a) ?? 0))
+        .slice(0, fitFallback ? 8 : undefined);
+  const doneClips = loadClipsDone();
 
   // The "easy to understand" filter cannot judge clips until the word index has loaded.
   const waitingCaptions =
@@ -257,7 +275,7 @@ export const VideoFeed: React.FC = () => {
             }`}
           >
             <CheckCircle2 className="w-4 h-4" />
-            เข้าใจง่าย
+            พอดีตัว
           </button>
         </div>
         <button
@@ -287,6 +305,14 @@ export const VideoFeed: React.FC = () => {
             ล้าง
           </button>
         </div>
+      )}
+
+      {comprehensibleOnly && !waitingCaptions && (
+        <p className="text-xs text-slate-400 -mt-2">
+          {fitFallback
+            ? `ยังไม่มีคลิปที่รู้คำ ${FIT_MIN}% ขึ้นไป นี่คือคลิปที่ใกล้ที่สุด กดจำคำในคลิปเพิ่มแล้วจะเจอคลิปพอดีตัวมากขึ้น`
+            : `คลิปที่คุณรู้คำ ${FIT_MIN}–${FIT_MAX}%: มีคำใหม่นิดหน่อย แต่ยังดูรู้เรื่อง`}
+        </p>
       )}
 
       {waitingCaptions && (
@@ -356,6 +382,11 @@ export const VideoFeed: React.FC = () => {
                   <span className="px-2 py-0.5 rounded-md text-xs font-bold bg-black/75 text-white backdrop-blur-md">
                     {video.primary_jlpt}
                   </span>
+                  {doneClips[video.youtube_id] && (
+                    <span className="px-1.5 py-0.5 rounded-md text-xs font-bold bg-emerald-500/90 text-slate-950" title="ดูจบแล้ว">
+                      ✓ ดูจบ
+                    </span>
+                  )}
                   {hasExplanations(video.youtube_id) && (
                     <span className="px-1.5 py-0.5 rounded-md text-xs font-bold bg-amber-400/90 text-slate-950" title="มีคำอธิบายประโยค">
                       💡 อธิบาย

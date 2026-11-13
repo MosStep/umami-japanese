@@ -2,6 +2,8 @@ import React from 'react';
 import { useApp } from '../context/AppContext';
 import { DAILY_GOAL_MIN, STUDY_MIN_MINUTES, STUDY_MIN_REVIEWS, isStudyDay, localDayKey } from '../utils/streak';
 import mascotImg from '../assets/mascot-fox.webp';
+import { WeeklyRecap } from './WeeklyRecap';
+import { finishesOnDays } from '../utils/clipProgress';
 import { BookOpen, Eye, Headphones, Mic, TrendingUp, Trophy, Lock } from 'lucide-react';
 
 const WEEKDAY_TH = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
@@ -49,6 +51,28 @@ export const GamificationProfile: React.FC = () => {
     return { key, label: WEEKDAY_TH[d.getDay()], active, frozen, today: key === todayKey };
   });
 
+  // Last 7 days for the recap card and the fox's mood.
+  const weekKeys = new Set(week.map((d) => d.key));
+  const sumWeek = (map?: Record<string, number>) => week.reduce((n, d) => n + (map?.[d.key] ?? 0), 0);
+  const weekMinutes = Math.floor(sumWeek(stats.daily_minutes));
+  const weekReviews = sumWeek(stats.daily_reviews);
+  const weekNewWords = sumWeek(stats.daily_words);
+  const weekClips = finishesOnDays(weekKeys);
+  const days = lastDays(7);
+  const fmt = (d: Date) => d.toLocaleDateString('th-TH', { day: 'numeric', month: 'short' });
+  const weekRange = `${fmt(days[0])} – ${fmt(days[6])}`;
+  const studiedDays = week.filter((d) => d.active).length;
+  const mood =
+    studiedDays >= 6
+      ? '😸 ภูมิใจในตัวคุณสุด ๆ'
+      : studiedDays >= 4
+      ? '😺 อารมณ์ดี'
+      : studiedDays >= 2
+      ? '🙂 อยากเจอบ่อยขึ้นอีกนิด'
+      : studiedDays === 1
+      ? '🥺 คิดถึงนะ'
+      : '😿 คิดถึงมากเลย';
+
   const mascotLine = goalDone
     ? 'วันนี้ถึงเป้าแล้ว เก่งมาก! พรุ่งนี้มาต่อกันนะ'
     : streak > 1 && !studiedToday
@@ -83,6 +107,9 @@ export const GamificationProfile: React.FC = () => {
       <section className="rounded-3xl bg-gradient-to-br from-[#2b3a63] to-slate-900 border border-slate-800 p-4 flex items-center gap-4">
         <img src={mascotImg} alt="" className="w-24 h-24 sm:w-28 sm:h-28 rounded-2xl shrink-0" />
         <div className="min-w-0 flex-1 space-y-2">
+          <p className="text-xs font-semibold text-amber-200">
+            จิ้งจอก: {mood} <span className="text-slate-400 font-normal">· เรียน {studiedDays}/7 วัน</span>
+          </p>
           <p className="text-sm text-slate-200 leading-snug">{mascotLine}</p>
           <div>
             <div className="flex justify-between text-xs text-slate-300 mb-1">
@@ -158,6 +185,16 @@ export const GamificationProfile: React.FC = () => {
           </div>
         </div>
       </section>
+
+      <WeeklyRecap
+        days={week}
+        minutes={weekMinutes}
+        reviews={weekReviews}
+        newWords={weekNewWords}
+        clips={weekClips}
+        streak={streak}
+        range={weekRange}
+      />
 
       {/* Totals */}
       <section className="grid grid-cols-2 gap-3">

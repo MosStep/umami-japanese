@@ -5,6 +5,8 @@ import { SubtitleLineRecord, SubtitleTokenJSON } from '../schema/databaseSchema'
 import { ContextualDictionaryModal } from './ContextualDictionaryModal';
 import { audioService } from '../utils/audioService';
 import { loadExplanations, explanationFor, hasExplanations, LineExplanation } from '../data/explanations';
+import { ClipFinishSheet } from './ClipFinishSheet';
+import { addSubReport, clipDone, hasSubReport, markClipDone, SUB_REPORT_LABEL, SubReportKind } from '../utils/clipProgress';
 import {
   Play,
   Pause,
@@ -113,6 +115,16 @@ export const ImmersionPlayer: React.FC = () => {
   useLockBodyScroll(showSettingsMenu);
   // true only while playback time is inside a line's window (see resolveSubtitleLine)
   const [isLineActive, setIsLineActive] = useState<boolean>(false);
+  // End-of-clip sheet (quiz + new words). finished=false when opened by hand from the transcript.
+  const [finishSheet, setFinishSheet] = useState<{ finished: boolean } | null>(null);
+  const finishedRef = useRef<boolean>(false);
+  // Rewatch: a clip finished before opens with the translation hidden; lines heard are tracked to show
+  // how many were understood without opening the Thai.
+  const [isRewatch, setIsRewatch] = useState<boolean>(false);
+  const heardLinesRef = useRef<Set<string>>(new Set());
+  // Wrong-subtitle report row under the explanation
+  const [reportOpen, setReportOpen] = useState<boolean>(false);
+  const [reportTick, setReportTick] = useState<number>(0);
 
   const toggleHideTranslation = () => {
     const next = !hideTranslation;
@@ -165,10 +177,50 @@ export const ImmersionPlayer: React.FC = () => {
     seekPendingRef.current = null;
     spokenLineRef.current = 0;
     lastSecRef.current = null;
+    finishedRef.current = false;
+    setFinishSheet(null);
+    heardLinesRef.current = new Set();
+    setRevealedLines({});
+    // Rewatch hides the translation for this clip only; the saved preference is left as it is.
+    const rewatch = !!activeVideo.youtube_id && (clipDone(activeVideo.youtube_id)?.n ?? 0) > 0;
+    setIsRewatch(rewatch);
+    setHideTranslation(rewatch || localStorage.getItem('umami_hide_translation') === 'true');
   }, [activeVideo.id]);
+
+  // Called when the last line ends or the video ends: once per clip opening.
+  const onClipFinishedRef = useRef<() => void>(() => {});
+  onClipFinishedRef.current = () => {
+    if (finishedRef.current || !activeVideo.youtube_id || activeSubtitleLines.length === 0) return;
+    finishedRef.current = true;
+    markClipDone(activeVideo.youtube_id);
+    setFinishSheet({ finished: true });
+  };
 
   const activeLine = activeSubtitleLines[currentLineIndex] || activeSubtitleLines[0];
   const activeExplain = activeLine ? explanationFor(explanations, activeLine.start_time_ms, activeLine.raw_text) : undefined;
+
+  // Rewatch: remember the lines heard with the translation hidden.
+  useEffect(() => {
+    if (isRewatch && hideTranslation && isLineActive && activeLine?.raw_text) heardLinesRef.current.add(activeLine.id);
+  }, [isRewatch, hideTranslation, isLineActive, activeLine?.id]);
+  useEffect(() => setReportOpen(false), [activeLine?.id]);
+  const rewatchStats = () => {
+    const heard = [...heardLinesRef.current];
+    return { heard: heard.length, understood: heard.filter((id) => !revealedLines[id]).length };
+  };
+  const lineReported = !!activeLine && !!activeVideo.youtube_id && reportTick >= 0 && hasSubReport(activeVideo.youtube_id, activeLine.start_time_ms);
+  const reportLine = (kind: SubReportKind) => {
+    if (!activeLine || !activeVideo.youtube_id) return;
+    addSubReport({
+      yt: activeVideo.youtube_id,
+      ms: activeLine.start_time_ms,
+      ja: activeLine.raw_text,
+      th: activeLine.thai_translation || activeLine.natural_translation || '',
+      kind,
+    });
+    setReportOpen(false);
+    setReportTick((t) => t + 1);
+  };
 
   // Dynamic real-time spoken token calculation (no highlight when no line is active)
   const getActiveTokenIndex = () => {
@@ -247,6 +299,7 @@ export const ImmersionPlayer: React.FC = () => {
                 setIsPlaying(true);
               } else if (event.data === 2 || event.data === 0) {
                 setIsPlaying(false);
+                if (event.data === 0) onClipFinishedRef.current();
               }
             },
           },
@@ -345,6 +398,9 @@ export const ImmersionPlayer: React.FC = () => {
           player.seekTo(startSec, true);
           return;
         }
+
+        // Last line spoken to its end: the clip counts as finished (end-of-clip sheet)
+        if (crossed && prevSpoken === lines.length - 1) onClipFinishedRef.current();
 
         // Auto-pause: once per line, so pressing play after a pause does not re-pause
         if (autoPause && crossed && pausedLineIdRef.current !== spokenLine.id) {
@@ -632,6 +688,7 @@ export const ImmersionPlayer: React.FC = () => {
                     ) : (
                       <span>{isBeforeFirstLine ? 'รอบทพูดแรก…' : '♪ ช่วงไม่มีบทพูด'}</span>
                     )}
+                    {isRewatch && <span className="text-amber-300/80">· ดูรอบสอง</span>}
                   </div>
                   <button
                     onClick={toggleHideTranslation}
@@ -877,6 +934,32 @@ export const ImmersionPlayer: React.FC = () => {
                                 )}
                               </div>
                             )}
+                            {showExplain && activeVideo.youtube_id && (
+                              <div className="mt-1.5 text-left">
+                                {lineReported ? (
+                                  <p className="min-h-9 flex items-center text-xs text-slate-500">🚩 แจ้งซับผิดแล้ว ขอบคุณครับ</p>
+                                ) : reportOpen ? (
+                                  <div className="flex flex-wrap items-center gap-1.5">
+                                    {(Object.keys(SUB_REPORT_LABEL) as SubReportKind[]).map((k) => (
+                                      <button
+                                        key={k}
+                                        onClick={() => reportLine(k)}
+                                        className="min-h-9 px-2.5 rounded-lg bg-slate-800 border border-slate-700 text-xs text-slate-200 hover:bg-slate-700"
+                                      >
+                                        {SUB_REPORT_LABEL[k]}
+                                      </button>
+                                    ))}
+                                    <button onClick={() => setReportOpen(false)} className="min-h-9 px-2 text-xs text-slate-500">
+                                      ยกเลิก
+                                    </button>
+                                  </div>
+                                ) : (
+                                  <button onClick={() => setReportOpen(true)} className="min-h-9 px-1 text-xs text-slate-500 hover:text-slate-300">
+                                    🚩 ซับประโยคนี้ผิด?
+                                  </button>
+                                )}
+                              </div>
+                            )}
                           </div>
                         )}
                       </>
@@ -1010,9 +1093,28 @@ export const ImmersionPlayer: React.FC = () => {
                   </div>
                 );
               })}
+              {activeSubtitleLines.length > 0 && (
+                <button
+                  onClick={() => setFinishSheet({ finished: false })}
+                  className="w-full min-h-11 rounded-2xl border border-dashed border-amber-500/40 text-amber-200 text-sm font-semibold hover:bg-amber-500/10"
+                >
+                  📝 ทำแบบทดสอบคลิปนี้ (5 ข้อ)
+                </button>
+              )}
             </div>
         </div>
       </div>
+
+      {finishSheet && (
+        <ClipFinishSheet
+          key={activeVideo.id}
+          youtubeId={activeVideo.youtube_id || activeVideo.id}
+          lines={activeSubtitleLines}
+          finished={finishSheet.finished}
+          rewatch={isRewatch ? rewatchStats() : undefined}
+          onClose={() => setFinishSheet(null)}
+        />
+      )}
 
       {/* Subtitle Preferences Modal (Clean, Centered, Never Clipped) */}
       {showSettingsMenu && (

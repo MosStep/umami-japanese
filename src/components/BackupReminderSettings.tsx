@@ -8,6 +8,8 @@ import {
   requestReminderPermission,
   saveReminderPrefs,
 } from '../utils/reminders';
+import { clearSubReports, loadSubReports } from '../utils/clipProgress';
+import { Capacitor } from '@capacitor/core';
 
 const pad = (n: number) => String(n).padStart(2, '0');
 
@@ -19,6 +21,7 @@ export const BackupReminderSettings: React.FC = () => {
   const [message, setMessage] = useState<string | null>(null);
   const [pending, setPending] = useState<BackupFile | null>(null);
 
+  const [reportCount, setReportCount] = useState(() => loadSubReports().length);
   const [prefs, setPrefs] = useState(loadReminderPrefs);
   const supported = remindersSupported();
 
@@ -51,6 +54,23 @@ export const BackupReminderSettings: React.FC = () => {
     }
   };
 
+  // Wrong-subtitle reports: shared as JSON text (the backup file carries them too).
+  const shareReports = async () => {
+    const text = JSON.stringify({ app: 'umami', kind: 'sub_reports', reports: loadSubReports() }, null, 1);
+    try {
+      if (Capacitor.isNativePlatform() && Capacitor.isPluginAvailable('Share')) {
+        const { Share } = await import('@capacitor/share');
+        await Share.share({ title: 'รายงานซับผิด うまみ', text, dialogTitle: 'ส่งรายงานซับผิด' });
+      } else {
+        await navigator.clipboard.writeText(text);
+        setMessage('คัดลอกรายงานซับผิดแล้ว');
+      }
+    } catch (err) {
+      const t = String((err as Error)?.message ?? err);
+      if (!/cancel/i.test(t)) setMessage('ส่งไม่สำเร็จ: ' + t);
+    }
+  };
+
   const updatePrefs = async (next: typeof prefs) => {
     if (next.on && !prefs.on) {
       const ok = await requestReminderPermission();
@@ -66,6 +86,25 @@ export const BackupReminderSettings: React.FC = () => {
 
   return (
     <div className="space-y-3">
+      {reportCount > 0 && (
+        <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 flex items-center gap-2">
+          <p className="flex-1 text-sm text-slate-200">🚩 ซับที่แจ้งว่าผิด {reportCount} ประโยค</p>
+          <button type="button" onClick={shareReports} className="min-h-10 px-3 rounded-xl bg-slate-800 text-sm text-slate-100 font-semibold">
+            ส่งออก
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              clearSubReports();
+              setReportCount(0);
+            }}
+            className="min-h-10 px-2 rounded-xl text-xs text-slate-500 hover:text-slate-300"
+          >
+            ล้าง
+          </button>
+        </div>
+      )}
+
       {/* Backup / restore */}
       <div className="p-3.5 rounded-xl bg-slate-950/80 border border-slate-800 space-y-3">
         <div>

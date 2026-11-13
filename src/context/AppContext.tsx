@@ -49,6 +49,8 @@ export interface UserStats {
   daily_xp?: Record<string, number>;
   // Flashcards graded per local day (word + sentence decks).
   daily_reviews?: Record<string, number>;
+  // Words that left 'new' (marked learning/known) per local day.
+  daily_words?: Record<string, number>;
   // Study streak (1.0.24+): streak_days counts days with real study (see utils/streak.ts isStudyDay).
   last_study_day?: string;
   // Days bridged by a streak freeze (YYYY-MM-DD, newest last).
@@ -397,6 +399,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [customLines]);
 
   const setWordStatus = (wordId: string, status: WordLearningStatus) => {
+    // A word leaving 'new' counts as a new word today (weekly recap).
+    if ((wordStates[wordId] ?? 'new') === 'new' && status !== 'new') {
+      setStats((prev) => ({ ...prev, daily_words: bumpToday(prev.daily_words, 1) }));
+    }
     setWordStates((prev) => ({ ...prev, [wordId]: status }));
     if (status === 'known') addXP('reading', 15);
     else if (status === 'learning') addXP('reading', 5);
