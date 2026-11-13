@@ -127,6 +127,7 @@ export const ImmersionPlayer: React.FC = () => {
   // Refs read by the sync interval, so the interval is created once per video
   const currentLineIndexRef = useRef<number>(0);
   const pausedLineIdRef = useRef<string | null>(null); // line id we last auto-paused at
+  const stopAtEndLineIdRef = useRef<string | null>(null); // one-shot pause at this line's end (replay button)
   const seekPendingRef = useRef<{ targetSec: number; until: number } | null>(null);
   // Line being spoken (last line with start <= sec), carried between ticks.
   // Loop / auto-pause test its end before it advances, so short gaps cannot skip it.
@@ -160,6 +161,7 @@ export const ImmersionPlayer: React.FC = () => {
   useEffect(() => {
     applyLineIndex(0);
     pausedLineIdRef.current = null;
+    stopAtEndLineIdRef.current = null;
     seekPendingRef.current = null;
     spokenLineRef.current = 0;
     lastSecRef.current = null;
@@ -321,6 +323,19 @@ export const ImmersionPlayer: React.FC = () => {
           pausedLineIdRef.current = null;
         }
 
+        // Replay button: pause once at the end of the replayed line. Any other line ending first
+        // (the user scrubbed away) cancels it.
+        if (crossed && stopAtEndLineIdRef.current !== null) {
+          const isTarget = stopAtEndLineIdRef.current === spokenLine.id;
+          stopAtEndLineIdRef.current = null;
+          if (isTarget) {
+            pausedLineIdRef.current = spokenLine.id;
+            player.pauseVideo();
+            setIsPlaying(false);
+            return;
+          }
+        }
+
         // Loop sentence: seek back to the spoken line's start
         if (loop && crossed) {
           const startSec = spokenLine.start_time_ms / 1000;
@@ -393,6 +408,7 @@ export const ImmersionPlayer: React.FC = () => {
     applyLineIndex(index);
     setIsLineActive(true);
     pausedLineIdRef.current = null; // re-arm auto-pause for this line
+    stopAtEndLineIdRef.current = null;
     spokenLineRef.current = index;
     lastSecRef.current = null;
     const line = activeSubtitleLines[index];
@@ -427,11 +443,12 @@ export const ImmersionPlayer: React.FC = () => {
     }
   };
 
-  // Replay current line audio and seek video
+  // Replay the current line from its start and pause when it ends (loop mode keeps looping instead).
+  // The clip's own voice is the audio; no TTS on top of it.
   const replayCurrentLine = () => {
     if (!activeLine) return;
     seekToLine(currentLineIndex);
-    playNativeAudio(activeLine.raw_text);
+    if (!loopCurrentLine) stopAtEndLineIdRef.current = activeLine.id;
   };
 
   // When clicking a token: pause video, auto-speak word, and open dictionary
