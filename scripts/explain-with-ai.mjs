@@ -30,7 +30,7 @@ Example input: [{"key":"a:1","ja":"あなたの国の言葉では、なんと呼
 Example output: [{"key":"a:1","x":"พิธีกรหันมาถามผู้ชมอย่างสุภาพว่า โปเกมอนตัวนี้ในภาษาของประเทศผู้ชมเรียกว่าอะไร ต่อจากที่เพิ่งบอกชื่อภาษาญี่ปุ่นไป","g":[{"f":"では","b":"〜では","e":"で (ใน) + は (หัวข้อ) = 'ในภาษาของคุณนั้น…' ตั้งขอบเขตเพื่อเทียบกับภาษาญี่ปุ่น"},{"f":"なんと呼びますか","b":"何と呼ぶ","e":"なんと = ว่าอะไร + 呼びます รูปสุภาพของ 呼ぶ → 'เรียกว่าอะไรคะ'"}]}]`;
 
 class BillingStop extends Error {}
-let tokIn = 0, tokOut = 0, calls = 0;
+let tokIn = 0, tokOut = 0, calls = 0, skipped = 0;
 
 async function chatOnce(key, messages) {
   const res = await fetch(`${BASE}/chat/completions`, {
@@ -81,17 +81,26 @@ function parseArray(text) {
   return JSON.parse(text.slice(a, b + 1));
 }
 
+// Returns the explained entries of the chunk. A chunk whose answer stays unusable (bad JSON, missing keys) is
+// split in two and retried; a single line that still fails is left out (it is exported again next time).
 async function explainChunk(entries, src) {
   const input = entries.map((e) => ({ key: e.key, ja: e.ja, th: e.th, prev: e.prev?.ja ?? '', next: e.next?.ja ?? '', src }));
   const messages = [{ role: 'system', content: SYSTEM }, { role: 'user', content: JSON.stringify(input) }];
   for (let attempt = 1; attempt <= 2; attempt++) {
-    const out = parseArray(await chat(messages)).filter((o) => o && o.key);
+    let out;
+    try { out = parseArray(await chat(messages)).filter((o) => o && o.key); }
+    catch (e) {
+      if (e instanceof BillingStop || /^(402|429)|quota|insufficient/i.test(e.message)) throw e;
+      continue;
+    }
     const byKey = Object.fromEntries(out.map((o) => [o.key, o]));
     if (entries.every((e) => byKey[e.key]?.x)) {
       return entries.map((e) => { const o = byKey[e.key]; return { key: e.key, x: o.x, ...(o.g?.length ? { g: o.g } : {}), ...(o.fix && src === 'auto' ? { fix: o.fix } : {}) }; });
     }
-    if (attempt === 2) throw new Error('missing keys in model output');
   }
+  if (entries.length === 1) { skipped++; return []; }
+  const mid = Math.ceil(entries.length / 2);
+  return [...(await explainChunk(entries.slice(0, mid), src)), ...(await explainChunk(entries.slice(mid), src))];
 }
 
 const sourceOf = (batch) => {
@@ -121,14 +130,16 @@ async function main() {
       while (next < chunks.length) { const i = next++; results[i] = await explainChunk(chunks[i], src); }
     }));
     const out = results.flat();
-    if (partial) { // import requires the full batch key list: rewrite the batch to the explained part
-      writeFileSync(join(DIR, `${batch}.json`), JSON.stringify(entries, null, 1) + '\n');
+    if (partial || out.length < entries.length) { // import requires the full batch key list: rewrite the batch to the explained part
+      const got = new Set(out.map((o) => o.key));
+      writeFileSync(join(DIR, `${batch}.json`), JSON.stringify(entries.filter((e) => got.has(e.key)), null, 1) + '\n');
     }
+    if (!out.length) continue;
     writeFileSync(join(DIR, `${batch}.ex.json`), JSON.stringify(out, null, 1) + '\n');
     budget -= out.length; done += out.length;
     console.log(`${batch}: ${out.length} lines (total ${done}, ${Math.round((Date.now() - t0) / 1000)}s, calls ${calls}, tokens in ${tokIn} out ${tokOut})`);
   }
-  console.log(`done ${done} lines with ${MODEL}; calls ${calls}; tokens in ${tokIn} out ${tokOut}`);
+  console.log(`done ${done} lines with ${MODEL}; skipped ${skipped}; calls ${calls}; tokens in ${tokIn} out ${tokOut}`);
 }
 
 main().catch((e) => { console.error(e instanceof BillingStop ? `BILLING STOP: ${e.message}` : `FAILED: ${e.message}`); process.exit(1); });

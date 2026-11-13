@@ -213,6 +213,58 @@ CATEGORIES = {
         "target": 5,
         "max_per_channel": 2,
     },
+    "creators": {
+        # Big entertainment YouTubers and VTubers (auto Japanese allowed; songs and streams are skipped by title).
+        "channels": [
+            "https://www.youtube.com/@HikakinTV/videos",
+            "https://www.youtube.com/@SeikinTV/videos",
+            "https://www.youtube.com/@FischersTV/videos",
+            "https://www.youtube.com/@TokaiOnAir/videos",
+            "https://www.youtube.com/@mizutamaribond/videos",
+            "https://www.youtube.com/@sushi_ramen/videos",
+            "https://www.youtube.com/@comdot/videos",
+            "https://www.youtube.com/@QuizKnock/videos",
+            "https://www.youtube.com/@HikakinGames/videos",
+            "https://www.youtube.com/@heikinjyukenwotoru/videos",
+            "https://www.youtube.com/@kazuch/videos",
+            "https://www.youtube.com/@yuka0115/videos",
+            "https://www.youtube.com/@bayashitv/videos",
+            "https://www.youtube.com/@sekainoyomugi/videos",
+            "https://www.youtube.com/@kiyoisgod/videos",
+            "https://www.youtube.com/@pockysweets/videos",
+            "https://www.youtube.com/@Raphael-tv/videos",
+            "https://www.youtube.com/@hololive/videos",
+            "https://www.youtube.com/@usadapekora/videos",
+            "https://www.youtube.com/@SakuraMiko/videos",
+            "https://www.youtube.com/@HoushouMarine/videos",
+            "https://www.youtube.com/@ShirakamiFubuki/videos",
+            "https://www.youtube.com/@InugamiKorone/videos",
+            "https://www.youtube.com/@OozoraSubaru/videos",
+            "https://www.youtube.com/@NekomataOkayu/videos",
+            "https://www.youtube.com/@TokinoSora/videos",
+            "https://www.youtube.com/@ShiroganeNoel/videos",
+            "https://www.youtube.com/@nijisanji/videos",
+            "https://www.youtube.com/@TsukinoMito/videos",
+            "https://www.youtube.com/@ui_shig/videos",
+            "https://www.youtube.com/@aichannel/videos",
+            "https://www.youtube.com/@dennou_shojo_siro/videos",
+            "https://www.youtube.com/@KaguyaLuna/videos",
+            "ytsearch40:ホロライブ 切り抜き 雑談 面白い",
+            "ytsearch40:にじさんじ 切り抜き 雑談 面白い",
+            "ytsearch40:VTuber 自己紹介 動画 初投稿",
+            "ytsearch40:VTuber 企画 動画 検証",
+            "ytsearch40:YouTuber 検証 やってみた 一人",
+            "ytsearch40:YouTuber 商品紹介 レビュー 買ってみた",
+            "ytsearch40:YouTuber ドッキリ 企画 日本",
+            "ytsearch40:大食い YouTuber 挑戦",
+        ],
+        "min_s": 3 * 60,
+        "max_s": 16 * 60,
+        "target": 75,
+        "allow_auto": True,
+        "max_per_channel": 3,
+        "skip_title": r"MV|Music Video|歌ってみた|[Cc]over|COVER|オリジナル曲|Original Song|歌枠|踊ってみた|3D\s*LIVE|ライブ|LIVE|MMD|ASMR|#shorts|予告|PV|ティザー|Teaser|主題歌",
+    },
 }
 
 LIST_OPTS = {
@@ -389,6 +441,8 @@ def main():
                     if e["id"] in probed_ids:
                         continue
                     dur = e.get("duration")
+                    if cat.get("skip_title") and re.search(cat["skip_title"], e.get("title") or ""):
+                        continue
                     if e.get("live_status") in ("is_live", "is_upcoming", "post_live") or "/shorts/" in (e.get("url") or ""):
                         continue
                     if dur is not None and not (cat["min_s"] <= dur <= cat["max_s"]):
@@ -414,6 +468,8 @@ def main():
                         if not (cat["min_s"] <= dur <= cat["max_s"]):
                             continue
                         if info.get("availability") not in (None, "public"):
+                            continue
+                        if cat.get("skip_title") and re.search(cat["skip_title"], info.get("title") or ""):
                             continue
                         if info.get("live_status") not in (None, "not_live"):
                             continue

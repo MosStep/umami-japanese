@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { MinedSentenceRecord, SubtitleLineRecord } from '../schema/databaseSchema';
-import { MOCK_SUBTITLE_LINES } from '../data/mockVideos';
 import { audioService } from '../utils/audioService';
+import { AiChat } from './AiChat';
 import { AGAIN_GAP, NEW_PER_SESSION, buildReviewQueue, gradeWord, loadWordSrs, saveWordSrs, WordSrsMap } from '../utils/wordSrs';
 import {
   isNativeSpeech,
@@ -14,13 +14,7 @@ import {
   Mic,
   MicOff,
   Volume2,
-  Sparkles,
-  HelpCircle,
-  CheckCircle2,
   AlertCircle,
-  Play,
-  ArrowRight,
-  Send,
   Zap,
   Flame,
   Layers,
@@ -42,9 +36,6 @@ export const TheDojo: React.FC = () => {
     getWordStatus,
     addXP,
     recordReview,
-    callAICompletion,
-    aiProvider,
-    aiModel,
     setActiveVideoId,
     setActiveTab,
   } = useApp();
@@ -72,24 +63,6 @@ export const TheDojo: React.FC = () => {
   const [moraFeedback, setMoraFeedback] = useState<{ char: string; correct: boolean }[]>([]);
   const [speechWarning, setSpeechWarning] = useState<string | null>(null);
   const recordingStopRef = useRef<(() => void) | null>(null);
-
-  // Mode C: AI Roleplay State
-  const [selectedScenario, setSelectedScenario] = useState<number>(0);
-  const [roleplayInput, setRoleplayInput] = useState<string>('');
-  const [isAILoading, setIsAILoading] = useState<boolean>(false);
-  const [helpMeSayInput, setHelpMeSayInput] = useState<string>('');
-  const [isHelpLoading, setIsHelpLoading] = useState<boolean>(false);
-  const [helpMeSayResult, setHelpMeSayResult] = useState<{ polite: string; casual: string } | null>(null);
-  const [chatMessages, setChatMessages] = useState<
-    { sender: 'ai' | 'user'; text: string; translation?: string; explanation?: string }[]
-  >([
-    {
-      sender: 'ai',
-      text: 'いらっしゃいませ！何名様ですか？カウンター席でもよろしいでしょうか？',
-      translation: 'Welcome! How many guests? Would counter seating be alright with you?',
-      explanation: '何名様ですか (polite counter question) + よろしいでしょうか (honorific form of いいですか).',
-    },
-  ]);
 
   const learningCount = dictionaryWords.filter(
     (w) => (wordStates[w.id] || 'new') === 'learning'
@@ -356,128 +329,11 @@ export const TheDojo: React.FC = () => {
   };
 
 
-  // Scenarios for AI Roleplay
-  const scenarios = [
-    {
-      title: '居酒屋 (Izakaya Night)',
-      desc: 'Order draft beer, yakitori, ask for chef’s recommendation and the bill.',
-      emoji: '🍻',
-      initialBot: 'いらっしゃいませ！何名様ですか？カウンター席でもよろしいでしょうか？',
-    },
-    {
-      title: 'コンビニ (Convenience Store)',
-      desc: 'Ask for a bag, heat up your bento box, and pay with IC card.',
-      emoji: '🏪',
-      initialBot: 'いらっしゃいませ！お弁当温めますか？レジ袋はどうされますか？',
-    },
-    {
-      title: 'アニメ談義 (Anime & Shonen Talk)',
-      desc: 'Discuss your favorite anime characters, epic battles, and memorable catchphrases.',
-      emoji: '⚔️',
-      initialBot: 'こんにちは！最近ハマっているアニメや漫画はありますか？熱いシーンを語り合いましょう！',
-    },
-  ];
-
-  // Send AI Roleplay Message (Connected directly to Kob AI / Tenixe)
-  const handleSendRoleplay = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!roleplayInput.trim() || isAILoading) return;
-
-    const userMsg = roleplayInput.trim();
-    setChatMessages((prev) => [...prev, { sender: 'user', text: userMsg }]);
-    setRoleplayInput('');
-    setIsAILoading(true);
-
-    try {
-      const scenario = scenarios[selectedScenario];
-      const prompt = `You are a native Japanese speaker in an immersion roleplay.
-Scenario: ${scenario.title} (${scenario.desc}).
-User just said: "${userMsg}".
-Please respond naturally in authentic spoken Japanese (1-2 sentences).
-Then on a new line output: [TRANSLATION]: <English meaning>
-Then on a new line output: [EXPLANATION]: <Brief 1-sentence grammar or cultural nuance note>`;
-
-      const aiResponse = await callAICompletion(
-        prompt,
-        'You are an authentic Japanese immersion tutor for うまみ (Umami). Respond strictly with Japanese first, then [TRANSLATION]: and [EXPLANATION]:.'
-      );
-
-      // Parse structured sections
-      let botText = aiResponse;
-      let botTrans = '';
-      let botExpl = '';
-
-      if (aiResponse.includes('[TRANSLATION]:')) {
-        const parts = aiResponse.split('[TRANSLATION]:');
-        botText = parts[0].trim();
-        const subParts = parts[1].split('[EXPLANATION]:');
-        botTrans = subParts[0]?.trim() || '';
-        botExpl = subParts[1]?.trim() || '';
-      } else {
-        botTrans = 'Natural conversational Japanese response.';
-      }
-
-      setChatMessages((prev) => [
-        ...prev,
-        {
-          sender: 'ai',
-          text: botText,
-          translation: botTrans,
-          explanation: botExpl,
-        },
-      ]);
-      addXP('listening', 20);
-      playAudio(botText);
-    } catch (err) {
-      console.error('Roleplay error:', err);
-    } finally {
-      setIsAILoading(false);
-    }
-  };
-
-  // "Help Me Say..." with live AI translation & audio
-  const handleHelpMeSay = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!helpMeSayInput.trim() || isHelpLoading) return;
-
-    setIsHelpLoading(true);
-    const text = helpMeSayInput.trim();
-
-    try {
-      const prompt = `Translate this idea into natural Japanese in TWO ways:
-Idea: "${text}"
-Output exactly in this JSON format:
-{
-  "polite": "<Polite form with です/ます and Romaji/English in parentheses>",
-  "casual": "<Casual everyday form with Romaji/English in parentheses>"
-}`;
-
-      const res = await callAICompletion(prompt);
-      const jsonMatch = res.match(/\{[\s\S]*\}/);
-      if (jsonMatch) {
-        const parsed = JSON.parse(jsonMatch[0]);
-        setHelpMeSayResult(parsed);
-      } else {
-        setHelpMeSayResult({
-          polite: `${text} をお願いします。(Polite)`,
-          casual: `${text} ちょうだい！(Casual)`,
-        });
-      }
-    } catch {
-      setHelpMeSayResult({
-        polite: 'すみません、これをいただけますか？(Polite)',
-        casual: 'これちょうだい！(Casual)',
-      });
-    } finally {
-      setIsHelpLoading(false);
-    }
-  };
-
   // Presentation helpers (layout only)
   const modeTabs = [
     { key: 'srs' as const, label: 'แฟลชการ์ด', Icon: Layers },
     { key: 'shadowing' as const, label: 'พูดตาม', Icon: Mic },
-    { key: 'roleplay' as const, label: 'สนทนา AI', Icon: MessageCircle },
+    { key: 'roleplay' as const, label: 'คุยกับ AI', Icon: MessageCircle },
   ];
 
   const chipClass = (on: boolean, onCls: string) =>
@@ -1169,179 +1025,8 @@ Output exactly in this JSON format:
         </div>
       )}
 
-      {/* Mode C: Contextual AI Roleplay */}
-      {activeMode === 'roleplay' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6 items-start">
-          {/* Scenario Selector & Help Me Say Box */}
-          <div className="lg:col-span-4 space-y-4">
-            <div className="rounded-3xl bg-slate-900/90 border border-slate-800 p-4 sm:p-5 space-y-3">
-              <span className="text-xs font-bold uppercase tracking-wider text-slate-300">เลือกสถานการณ์</span>
-              <div className="space-y-2.5">
-                {scenarios.map((sc, idx) => (
-                  <button
-                    type="button"
-                    key={idx}
-                    onClick={() => {
-                      setSelectedScenario(idx);
-                      setChatMessages([
-                        {
-                          sender: 'ai',
-                          text: sc.initialBot,
-                          translation: 'คำทักทายเริ่มต้นของสถานการณ์',
-                        },
-                      ]);
-                    }}
-                    className={`w-full text-left p-3.5 rounded-2xl border transition-all active:opacity-80 ${
-                      selectedScenario === idx
-                        ? 'bg-rose-600/15 border-rose-500/50 text-slate-100 shadow-md'
-                        : 'bg-slate-950/40 border-slate-800 text-slate-300 hover:text-slate-100 hover:bg-slate-800/60'
-                    }`}
-                  >
-                    <div className="flex items-center gap-2.5 font-bold text-sm">
-                      <span className="text-lg" aria-hidden="true">{sc.emoji}</span>
-                      <span>{sc.title}</span>
-                    </div>
-                    <p className="text-sm text-slate-300 mt-1 line-clamp-2 leading-relaxed">{sc.desc}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Help Me Say Box */}
-            <div className="rounded-3xl bg-slate-900/90 border border-slate-800 p-4 sm:p-5 space-y-3">
-              <div className="flex items-center gap-2 text-xs font-bold uppercase text-slate-200">
-                <Sparkles className="w-4 h-4 text-amber-400" aria-hidden="true" />
-                <span>ช่วยฉันพูด (Help Me Say)</span>
-              </div>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                พิมพ์สิ่งที่อยากพูดเป็นไทยหรืออังกฤษ แล้วจะได้ประโยคญี่ปุ่นแบบสุภาพและแบบไม่เป็นทางการ
-              </p>
-              <form onSubmit={handleHelpMeSay} className="space-y-2">
-                <input
-                  type="text"
-                  aria-label="สิ่งที่อยากพูด"
-                  placeholder="เช่น ขอเบียร์เย็นกับเช็คบิลหน่อย"
-                  value={helpMeSayInput}
-                  onChange={(e) => setHelpMeSayInput(e.target.value)}
-                  className="w-full min-h-11 px-3.5 py-2.5 rounded-xl bg-slate-950 border border-slate-800 text-sm text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-rose-500"
-                />
-                <button
-                  type="submit"
-                  disabled={isHelpLoading}
-                  className="w-full min-h-11 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-sm text-slate-200 font-bold transition-colors active:opacity-80 disabled:opacity-50"
-                >
-                  {isHelpLoading ? 'กำลังสร้าง...' : 'สร้างประโยค'}
-                </button>
-              </form>
-
-              {helpMeSayResult && (
-                <div className="p-3.5 rounded-2xl bg-slate-950 border border-slate-800 text-sm space-y-3 animate-in fade-in">
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs uppercase font-bold text-indigo-300">สุภาพ (丁寧語):</span>
-                      <button
-                        type="button"
-                        onClick={() => playAudio(helpMeSayResult.polite)}
-                        aria-label="ฟังประโยคสุภาพ"
-                        className="min-h-11 min-w-11 flex items-center justify-center -my-2 -mr-2 text-slate-300 hover:text-indigo-300 active:opacity-80"
-                      >
-                        <Volume2 className="w-4 h-4" aria-hidden="true" />
-                      </button>
-                    </div>
-                    <span className="font-jp text-slate-100 block font-medium">{helpMeSayResult.polite}</span>
-                  </div>
-                  <div className="space-y-1 pt-1 border-t border-slate-800/80">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs uppercase font-bold text-amber-300">ไม่เป็นทางการ (ため口):</span>
-                      <button
-                        type="button"
-                        onClick={() => playAudio(helpMeSayResult.casual)}
-                        aria-label="ฟังประโยคไม่เป็นทางการ"
-                        className="min-h-11 min-w-11 flex items-center justify-center -my-2 -mr-2 text-slate-300 hover:text-amber-300 active:opacity-80"
-                      >
-                        <Volume2 className="w-4 h-4" aria-hidden="true" />
-                      </button>
-                    </div>
-                    <span className="font-jp text-slate-100 block font-medium">{helpMeSayResult.casual}</span>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Interactive Chat Window */}
-          <div className="lg:col-span-8 rounded-3xl bg-slate-900/90 border border-slate-800 flex flex-col h-[70vh] min-h-[420px] lg:h-[620px] overflow-hidden shadow-2xl">
-            {/* Chat Messages */}
-            <div className="flex-1 overflow-y-auto p-4 sm:p-6 space-y-4">
-              {chatMessages.map((msg, idx) => (
-                <div key={idx} className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
-                  <div
-                    className={`max-w-[85%] rounded-3xl p-4 sm:p-5 space-y-2.5 ${
-                      msg.sender === 'user'
-                        ? 'bg-gradient-to-r from-rose-600 to-red-600 text-white rounded-br-none shadow-xl shadow-rose-600/30'
-                        : 'bg-slate-950 border border-slate-800 text-slate-200 rounded-bl-none'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between gap-3">
-                      <p className="font-jp text-base sm:text-lg font-bold leading-relaxed">{msg.text}</p>
-                      {msg.sender === 'ai' && (
-                        <button
-                          type="button"
-                          onClick={() => playAudio(msg.text)}
-                          className="min-h-11 min-w-11 shrink-0 flex items-center justify-center rounded-xl text-slate-300 hover:text-white bg-slate-900 border border-slate-800 hover:bg-slate-800 transition-colors active:opacity-80"
-                          aria-label="ฟังเสียง"
-                        >
-                          <Volume2 className="w-4 h-4 text-amber-400" aria-hidden="true" />
-                        </button>
-                      )}
-                    </div>
-
-                    {msg.translation && (
-                      <p className="text-sm text-slate-300 pt-1.5 border-t border-slate-800 font-medium">
-                        {msg.translation}
-                      </p>
-                    )}
-
-                    {msg.explanation && (
-                      <p className="text-xs text-amber-300 italic">💡 {msg.explanation}</p>
-                    )}
-                  </div>
-                </div>
-              ))}
-
-              {isAILoading && (
-                <div className="flex items-center gap-2 text-sm text-slate-300 italic p-3">
-                  <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                  AI ({aiModel}) กำลังพิมพ์ภาษาญี่ปุ่น...
-                </div>
-              )}
-            </div>
-
-            {/* Chat Input */}
-            <form
-              onSubmit={handleSendRoleplay}
-              className="p-3 sm:p-4 border-t border-slate-800 bg-slate-950/80 flex items-center gap-2"
-            >
-              <input
-                type="text"
-                aria-label="ข้อความที่จะตอบ"
-                placeholder="พิมพ์ตอบเป็นภาษาญี่ปุ่น เช่น 生ビールと焼き鳥をお願いします"
-                value={roleplayInput}
-                onChange={(e) => setRoleplayInput(e.target.value)}
-                className="flex-1 min-w-0 min-h-11 px-4 py-3 rounded-2xl bg-slate-900 border border-slate-800 text-sm font-jp text-slate-100 placeholder:text-slate-400 focus:outline-none focus:border-rose-500"
-              />
-              <button
-                type="submit"
-                disabled={isAILoading}
-                className="min-h-11 px-4 sm:px-5 rounded-2xl bg-gradient-to-r from-rose-600 to-red-600 hover:from-rose-500 hover:to-red-500 text-white font-bold transition-all flex items-center gap-2 text-sm shadow-lg shadow-rose-600/30 active:opacity-80 disabled:opacity-50"
-              >
-                <Send className="w-4 h-4" aria-hidden="true" />
-                <span>ส่ง</span>
-              </button>
-            </form>
-          </div>
-        </div>
-      )}
+      {/* Mode C: AI conversation practice */}
+      {activeMode === 'roleplay' && <AiChat />}
     </div>
   );
 };
