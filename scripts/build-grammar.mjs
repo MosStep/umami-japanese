@@ -3,7 +3,7 @@
 //   node scripts/build-grammar.mjs
 // Output: [{ p: pattern, n: occurrences, lv: typical clip level (median), e?: Thai summary, x: [example] }]
 //   example = [youtube_id, start_ms, ja, th, f, e]  (up to 3, from different clips when possible; e = what it does there)
-// e comes from src/data/grammar-notes.json { "<pattern>": "<Thai summary>" } (written offline) when present.
+// e and lv come from src/data/grammar-notes.json { "<pattern>": { e, lv } | null } (scripts/notes-with-ai.mjs) when present.
 import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -47,6 +47,8 @@ for (const f of readdirSync(EX_DIR).filter((n) => n.endsWith('.json'))) {
 const out = [];
 for (const grp of groups.values()) {
   if (grp.n < MIN_COUNT) continue;
+  const note = notes[grp.p];
+  if (note === null) continue; // the note writer judged it not to be grammar (a plain word, a name)
   // Examples: short lines from different clips first.
   const seen = new Set();
   const xs = [...grp.x].sort((a, b) => a[2].length - b[2].length);
@@ -59,7 +61,9 @@ for (const grp of groups.values()) {
   }
   for (const x of xs) if (pick.length < MAX_EXAMPLES && !pick.includes(x) && x[2].length <= 40) pick.push(x);
   const lvs = grp.lvs.sort((a, b) => a - b);
-  out.push({ p: grp.p, n: grp.n, lv: LEVELS[lvs[Math.floor(lvs.length / 2)]], ...(notes[grp.p] ? { e: notes[grp.p] } : {}), x: pick });
+  const e = typeof note === 'string' ? note : note?.e;
+  const lv = note?.lv && LEVELS.includes(note.lv) ? note.lv : LEVELS[lvs[Math.floor(lvs.length / 2)]];
+  out.push({ p: grp.p, n: grp.n, lv, ...(e ? { e } : {}), x: pick });
 }
 out.sort((a, b) => b.n - a.n);
 writeFileSync(join(ROOT, 'src', 'data', 'grammar.json'), JSON.stringify(out));

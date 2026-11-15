@@ -43,12 +43,14 @@ async function explainChunk(entries, src) {
     try { out = parseArray(await chat(messages)).filter((o) => o && o.key); }
     catch (e) {
       if (isStop(e)) throw e;
+      console.error(`chunk of ${entries.length} failed: ${String(e.message).slice(0, 160)}`);
       continue;
     }
     const byKey = Object.fromEntries(out.map((o) => [o.key, o]));
     if (entries.every((e) => byKey[e.key]?.x)) {
       return entries.map((e) => { const o = byKey[e.key]; return { key: e.key, x: o.x, ...(o.g?.length ? { g: o.g } : {}), ...(o.fix && src === 'auto' ? { fix: o.fix } : {}) }; });
     }
+    console.error(`chunk of ${entries.length}: ${entries.filter((e) => !byKey[e.key]?.x).length} keys missing in the answer`);
   }
   if (entries.length === 1) { skipped++; return []; }
   const mid = Math.ceil(entries.length / 2);

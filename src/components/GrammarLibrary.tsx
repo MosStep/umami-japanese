@@ -50,6 +50,7 @@ export const GrammarLibrary: React.FC = () => {
   const [current, setCurrent] = useState<string | null>(null);
   const [seen, setSeen] = useState(loadSeen);
   const [limit, setLimit] = useState(80);
+  const [level, setLevel] = useState<string>('all');
   useLockBodyScroll(open);
 
   useEffect(() => {
@@ -69,8 +70,10 @@ export const GrammarLibrary: React.FC = () => {
   const byP = useMemo(() => new Map((data ?? []).map((g) => [g.p, g])), [data]);
   const list = useMemo(() => {
     const q = query.trim();
-    return (data ?? []).filter((g) => !q || g.p.includes(q) || g.e?.includes(q) || g.x.some((x) => x[5]?.includes(q)));
-  }, [data, query]);
+    return (data ?? []).filter(
+      (g) => (level === 'all' || g.lv === level) && (!q || g.p.includes(q) || g.e?.includes(q) || g.x.some((x) => x[5]?.includes(q))),
+    );
+  }, [data, query, level]);
 
   const g = current ? byP.get(current) : undefined;
   useEffect(() => {
@@ -120,7 +123,9 @@ export const GrammarLibrary: React.FC = () => {
 
           {g && (
             <>
-              <p className="text-xs text-slate-400">เจอในคลิป {g.n} ครั้ง</p>
+              <p className="text-xs text-slate-400">
+                ระดับ {g.lv} · เจอในคลิป {g.n} ครั้ง
+              </p>
               {g.e && <p className="p-3 rounded-2xl bg-slate-950 border border-slate-800 text-sm leading-6 text-slate-200">{g.e}</p>}
               <p className="text-sm font-semibold text-slate-200">ตัวอย่างจากคลิป</p>
               {g.x.map((x, i) => (
@@ -159,8 +164,23 @@ export const GrammarLibrary: React.FC = () => {
                   className="w-full min-h-11 pl-9 pr-3 rounded-xl bg-slate-950 border border-slate-800 text-white text-sm placeholder:text-slate-500"
                 />
               </div>
+              <div className="flex gap-1.5 overflow-x-auto">
+                {['all', 'N5', 'N4', 'N3', 'N2', 'N1'].map((lv) => (
+                  <button
+                    key={lv}
+                    onClick={() => {
+                      setLevel(lv);
+                      setLimit(80);
+                    }}
+                    aria-pressed={level === lv}
+                    className={`shrink-0 min-h-9 px-3 rounded-full text-sm font-semibold ${level === lv ? 'bg-slate-100 text-slate-900' : 'bg-slate-800 text-slate-300'}`}
+                  >
+                    {lv === 'all' ? 'ทั้งหมด' : lv}
+                  </button>
+                ))}
+              </div>
               <p className="text-xs text-slate-400">
-                {data.length} รูปไวยากรณ์จากคำอธิบายประโยคในคลิป เรียงจากที่เจอบ่อย · เปิดดูแล้ว {seenCount}
+                {list.length} รูปไวยากรณ์ที่เจอในคลิป เรียงจากที่เจอบ่อย · เปิดดูแล้ว {seenCount}
               </p>
               <div className="grid grid-cols-2 gap-2">
                 {list.slice(0, limit).map((p) => (
@@ -171,7 +191,8 @@ export const GrammarLibrary: React.FC = () => {
                   >
                     <span className="block font-jp text-base font-bold text-white truncate">{p.p}</span>
                     <span className="block text-[11px] text-slate-400">
-                      {seen[p.p] ? '✓ ' : ''}เจอ {p.n} ครั้ง
+                      {seen[p.p] ? '✓ ' : ''}
+                      {p.lv} · เจอ {p.n} ครั้ง
                     </span>
                   </button>
                 ))}

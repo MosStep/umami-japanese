@@ -265,6 +265,35 @@ CATEGORIES = {
         "max_per_channel": 3,
         "skip_title": r"MV|Music Video|歌ってみた|[Cc]over|COVER|オリジナル曲|Original Song|歌枠|踊ってみた|3D\s*LIVE|ライブ|LIVE|MMD|ASMR|#shorts|予告|PV|ティザー|Teaser|主題歌",
     },
+    "gaps": {
+        # Genre gaps: everyday dialogues, cooking, regional travel, folk tales, learner podcasts, culture, learner news.
+        "channels": [
+            "https://www.youtube.com/@nihongoconteppei/videos",
+            "https://www.youtube.com/@NHKWORLDJAPAN/videos",
+            "https://www.youtube.com/@nhk/videos",
+            "https://www.youtube.com/@sayurisaying/videos",
+            "https://www.youtube.com/@ryujiskitchen/videos",
+            "https://www.youtube.com/@nhkforschool/videos",
+            "https://www.youtube.com/@sanbonjuku/videos",
+            "https://www.youtube.com/@gizmodojapan/videos",
+            "https://www.youtube.com/@impress_watch/videos",
+            "ytsearch40:日本語 会話 買い物 やさしい",
+            "ytsearch40:日本語 会話 レストラン 注文 初級",
+            "ytsearch40:日本語 会話 駅 病院 やさしい",
+            "ytsearch40:料理 レシピ 作り方 日本語 字幕",
+            "ytsearch40:日本 旅行 vlog 地方 日本語",
+            "ytsearch40:昔話 読み聞かせ 日本語",
+            "ytsearch40:日本語 ポッドキャスト 中級",
+            "ytsearch40:日本の文化 解説 日本語",
+            "ytsearch40:やさしい日本語 ニュース",
+        ],
+        "min_s": 3 * 60,
+        "max_s": 20 * 60,
+        "target": 40,
+        "allow_auto": True,
+        "max_per_channel": 4,
+        "skip_title": r"MV|Music Video|歌ってみた|[Cc]over|COVER|オリジナル曲|Original Song|歌枠|踊ってみた|3D\s*LIVE|ライブ|LIVE|[Ll]ive|配信|MMD|ASMR|#shorts|[Ss]horts|予告|PV|ティザー|Teaser|主題歌|ミュージック|[Ss]ong|[Mm]usic|Official MV|[Ff]eat\.",
+    },
     "hololive": {
         # hololive only: members' own uploads first, then fan clip channels (auto Japanese allowed; songs skipped by title).
         "channels": [
