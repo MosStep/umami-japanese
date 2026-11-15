@@ -13,7 +13,9 @@ export type VideoCategory =
   | 'Daily Conversation'
   | 'Podcasts'
   | 'J-Pop'
-  | 'Street Food';
+  | 'Street Food'
+  | 'YouTuber'
+  | 'VTuber';
 
 export interface JLPTDistribution {
   N5: number;

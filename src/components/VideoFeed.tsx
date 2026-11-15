@@ -56,6 +56,8 @@ export const VideoFeed: React.FC = () => {
 
   const categoryDefs = [
     { id: 'All', label: 'ทั้งหมด' },
+    { id: 'YouTuber', label: '📺 ยูทูบเบอร์' },
+    { id: 'VTuber', label: '🎀 วีทูบเบอร์' },
     { id: 'Podcasts', label: '🎙️ พอดแคสต์' },
     { id: 'Gaming', label: '🎮 เกม & แคสเกม' },
     { id: 'Anime', label: '⚔️ อนิเมะ' },

@@ -126,12 +126,12 @@ function importBatches() {
     for (const [ms, e] of entries) {
       const line = lineAt[ms];
       if (!line) { console.error(`${id}:${ms} no such line`); bad++; continue; }
-      const fix = e.fix && cap.source?.ja === 'auto' ? e.fix : undefined;
+      const fix = typeof e.fix === 'string' && e.fix.trim() && cap.source?.ja === 'auto' ? e.fix : undefined;
       // Keep a good explanation even when one grammar point is bad: drop only the invalid points.
       const g = Array.isArray(e.g)
         ? e.g.filter((p) => !validate({ ja: line.ja, x: 'ก', g: [p], ...(fix ? { fix } : {}) }, line, cap.source?.ja).length).slice(0, 4)
         : [];
-      const item = { ja: line.ja, x: e.x?.trim(), ...(g.length ? { g } : {}), ...(fix ? { fix } : {}) };
+      const item = { ja: line.ja, x: typeof e.x === 'string' ? e.x.trim() : '', ...(g.length ? { g } : {}), ...(fix ? { fix } : {}) };
       const errs = validate(item, line, cap.source?.ja);
       if (errs.length) { console.error(`${id}:${ms} ${errs.join('; ')}`); bad++; continue; }
       ex.items[ms] = item;

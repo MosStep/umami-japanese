@@ -265,7 +265,67 @@ CATEGORIES = {
         "max_per_channel": 3,
         "skip_title": r"MV|Music Video|歌ってみた|[Cc]over|COVER|オリジナル曲|Original Song|歌枠|踊ってみた|3D\s*LIVE|ライブ|LIVE|MMD|ASMR|#shorts|予告|PV|ティザー|Teaser|主題歌",
     },
+    "hololive": {
+        # hololive only: members' own uploads first, then fan clip channels (auto Japanese allowed; songs skipped by title).
+        "channels": [
+            "https://www.youtube.com/@usadapekora/videos",
+            "https://www.youtube.com/@SakuraMiko/videos",
+            "https://www.youtube.com/@HoushouMarine/videos",
+            "https://www.youtube.com/@ShirakamiFubuki/videos",
+            "https://www.youtube.com/@NekomataOkayu/videos",
+            "https://www.youtube.com/@OozoraSubaru/videos",
+            "https://www.youtube.com/@TokinoSora/videos",
+            "https://www.youtube.com/@ShiroganeNoel/videos",
+            "https://www.youtube.com/@ShiranuiFlare/videos",
+            "https://www.youtube.com/@MinatoAqua/videos",
+            "https://www.youtube.com/@AmaneKanata/videos",
+            "https://www.youtube.com/@TsunomakiWatame/videos",
+            "https://www.youtube.com/@TokoyamiTowa/videos",
+            "https://www.youtube.com/@HimemoriLuna/videos",
+            "https://www.youtube.com/@YukihanaLamy/videos",
+            "https://www.youtube.com/@MomosuzuNene/videos",
+            "https://www.youtube.com/@ShishiroBotan/videos",
+            "https://www.youtube.com/@OmaruPolka/videos",
+            "https://www.youtube.com/@LaplusDarknesss/videos",
+            "https://www.youtube.com/@TakaneLui/videos",
+            "https://www.youtube.com/@HakuiKoyori/videos",
+            "https://www.youtube.com/@SakamataChloe/videos",
+            "https://www.youtube.com/@KazamaIroha/videos",
+            "https://www.youtube.com/@NatsuiroMatsuri/videos",
+            "https://www.youtube.com/@AkiRosenthal/videos",
+            "https://www.youtube.com/@AkaiHaato/videos",
+            "https://www.youtube.com/@MurasakiShion/videos",
+            "https://www.youtube.com/@NakiriAyame/videos",
+            "https://www.youtube.com/@YuzukiChoco/videos",
+            "https://www.youtube.com/@OokamiMio/videos",
+            "https://www.youtube.com/@HoshimachiSuisei/videos",
+            "https://www.youtube.com/@AZKi/videos",
+            "https://www.youtube.com/@Robocosan/videos",
+            "https://www.youtube.com/@hololive/videos",
+            "ytsearch30:ホロライブ 切り抜き 雑談 面白い",
+            "ytsearch30:ホロライブ 切り抜き 爆笑 トーク",
+            "ytsearch30:ホロライブ 切り抜き ぺこら 雑談",
+            "ytsearch30:ホロライブ 切り抜き みこ 雑談",
+            "ytsearch30:ホロライブ 切り抜き マリン 雑談",
+            "ytsearch30:ホロライブ 切り抜き スバル 雑談",
+            "ytsearch30:ホロライブ 切り抜き すいせい 雑談",
+            "ytsearch30:ホロライブ 切り抜き 料理",
+            "ytsearch30:ホロライブ 切り抜き 思い出 話",
+            "ytsearch30:ホロぐら 総集編",
+        ],
+        "min_s": 3 * 60,
+        "max_s": 14 * 60,
+        "target": 45,
+        "allow_auto": True,
+        "max_per_channel": 3,
+        "skip_title": r"MV|Music Video|歌ってみた|[Cc]over|COVER|オリジナル曲|Original Song|[Oo]riginal|official|Official|歌枠|踊ってみた|Dance|3D\s*LIVE|ライブ|LIVE|Live|MMD|ASMR|#shorts|予告|PV|ティザー|Teaser|主題歌|クロスフェード|XFD|試聴|メドレー|ダイジェスト|feat\.|／.*作曲|Instrumental|inst",
+        "require_title_for_search": r"ホロライブ|hololive|ぺこら|みこ|マリン|フブキ|ころね|おかゆ|スバル|そら|ノエル|フレア|あくあ|かなた|わため|トワ|ルーナ|ラミィ|ねね|ぼたん|ポルカ|ラプ|ルイ|こより|クロヱ|いろは|まつり|アキロゼ|はあと|シオン|あやめ|ちょこ|ミオ|すいせい|AZKi|ロボ子|ホロメン",
+    },
 }
+
+# Second half of the hololive scan (resume point after the first run).
+_h = CATEGORIES["hololive"]
+CATEGORIES["hololive2"] = {**_h, "channels": _h["channels"][[i for i, c in enumerate(_h["channels"]) if "TakaneLui" in c][0]:], "target": 22}
 
 LIST_OPTS = {
     "quiet": True,
@@ -442,6 +502,8 @@ def main():
                         continue
                     dur = e.get("duration")
                     if cat.get("skip_title") and re.search(cat["skip_title"], e.get("title") or ""):
+                        continue
+                    if ch_url.startswith("ytsearch") and cat.get("require_title_for_search") and not re.search(cat["require_title_for_search"], e.get("title") or ""):
                         continue
                     if e.get("live_status") in ("is_live", "is_upcoming", "post_live") or "/shorts/" in (e.get("url") or ""):
                         continue
