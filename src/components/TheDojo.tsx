@@ -3,7 +3,7 @@ import { useApp } from '../context/AppContext';
 import { MinedSentenceRecord, SubtitleLineRecord } from '../schema/databaseSchema';
 import { audioService } from '../utils/audioService';
 import { AiChat } from './AiChat';
-import { AGAIN_GAP, NEW_PER_SESSION, buildReviewQueue, gradeWord, loadWordSrs, saveWordSrs, WordSrsMap } from '../utils/wordSrs';
+import { AGAIN_GAP, NEW_PER_SESSION, buildReviewQueue, gradeWord, isLeech, loadWordSrs, saveWordSrs, WordSrsMap } from '../utils/wordSrs';
 import {
   isNativeSpeech,
   startJapaneseRecognition,
@@ -50,6 +50,8 @@ export const TheDojo: React.FC = () => {
   const [wordQueue, setWordQueue] = useState<string[]>([]);
   const [queueTotal, setQueueTotal] = useState<number>(0);
   const [queueNonce, setQueueNonce] = useState<number>(0);
+  // "Learn more" after today's queue: one more batch of new words beyond the daily allowance.
+  const extraNewRef = useRef<boolean>(false);
   const [srsIndex, setSrsIndex] = useState<number>(0);
   const [isRevealed, setIsRevealed] = useState<boolean>(false);
   const [quizMode, setQuizMode] = useState<'cloze' | 'listening'>('cloze');
@@ -99,7 +101,7 @@ export const TheDojo: React.FC = () => {
   useEffect(() => {
     const ids =
       wordFilter === 'all'
-        ? buildReviewQueue(dictionaryWords.map((w) => w.id), loadWordSrs())
+        ? buildReviewQueue(dictionaryWords.map((w) => w.id), loadWordSrs(), extraNewRef.current ? NEW_PER_SESSION : undefined, undefined, (id: string) => wordStates[id] === 'known')
         : filteredWords.map((w) => w.id);
     setWordQueue(ids);
     setQueueTotal(ids.length);
@@ -124,7 +126,7 @@ export const TheDojo: React.FC = () => {
     setActiveTab('player');
   };
 
-  const dueTodayCount = buildReviewQueue(dictionaryWords.map((w) => w.id), srsMap).length;
+  const dueTodayCount = buildReviewQueue(dictionaryWords.map((w) => w.id), srsMap, undefined, undefined, (id: string) => wordStates[id] === 'known').length;
   const currentWord = dictionaryWords.find((w) => w.id === wordQueue[0]);
   const reviewedInQueue = queueTotal - wordQueue.length;
   // Cards get harder as a word matures: read it → hear it → recall it from Thai (today's review only).
@@ -507,6 +509,9 @@ export const TheDojo: React.FC = () => {
                       <p className="text-xs font-semibold text-slate-400">
                         {cardStage === 'read' ? 'ดูคำ แล้วนึกความหมาย' : cardStage === 'listen' ? 'ฟังเสียง แล้วนึกความหมาย' : 'ดูความหมาย แล้วนึกคำภาษาญี่ปุ่น'}
                       </p>
+                      {isLeech(srsMap[currentWord.id]) && (
+                        <p className="text-xs text-amber-300">🩹 คำนี้ลืมบ่อย ลองจำจากประโยคตัวอย่างหลังเปิดเฉลย</p>
+                      )}
 
                       {cardStage === 'listen' && !isRevealed ? (
                         <button
@@ -636,10 +641,13 @@ export const TheDojo: React.FC = () => {
                     <div className="text-center py-8 space-y-3">
                       <p className="text-4xl" aria-hidden="true">🎉</p>
                       <p className="text-lg font-bold text-white">ทบทวนครบแล้วสำหรับวันนี้</p>
-                      <p className="text-sm text-slate-400">คำที่ทบทวนแล้วจะกลับมาให้ทวนอีกตามรอบ (1, 2, 4, 8… วัน)</p>
+                      <p className="text-sm text-slate-400">คำที่ทบทวนแล้วจะกลับมาตอนที่ใกล้จะลืม (คำนวณจากความจำของแต่ละคำ)</p>
                       <button
                         type="button"
-                        onClick={() => setQueueNonce((n) => n + 1)}
+                        onClick={() => {
+                          extraNewRef.current = true;
+                          setQueueNonce((n) => n + 1);
+                        }}
                         className="min-h-12 px-5 rounded-2xl bg-rose-600 hover:bg-rose-500 text-white font-bold"
                       >
                         เรียนคำใหม่อีก {NEW_PER_SESSION} คำ

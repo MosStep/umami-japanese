@@ -120,7 +120,7 @@ export const VideoFeed: React.FC = () => {
 
   // "Today" card: due words, one clip (resume, else a well-fitting one), streak status, backup nudge.
   const [srsSnapshot] = useState(loadWordSrs);
-  const { due: dueWords, fresh: freshWords } = countDue(dictionaryWords.map((w) => w.id), srsSnapshot);
+  const { due: dueWords, fresh: freshWords } = countDue(dictionaryWords.map((w) => w.id), srsSnapshot, undefined, (id) => wordStates[id] === 'known');
   const todayKey = localDayKey(new Date());
   const todayReviews = stats.daily_reviews?.[todayKey] ?? 0;
   const minLeft = Math.max(1, Math.ceil(STUDY_MIN_MINUTES - (stats.daily_minutes?.[todayKey] ?? 0)));

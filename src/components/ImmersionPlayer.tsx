@@ -6,6 +6,8 @@ import { ContextualDictionaryModal } from './ContextualDictionaryModal';
 import { audioService } from '../utils/audioService';
 import { loadExplanations, explanationFor, hasExplanations, LineExplanation } from '../data/explanations';
 import { ClipFinishSheet } from './ClipFinishSheet';
+import { openGrammar } from './GrammarLibrary';
+import { kanjiIn, openKanji } from './KanjiSheet';
 import { addSubReport, clipDone, hasSubReport, markClipDone, SUB_REPORT_LABEL, SubReportKind } from '../utils/clipProgress';
 import {
   Play,
@@ -799,6 +801,17 @@ export const ImmersionPlayer: React.FC = () => {
                           {selectedToken.token.reading_kana && selectedToken.token.reading_kana !== selectedToken.token.surface && (
                             <span className="text-sm font-jp font-bold text-indigo-300">{selectedToken.token.reading_kana}</span>
                           )}
+                          {kanjiIn(selectedToken.token.lemma || selectedToken.token.surface).map((k) => (
+                            <button
+                              key={k}
+                              type="button"
+                              onClick={() => openKanji(k)}
+                              title={`ดูคันจิ ${k}`}
+                              className="min-h-8 min-w-8 px-1 rounded-lg bg-emerald-500/15 text-emerald-200 font-jp text-sm font-bold"
+                            >
+                              {k}
+                            </button>
+                          ))}
                         </div>
                         {(selectedToken.token.thai_meaning || selectedToken.token.contextual_meaning) && (
                           <p className="mt-0.5 text-sm font-bold text-emerald-300 line-clamp-2">
@@ -925,7 +938,14 @@ export const ImmersionPlayer: React.FC = () => {
                                   <ul className="space-y-1.5 pt-1 border-t border-slate-800">
                                     {activeExplain.g.map((pt, i) => (
                                       <li key={i} className="text-sm leading-6">
-                                        <span className="font-bold text-amber-300">{pt.f}</span>
+                                        <button
+                                          type="button"
+                                          onClick={() => openGrammar(pt.b || pt.f)}
+                                          className="font-bold text-amber-300 underline decoration-dotted decoration-amber-400/60 underline-offset-4"
+                                          title="เปิดในคลังไวยากรณ์"
+                                        >
+                                          {pt.f}
+                                        </button>
                                         {pt.b && pt.b !== pt.f && <span className="text-xs text-slate-500"> ({pt.b})</span>}
                                         <span className="text-slate-300"> — {pt.e}</span>
                                       </li>

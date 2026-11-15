@@ -22,6 +22,8 @@ import {
   shouldSkipBackgroundOta,
 } from './utils/otaUpdater';
 import { REMINDERS_CHANGED_EVENT, onReminderTap, syncReminders } from './utils/reminders';
+import { GrammarLibrary } from './components/GrammarLibrary';
+import { KanjiSheet } from './components/KanjiSheet';
 
 const OtaReadyToast: React.FC<{ version: string; onRestart: () => void; onDismiss: () => void }> = ({
   version,
@@ -52,7 +54,7 @@ const OtaReadyToast: React.FC<{ version: string; onRestart: () => void; onDismis
 );
 
 export const App: React.FC = () => {
-  const { activeTab, setActiveTab, dictionaryWords, streak, studiedToday } = useApp();
+  const { activeTab, setActiveTab, dictionaryWords, wordStates, streak, studiedToday } = useApp();
   const [showUpdateModal, setShowUpdateModal] = useState(false);
   const [otaReady, setOtaReady] = useState<{ bundle: BundleInfo | null; version: string } | null>(null);
   const launchCheckStarted = useRef(false);
@@ -66,8 +68,8 @@ export const App: React.FC = () => {
 
   // Daily reminders: rescheduled with fresh due counts on launch, when the app goes to the background,
   // and after the settings change. A tapped reminder opens the practice tab.
-  const reminderCtx = useRef({ wordIds: [] as string[], streak: 0, studiedToday: false });
-  reminderCtx.current = { wordIds: dictionaryWords.map((w) => w.id), streak, studiedToday };
+  const reminderCtx = useRef({ wordIds: [] as string[], streak: 0, studiedToday: false, isKnown: (_id: string): boolean => false });
+  reminderCtx.current = { wordIds: dictionaryWords.map((w) => w.id), streak, studiedToday, isKnown: (id: string) => wordStates[id] === 'known' };
   useEffect(() => {
     const sync = () => void syncReminders(reminderCtx.current);
     const timer = window.setTimeout(sync, 4000);
@@ -155,6 +157,9 @@ export const App: React.FC = () => {
           </div>
         </footer>
       </main>
+
+      <GrammarLibrary />
+      <KanjiSheet />
 
       {/* Settings & Auto-Update Modals */}
       <SettingsModal onOpenUpdate={() => setShowUpdateModal(true)} />

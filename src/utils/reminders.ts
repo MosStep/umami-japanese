@@ -48,6 +48,8 @@ export const requestReminderPermission = async (): Promise<boolean> => {
 
 export interface ReminderContext {
   wordIds: string[];
+  /** Known words are not introduced as new cards. */
+  isKnown?: (id: string) => boolean;
   streak: number;
   studiedToday: boolean;
 }
@@ -79,7 +81,7 @@ export const syncReminders = async (ctx: ReminderContext): Promise<void> => {
       const at = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, prefs.hour, prefs.minute);
       if (at.getTime() <= now.getTime() + 60_000) continue;
       if (i === 0 && ctx.studiedToday) continue;
-      const { due, fresh } = countDue(ctx.wordIds, srs, at.getTime());
+      const { due, fresh } = countDue(ctx.wordIds, srs, at.getTime(), ctx.isKnown);
       notifications.push({
         id: ID_BASE + i,
         title: '🦊 ถึงเวลาเรียนญี่ปุ่นแล้ว',

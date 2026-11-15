@@ -16,6 +16,8 @@ const MODEL = opt('--model', 'claude-haiku-5-5');
 const LIMIT = Number(opt('--limit', 'Infinity'));
 const CHUNK = Number(opt('--chunk', '10'));
 const PAR = Number(opt('--par', '3'));
+// --shard k/n: this process takes every n-th batch starting at k (run n processes for more throughput).
+const SHARD = opt('--shard', '0/1').split('/').map(Number);
 requireKeys();
 
 const SYSTEM = `You are a Japanese teacher writing short explanations for Thai learners who watch Japanese videos with subtitles.
@@ -29,7 +31,7 @@ Example input: [{"key":"a:1","ja":"あなたの国の言葉では、なんと呼
 Example output: [{"key":"a:1","x":"พิธีกรหันมาถามผู้ชมอย่างสุภาพว่า โปเกมอนตัวนี้ในภาษาของประเทศผู้ชมเรียกว่าอะไร ต่อจากที่เพิ่งบอกชื่อภาษาญี่ปุ่นไป","g":[{"f":"では","b":"〜では","e":"で (ใน) + は (หัวข้อ) = 'ในภาษาของคุณนั้น…' ตั้งขอบเขตเพื่อเทียบกับภาษาญี่ปุ่น"},{"f":"なんと呼びますか","b":"何と呼ぶ","e":"なんと = ว่าอะไร + 呼びます รูปสุภาพของ 呼ぶ → 'เรียกว่าอะไรคะ'"}]}]`;
 
 let skipped = 0;
-const chat = (messages) => tenixeChat(MODEL, messages, MODEL.startsWith("deepseek") ? 24000 : 6000);
+const chat = (messages) => tenixeChat(MODEL, messages, /deepseek|nemotron|gpt-oss|reasoning/i.test(MODEL) ? 24000 : 8000);
 
 // Returns the explained entries of the chunk. A chunk whose answer stays unusable (bad JSON, missing keys) is
 // split in two and retried; a single line that still fails is left out (it is exported again next time).
@@ -63,6 +65,7 @@ async function main() {
   if (args.length) batches = batches.filter((b) => args.includes(b));
   const order = readFileSync(join(DIR, 'INDEX.md'), 'utf8').match(/^\| (\S+-\d+) \|/gm)?.map((s) => s.slice(2, -2)) ?? [];
   batches.sort((a, b) => order.indexOf(a) - order.indexOf(b));
+  batches = batches.filter((_, i) => i % SHARD[1] === SHARD[0]);
   let budget = LIMIT, done = 0;
   const t0 = Date.now();
   for (const batch of batches) {

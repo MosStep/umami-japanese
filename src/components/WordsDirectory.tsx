@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { JLPTLevel, WordLearningStatus } from '../schema/databaseSchema';
 import { audioService } from '../utils/audioService';
+import { JlptPanel } from './JlptPanel';
+import { GrammarCard } from './GrammarLibrary';
+import { KanjiCard } from './KanjiSheet';
 import {
   BookA,
   Search,
@@ -28,6 +31,8 @@ export const WordsDirectory: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedJLPT, setSelectedJLPT] = useState<string>('All');
   const [selectedStatus, setSelectedStatus] = useState<string>('All');
+  // Long lists (after marking a whole JLPT level known) render in pages.
+  const [visible, setVisible] = useState<number>(120);
 
   const jlptTabs = ['All', 'N5', 'N4', 'N3', 'N2', 'N1'];
 
@@ -69,6 +74,12 @@ export const WordsDirectory: React.FC = () => {
             <Flame className="w-4 h-4" /> กำลังเรียน {countLearning}
           </span>
         </div>
+      </div>
+
+      <JlptPanel />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <GrammarCard />
+        <KanjiCard />
       </div>
 
       {/* Search Input */}
@@ -138,7 +149,7 @@ export const WordsDirectory: React.FC = () => {
       {/* Word Cards List (Mobile-First 1 Column on Phone, 2-3 Columns on Tablet/Desktop) */}
       {filteredWords.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3.5">
-          {filteredWords.map((word) => {
+          {filteredWords.slice(0, visible).map((word) => {
             const status = wordStates[word.id] || 'new';
 
             return (
@@ -226,6 +237,14 @@ export const WordsDirectory: React.FC = () => {
               </div>
             );
           })}
+          {filteredWords.length > visible && (
+            <button
+              onClick={() => setVisible((v) => v + 120)}
+              className="min-h-12 rounded-2xl bg-slate-800 text-slate-200 text-sm font-semibold md:col-span-2 lg:col-span-3"
+            >
+              แสดงเพิ่ม ({filteredWords.length - visible} คำ)
+            </button>
+          )}
         </div>
       ) : (
         <div className="rounded-3xl bg-slate-900/50 border border-slate-800 p-8 text-center space-y-2">

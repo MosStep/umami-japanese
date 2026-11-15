@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "bundle": "node scripts/check-captions.mjs && node scripts/build-word-examples.mjs && npm run build && node scripts/make-bundle.mjs"
+    "bundle": "node scripts/check-captions.mjs && node scripts/build-word-examples.mjs && node scripts/build-jlpt-words.mjs && node scripts/build-grammar.mjs && node scripts/build-kanji.mjs && npm run build && node scripts/make-bundle.mjs"
   },
   "dependencies": {
     "@capacitor-community/speech-recognition": "^7.0.1",
@@ -20,7 +20,8 @@
     "@capgo/capacitor-updater": "^8.54.2",
     "lucide-react": "^0.468.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "ts-fsrs": "5.2.3"
   },
   "devDependencies": {
     "@types/react": "^18.3.18",

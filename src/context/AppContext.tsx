@@ -101,6 +101,8 @@ interface AppContextType {
   // Word States
   wordStates: Record<string, WordLearningStatus>;
   setWordStatus: (wordId: string, status: WordLearningStatus) => void;
+  /** Marks many words known at once (level check, "I know all N5"): no XP, words already known/learning stay. */
+  markWordsKnown: (wordIds: string[]) => number;
   getWordStatus: (wordId: string) => WordLearningStatus;
   // null = not computable yet (captions still loading) or no content words.
   getKnownWordPercentage: (videoId: string) => number | null;
@@ -406,6 +408,18 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setWordStates((prev) => ({ ...prev, [wordId]: status }));
     if (status === 'known') addXP('reading', 15);
     else if (status === 'learning') addXP('reading', 5);
+  };
+
+  const markWordsKnown = (wordIds: string[]): number => {
+    const fresh = wordIds.filter((id) => (wordStates[id] ?? 'new') === 'new');
+    if (fresh.length) {
+      setWordStates((prev) => {
+        const next = { ...prev };
+        for (const id of fresh) if ((next[id] ?? 'new') === 'new') next[id] = 'known';
+        return next;
+      });
+    }
+    return fresh.length;
   };
 
   const getWordStatus = (wordId: string): WordLearningStatus => {
@@ -957,6 +971,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         isCustomVideo,
         wordStates,
         setWordStatus,
+        markWordsKnown,
         getWordStatus,
         getKnownWordPercentage,
         wordIndexStatus,
