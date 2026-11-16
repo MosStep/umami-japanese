@@ -1,18 +1,17 @@
 {
-  "version": "1.0.31",
-  "build": 131,
+  "version": "1.0.32",
+  "build": 132,
   "min_native_build": 115,
-  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.31/web-bundle-1.0.31.zip",
-  "updated_at": "2026-11-16T07:00:00.000Z",
+  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.32/web-bundle-1.0.32.zip",
+  "updated_at": "2026-11-16T07:30:00.000Z",
   "words_count": 125,
   "videos_count": 174,
-  "announcement": "🎬 v1.0.31: คลิปใหม่ 30 คลิป (พอดแคสต์ วล็อก บทสนทนา อาหาร) พร้อมซับไทยครบ",
+  "announcement": "💡 v1.0.32: คำอธิบายประโยคสำหรับคลิประดับ N5 ชุดใหม่",
   "release_notes": [
-    "🎬 คลิปใหม่ 30 คลิปแนวที่ยังมีน้อย: พอดแคสต์ วล็อก บทสนทนาประจำวัน สตรีทฟู้ด (N5–N2)",
-    "🇹🇭 ซับไทยครบทุกบรรทัด รวมเพลง Lemon ที่เดิมเป็นแปลอัตโนมัติ",
-    "📚 คำศัพท์ใหม่ 1,490 คำมีความหมายไทย (ครอบคลุม 100%)"
+    "💡 คำอธิบายประโยคเพิ่ม 471 บรรทัด (คลิประดับ N5 ชุดใหม่)",
+    "🎬 คลิปใหม่ 30 คลิปจาก v1.0.31 พร้อมซับไทยครบ"
   ],
   "update_type": "apk",
   "apk_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.24/umami-app-debug.apk",
-  "checksum": "cd6256e09c8f48b5e9383c499b56786295f6ae85a82f7c086241ddfc580b15c9"
+  "checksum": "bf20691ff02e34be5e990f93ecaea0cabdf157a3a4ef919c1139a57eeca284bc"
 }

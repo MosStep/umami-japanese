@@ -1,6 +1,6 @@
-export const APP_VERSION_BASE = 'v1.0.31';
-export const APP_VERSION_NAME = '1.0.31';
-export const APP_BUILD = 131;
+export const APP_VERSION_BASE = 'v1.0.32';
+export const APP_VERSION_NAME = '1.0.32';
+export const APP_BUILD = 132;
 export const APP_RELEASE_DATE = '2026-11-16';
 
 // Native build of the Android shell. Bump only when android/ native code changes
