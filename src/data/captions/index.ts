@@ -35,7 +35,16 @@ export interface CaptionFile {
   lines: CaptionLine[];
 }
 
-const loaders = import.meta.glob('./*.json') as Record<string, () => Promise<{ default: CaptionFile }>>;
+// The caption files are emitted as plain static assets (URLs) and fetched when a clip opens: bundling ~30 MB of
+// JSON as JS modules needed more memory than the build machine has.
+const urls = import.meta.glob(['./*.json', '!./word-index.json'], { query: '?url', import: 'default', eager: true }) as Record<string, string>;
+
+/** Fetch a static JSON asset; rejects on HTTP errors. */
+export const fetchJson = <T,>(url: string): Promise<T> =>
+  fetch(url).then((r) => {
+    if (!r.ok) throw new Error(`HTTP ${r.status} for ${url}`);
+    return r.json() as Promise<T>;
+  });
 
 // Cache of load promises keyed by youtube_id. Resolves to undefined when no file exists.
 const cache = new Map<string, Promise<CaptionFile | undefined>>();
@@ -43,10 +52,11 @@ const cache = new Map<string, Promise<CaptionFile | undefined>>();
 export const loadRealCaptions = (youtubeId: string): Promise<CaptionFile | undefined> => {
   let p = cache.get(youtubeId);
   if (!p) {
-    const loader = loaders[`./${youtubeId}.json`];
-    p = loader
-      ? loader().then((m) => m.default).catch(() => undefined)
-      : Promise.resolve(undefined);
+    const url = urls[`./${youtubeId}.json`];
+    p = url ? fetchJson<CaptionFile>(url).catch(() => undefined) : Promise.resolve(undefined);
+    p.then((f) => {
+      if (!f) cache.delete(youtubeId); // allow a retry after a failed fetch
+    });
     cache.set(youtubeId, p);
   }
   return p;

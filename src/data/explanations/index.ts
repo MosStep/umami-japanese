@@ -1,3 +1,5 @@
+import { fetchJson } from '../captions';
+
 /**
  * Per-line Thai explanations written offline (scripts/explain-tool.mjs):
  * src/data/explanations/<youtube_id>.json = { youtube_id, v, items: { "<start_ms>": LineExplanation } }.
@@ -28,17 +30,23 @@ interface ExplanationFile {
   items: Record<string, LineExplanation>;
 }
 
-const loaders = import.meta.glob('./*.json') as Record<string, () => Promise<{ default: ExplanationFile }>>;
+// Emitted as static assets and fetched (see src/data/captions/index.ts for why).
+const urls = import.meta.glob('./*.json', { query: '?url', import: 'default', eager: true }) as Record<string, string>;
 /** Whether this clip ships any explanations (known without loading the file). */
-export const hasExplanations = (youtubeId: string): boolean => `./${youtubeId}.json` in loaders;
+export const hasExplanations = (youtubeId: string): boolean => `./${youtubeId}.json` in urls;
 
 const cache = new Map<string, Promise<Record<string, LineExplanation>>>();
 
 export const loadExplanations = (youtubeId: string): Promise<Record<string, LineExplanation>> => {
   let p = cache.get(youtubeId);
   if (!p) {
-    const loader = loaders[`./${youtubeId}.json`];
-    p = loader ? loader().then((m) => m.default.items ?? {}).catch(() => ({})) : Promise.resolve({});
+    const url = urls[`./${youtubeId}.json`];
+    p = url
+      ? fetchJson<ExplanationFile>(url).then((f) => f.items ?? {}).catch(() => {
+          cache.delete(youtubeId); // allow a retry after a failed fetch
+          return {};
+        })
+      : Promise.resolve({});
     cache.set(youtubeId, p);
   }
   return p;

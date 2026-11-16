@@ -17,6 +17,8 @@ const opt = (name, def) => { const i = args.indexOf(name); if (i < 0) return def
 const MODEL = opt('--model', 'claude-haiku-5-5');
 const CHUNK = Number(opt('--chunk', '40'));
 const PAR = Number(opt('--par', '2'));
+// --shard k/n: this process takes every n-th batch starting at k (run n processes to keep the gateway busy).
+const SHARD = opt('--shard', '0/1').split('/').map(Number);
 // Reasoning models (deepseek-v4-flash) need a large budget or they return nothing.
 const MAX_TOKENS = Number(opt('--max', MODEL.startsWith('deepseek') ? '24000' : '6000'));
 requireKeys();
@@ -69,6 +71,7 @@ async function translateChunk(entries, context) {
 async function main() {
   let batches = readdirSync(DIR).filter((f) => /-\d+\.json$/.test(f) && !/\.(th|part)\.json$/.test(f)).map((f) => f.slice(0, -5)).sort();
   if (args.length) batches = batches.filter((b) => args.includes(b));
+  batches = batches.filter((_, i) => i % SHARD[1] === SHARD[0]);
   let done = 0;
   const t0 = Date.now();
   for (const batch of batches) {
