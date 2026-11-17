@@ -1,17 +1,17 @@
 {
-  "version": "1.0.33",
-  "build": 133,
+  "version": "1.0.34",
+  "build": 134,
   "min_native_build": 115,
-  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.33/web-bundle-1.0.33.zip",
-  "updated_at": "2026-11-17T10:15:00.000Z",
+  "bundle_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.34/web-bundle-1.0.34.zip",
+  "updated_at": "2026-11-17T12:30:00.000Z",
   "words_count": 125,
   "videos_count": 174,
-  "announcement": "💡 v1.0.33: คำอธิบายประโยคเพิ่มอีก 1,036 บรรทัด + คันจิใหม่ครบ",
+  "announcement": "💡 v1.0.34: คำอธิบายประโยคครบ 100% ทุกคลิป!",
   "release_notes": [
-    "💡 คำอธิบายประโยคเพิ่ม 1,036 บรรทัด (ส่วนใหญ่คลิประดับ N4) รวมครบ 87%",
-    "字 คันจิใหม่ 44 ตัวมีเสียงอ่านและความหมายไทย (ครบ 1,721 ตัว)"
+    "💡 คำอธิบายประโยคครบทุกบรรทัดของทุกคลิป (33,478 บรรทัด)",
+    "📖 ไวยากรณ์ใหม่ 134 รูปมีคำอธิบายและระดับ JLPT"
   ],
   "update_type": "apk",
   "apk_url": "https://github.com/MosStep/umami-japanese/releases/download/v1.0.24/umami-app-debug.apk",
-  "checksum": "1db61087a090c38afe552864fa83c82b6b323a741a67dc496ae8c864f7b957d2"
+  "checksum": "af93a15f7673ae393e65616270e9f378cfc64e83b251caa156b2719eb35a9376"
 }
