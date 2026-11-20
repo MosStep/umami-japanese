@@ -348,14 +348,14 @@ const MockTest: React.FC<{ level: Level; words: JWord[]; pool: JWord[]; onAnswer
   onAnswer,
   onClose,
 }) => {
-  const qs = useMemo(() => {
+  const [qs] = useState(() => {
     const usable = shuffle(words.filter((w) => w.meaning)).slice(0, 15);
     const meanings = [...new Set(pool.map((w) => w.meaning).filter(Boolean))];
     return usable.map((w, i) => {
       const options = shuffle([w.meaning, ...shuffle(meanings.filter((m) => m !== w.meaning)).slice(0, 3)]);
       return { w, listen: i >= 10, options, answer: options.indexOf(w.meaning) };
     });
-  }, [words, pool]);
+  });
   const [i, setI] = useState(0);
   const [picked, setPicked] = useState<number | null>(null);
   const [score, setScore] = useState(0);

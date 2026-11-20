@@ -4076,27 +4076,6 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "description": "วล็อกวันหยุดของคนวัยทำงานอายุ 24 ปีที่เริ่มต้นตั้งแต่ 5:30 น. ด้วยการอ่านหนังสือ ไปคาเฟ่ และจัดแต่งห้องพัก"
   },
   {
-    "id": "vid-pod-char-02",
-    "youtube_id": "BBdK30Cvgpo",
-    "title": "บทสนทนาภาษาญี่ปุ่นง่าย ๆ: ชวนเพื่อนไปเที่ยวด้วยกัน",
-    "japanese_title": "Japanese Conversation \"invite a friend to join one\" / Easy Japanese Listening【N5-N4】",
-    "channel": "Learn Japanese with Characters",
-    "category": "Podcasts",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "jlpt_distribution": {
-      "N5": 55,
-      "N4": 15,
-      "N3": 10,
-      "N2": 1,
-      "N1": 19
-    },
-    "duration": 511,
-    "thumbnail_gradient": "from-indigo-900 via-blue-950 to-slate-900",
-    "scene_emoji": "👋",
-    "description": "ฝึกฟังบทสนทนาภาษาญี่ปุ่นระดับ N5-N4 เรื่องการทักทายและชวนเพื่อนออกไปข้างนอกใกล้สถานีรถไฟ"
-  },
-  {
     "id": "vid-pod-kensan-01",
     "youtube_id": "_aCjA73ZyF4",
     "title": "ฝึกฟังภาษาญี่ปุ่นระดับเริ่มต้น N5 แบบเข้าใจง่าย #140",
@@ -4223,27 +4202,6 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "description": "ฝึกฟังคำศัพท์และประโยคภาษาญี่ปุ่นในชีวิตประจำวันผ่านการลงมือทำอาหาร"
   },
   {
-    "id": "vid-news-abe-01",
-    "youtube_id": "ZWsQB3gfBUo",
-    "title": "ข่าวภาษาญี่ปุ่นเข้าใจง่าย: ถุงพลาสติกคิดเงินและผ้าฟุโรชิกิยอดนิยม",
-    "japanese_title": "やさしい日本語ニュースわん　9/13「レジ袋が有料になって、代わりに使う風呂敷が人気」「オンラインゲーム、子供がする時は親が一緒にいて」「ニュース犬が好きな歌：布団の中から出たくない」",
-    "channel": "阿部先生の日本語教室",
-    "category": "Podcasts",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "jlpt_distribution": {
-      "N5": 56,
-      "N4": 19,
-      "N3": 11,
-      "N2": 3,
-      "N1": 11
-    },
-    "duration": 500,
-    "thumbnail_gradient": "from-cyan-900 via-blue-950 to-slate-900",
-    "scene_emoji": "🐶",
-    "description": "ฝึกฟังข่าวภาษาญี่ปุ่นแบบเข้าใจง่ายเรื่องการใช้ผ้าฟุโรชิกิแทนถุงพลาสติกและคำแนะนำเรื่องเกมออนไลน์สำหรับเด็ก"
-  },
-  {
     "id": "vid-vlog-akane-03",
     "youtube_id": "oHlC4mdcTTY",
     "title": "วล็อกเดินเล่น #13: 3 สิ่งที่ควรรู้ก่อนคุยกับเจ้าของภาษาญี่ปุ่น",
@@ -4328,27 +4286,6 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "description": "ฝึกฟังภาษาญี่ปุ่นผ่านการสวมชุดกิโมโนเดินชมย่านกินซ่าและสัมผัสวัฒนธรรมอาหารญี่ปุ่น"
   },
   {
-    "id": "vid-pod-dailypod-01",
-    "youtube_id": "x-KklMb9FAw",
-    "title": "คุยเรื่องอาหารเช้าของคนญี่ปุ่น: พอดแคสต์ภาษาญี่ปุ่นประจำวัน",
-    "japanese_title": "Talking About Japanese Breakfast (日本の朝ごはん) | Japanese Daily Podcast",
-    "channel": "Japanese Daily Podcast",
-    "category": "Podcasts",
-    "difficulty_rating": 3,
-    "primary_jlpt": "N3",
-    "jlpt_distribution": {
-      "N5": 45,
-      "N4": 16,
-      "N3": 16,
-      "N2": 3,
-      "N1": 20
-    },
-    "duration": 983,
-    "thumbnail_gradient": "from-amber-800 via-yellow-950 to-slate-900",
-    "scene_emoji": "🍚",
-    "description": "พอดแคสต์สนทนาภาษาญี่ปุ่นเกี่ยวกับวัฒนธรรมและเมนูอาหารเช้าในชีวิตจริงของคนญี่ปุ่น"
-  },
-  {
     "id": "vid-pod-kensan-02",
     "youtube_id": "KDVGWFQDtjE",
     "title": "เดินป่าขึ้นเขาในญี่ปุ่น: ฝึกฟังภาษาญี่ปุ่นจากสถานการณ์จริง 20 นาที",
@@ -4389,27 +4326,6 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "thumbnail_gradient": "from-violet-900 via-indigo-950 to-slate-900",
     "scene_emoji": "🧩",
     "description": "ฝึกฟังภาษาญี่ปุ่นพร้อมทายคำศัพท์ที่ใช้ในชีวิตประจำวันขณะเดินเล่นกลางแจ้ง"
-  },
-  {
-    "id": "vid-news-abe-02",
-    "youtube_id": "iWg70cSpX9I",
-    "title": "ข่าวภาษาญี่ปุ่นเข้าใจง่าย: หุ่นยนต์อวตารต้อนรับลูกค้าและธนบัตร 1 หมื่นเยนแบบใหม่",
-    "japanese_title": "やさしい日本語ニュースわん 9/6　「分身ロボットで接客、生きる希望に」「政府、客に渡す12の品物にプラスチックを使わないで」「新しい1万円のお札　工場で印刷が始まる」",
-    "channel": "阿部先生の日本語教室",
-    "category": "Podcasts",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "jlpt_distribution": {
-      "N5": 53,
-      "N4": 19,
-      "N3": 11,
-      "N2": 2,
-      "N1": 15
-    },
-    "duration": 703,
-    "thumbnail_gradient": "from-blue-900 via-slate-900 to-zinc-950",
-    "scene_emoji": "🤖",
-    "description": "เล่าข่าวภาษาญี่ปุ่นเข้าใจง่ายเรื่องการใช้หุ่นยนต์บริการลูกค้า การลดพลาสติก และการเริ่มพิมพ์ธนบัตร 1 หมื่นเยนรุ่นใหม่"
   },
   {
     "id": "vid-vlog-mogura-01",
@@ -4790,69 +4706,6 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "description": "อธิบายประวัติและจุดเด่นของศิลปะการแสดงดั้งเดิมของญี่ปุ่น 5 แขนง ได้แก่ กากากุ โนกากุ คาบูกิ บุนรากุ และคุมิโอโดริ"
   },
   {
-    "id": "vid-news-ainewslab-01",
-    "youtube_id": "HyK2DV5Y2kA",
-    "title": "วิเคราะห์เศรษฐกิจมหภาค: มาตรฐานการครองชีพที่ลดลงกับดัชนีเศรษฐกิจและค่าเงินเยน",
-    "japanese_title": "【経済】【字幕対応】国民の生活水準低下 vs 経済指標好転！？ - サナエノミクスの「エコチェンバー」と マクロ経済の共通認識 Part 2【AI解説】",
-    "channel": "+AI News Lab",
-    "category": "Podcasts",
-    "difficulty_rating": 4,
-    "primary_jlpt": "N2",
-    "jlpt_distribution": {
-      "N5": 27,
-      "N4": 14,
-      "N3": 27,
-      "N2": 5,
-      "N1": 27
-    },
-    "duration": 416,
-    "thumbnail_gradient": "from-slate-900 via-blue-950 to-zinc-950",
-    "scene_emoji": "📉",
-    "description": "วิเคราะห์ข่าวและนโยบายเศรษฐกิจมหภาคของญี่ปุ่น ปัญหาเงินเฟ้อ ค่าเงินเยนอ่อนค่า และผลกระทบต่อทรัพย์สินของประชาชน"
-  },
-  {
-    "id": "vid-news-stock-01",
-    "youtube_id": "XloXpxDlx68",
-    "title": "วิเคราะห์ตลาดหุ้นญี่ปุ่น: ดัชนีนิกเคอิร่วง 6.0% และเงื่อนไขการเฝ้าดูหุ้น",
-    "japanese_title": "日経平均6.0%安｜下落482銘柄、売りの広がり｜アステラス製薬の監視条件【11/6 日本株】",
-    "channel": "耳でわかる株式市場",
-    "category": "Podcasts",
-    "difficulty_rating": 4,
-    "primary_jlpt": "N2",
-    "jlpt_distribution": {
-      "N5": 14,
-      "N4": 11,
-      "N3": 38,
-      "N2": 3,
-      "N1": 34
-    },
-    "duration": 437,
-    "thumbnail_gradient": "from-emerald-950 via-slate-900 to-zinc-950",
-    "scene_emoji": "📊",
-    "description": "สรุปและวิเคราะห์ความเคลื่อนไหวของตลาดหุ้นญี่ปุ่น ดัชนีนิกเคอิ ข่าวกลุ่มเซมิคอนดักเตอร์ และเงื่อนไขการลงทุนรายวัน"
-  },
-  {
-    "id": "vid-doc-noh-01",
-    "youtube_id": "RNE60ygYH6E",
-    "title": "ความรู้พื้นฐานเพื่อการชมละครโน (Noh): ศิลปะการแสดงดั้งเดิมของญี่ปุ่น",
-    "japanese_title": "能を楽しむための基礎知識❖日本の伝統芸能【日本通tv】",
-    "channel": "NipponTsuTV",
-    "category": "Vlogs",
-    "difficulty_rating": 4,
-    "primary_jlpt": "N2",
-    "jlpt_distribution": {
-      "N5": 27,
-      "N4": 8,
-      "N3": 30,
-      "N2": 6,
-      "N1": 29
-    },
-    "duration": 722,
-    "thumbnail_gradient": "from-amber-950 via-stone-950 to-black",
-    "scene_emoji": "👹",
-    "description": "สารคดีแนะนำประวัติศาสตร์ 650 ปีของละครโน เวทีการแสดง บทบาทตัวละคร เครื่องดนตรี และการสวมใส่ชุดโชโซกุ"
-  },
-  {
     "id": "vid-doc-tedxsaku-01",
     "youtube_id": "EzXvih454dM",
     "title": "บรรยาย TEDxSaku: เวลาคือทรัพย์สินอันล้ำค่า โดย ฮิเดทากะ นากาโอกะ",
@@ -5102,48 +4955,6 @@ export const MOCK_VIDEOS: VideoRecord[] = [
       "N3": 16,
       "N2": 3,
       "N1": 24
-    }
-  },
-  {
-    "id": "vid-n5-story-garban-01",
-    "youtube_id": "9_3_G3cOtaE",
-    "title": "นิทานก่อนนอนภาษาญี่ปุ่นระดับ N5: การผจญภัยของเจ้าถั่วน้อยกัลบันโซ",
-    "japanese_title": "Easy Japanese Listening N5 | Little Garban",
-    "channel": "OYASUMI JAPANESE CHANNEL",
-    "category": "Podcasts",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "duration": 556,
-    "thumbnail_gradient": "from-indigo-950 via-slate-950 to-black",
-    "scene_emoji": "🌱",
-    "description": "เรื่องเล่าการผจญภัยของเจ้าถั่วกัลบันโซที่เล่าอย่างช้าๆ ผ่อนคลายด้วยคำศัพท์และไวยากรณ์ระดับ N5 (Easy Japanese N5)",
-    "jlpt_distribution": {
-      "N5": 49,
-      "N4": 13,
-      "N3": 13,
-      "N2": 2,
-      "N1": 23
-    }
-  },
-  {
-    "id": "vid-n5-story-room-02",
-    "youtube_id": "d4NKJ0c2pOA",
-    "title": "นิทานภาษาญี่ปุ่นเข้าใจง่ายระดับ N5: ห้องต้องห้าม",
-    "japanese_title": "Easy Japanese Story | The Forbidden Room (N5)",
-    "channel": "OYASUMI JAPANESE CHANNEL",
-    "category": "Podcasts",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "duration": 758,
-    "thumbnail_gradient": "from-purple-950 via-slate-950 to-black",
-    "scene_emoji": "🗝️",
-    "description": "เรื่องเล่าปริศนาห้องต้องห้ามที่เล่าอย่างช้าๆ ชัดเจน เหมาะสำหรับฝึกฟังภาษาญี่ปุ่นระดับ N5 (Easy Japanese N5)",
-    "jlpt_distribution": {
-      "N5": 76,
-      "N4": 10,
-      "N3": 6,
-      "N2": 1,
-      "N1": 7
     }
   },
   {
@@ -6764,69 +6575,6 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "description": "คลิปภาษาญี่ปุ่นเรื่องการซื้อของที่คอนวีเนียนสโตร์และซูเปอร์มาร์เก็ต"
   },
   {
-    "id": "vid-gaps-sakura-shopping-1",
-    "youtube_id": "Ve0a81l1kVY",
-    "title": "เรียนภาษาผ่านเรื่องเล่า: ไปซื้อของที่คอนวีเนียนสโตร์ (ญี่ปุ่นง่าย N5)",
-    "japanese_title": "物語で学ぶ日本語 🛒 コンビニでお買い物! | やさしい日本語 N5",
-    "channel": "Sakura Family Japanese",
-    "category": "Daily Conversation",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "jlpt_distribution": {
-      "N5": 56,
-      "N4": 15,
-      "N3": 10,
-      "N2": 6,
-      "N1": 13
-    },
-    "duration": 960,
-    "thumbnail_gradient": "from-rose-950 via-red-950 to-slate-900",
-    "scene_emoji": "🛒",
-    "description": "เรื่องเล่าภาษาญี่ปุ่นง่ายระดับ N5 เกี่ยวกับการซื้อของที่คอนวีเนียนสโตร์"
-  },
-  {
-    "id": "vid-gaps-sakura-shopping-2",
-    "youtube_id": "1t12BjgS9D8",
-    "title": "เรียนภาษาผ่านเรื่องเล่า: ไปซื้อของกันเถอะ! (ญี่ปุ่นง่าย N5)",
-    "japanese_title": "物語で学ぶ日本語 | お買い物に行こう！🛒 | やさしい日本語 N5",
-    "channel": "Sakura Family Japanese",
-    "category": "Daily Conversation",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "jlpt_distribution": {
-      "N5": 52,
-      "N4": 15,
-      "N3": 13,
-      "N2": 4,
-      "N1": 16
-    },
-    "duration": 480,
-    "thumbnail_gradient": "from-indigo-950 via-violet-950 to-slate-900",
-    "scene_emoji": "🛒",
-    "description": "เรื่องเล่าภาษาญี่ปุ่นง่ายระดับ N5 เกี่ยวกับการไปซื้อของ"
-  },
-  {
-    "id": "vid-gaps-nihongohouse-restaurant-1",
-    "youtube_id": "1oAOTbPzrg4",
-    "title": "สนทนาภาษาญี่ปุ่น #11: ภาษาที่ใช้ในร้านอาหาร",
-    "japanese_title": "At the restaurant｜Japanese conversation#11｜レストランで使う日本語",
-    "channel": "Nihongo House",
-    "category": "Daily Conversation",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N4",
-    "jlpt_distribution": {
-      "N5": 46,
-      "N4": 14,
-      "N3": 12,
-      "N2": 1,
-      "N1": 27
-    },
-    "duration": 256,
-    "thumbnail_gradient": "from-amber-950 via-orange-950 to-neutral-900",
-    "scene_emoji": "🍽️",
-    "description": "บทสนทนาภาษาญี่ปุ่นเรื่องภาษาที่ใช้ในร้านอาหาร"
-  },
-  {
     "id": "vid-gaps-masami-restaurant-1",
     "youtube_id": "DNtLKpLZgZE",
     "title": "สนทนาภาษาญี่ปุ่น: ดูเมนูและสั่งอาหารกับเครื่องดื่ม",
@@ -6867,48 +6615,6 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "thumbnail_gradient": "from-emerald-950 via-teal-950 to-zinc-900",
     "scene_emoji": "🏮",
     "description": "คลิปเรื่องวลีที่ควรรู้และมารยาทเวลาไปอิซากายะ"
-  },
-  {
-    "id": "vid-gaps-nihongohouse-hospital-1",
-    "youtube_id": "EUXzdIlmYwU",
-    "title": "สนทนาภาษาญี่ปุ่น #1: ไปหาหมอและภาษาที่ใช้ที่ร้านยา",
-    "japanese_title": "Going to the Doctor｜Japanese conversation#1｜病院で使う日本語｜薬局で使う日本語",
-    "channel": "Nihongo House",
-    "category": "Daily Conversation",
-    "difficulty_rating": 2,
-    "primary_jlpt": "N4",
-    "jlpt_distribution": {
-      "N5": 53,
-      "N4": 12,
-      "N3": 17,
-      "N2": 3,
-      "N1": 15
-    },
-    "duration": 440,
-    "thumbnail_gradient": "from-amber-950 via-orange-950 to-neutral-900",
-    "scene_emoji": "💊",
-    "description": "บทสนทนาภาษาญี่ปุ่นเรื่องการไปหาหมอและการใช้ภาษาที่ร้านยา"
-  },
-  {
-    "id": "vid-gaps-jlpt-hospital-1",
-    "youtube_id": "xLX_3RASapw",
-    "title": "บทสนทนาเรื่องการไปโรงพยาบาลและการเจ็บป่วยหรือบาดเจ็บ",
-    "japanese_title": "病院での会話＆病気・ケガをした時の会話 / Health & Illness Conversation",
-    "channel": "JLPT Test Channel",
-    "category": "Daily Conversation",
-    "difficulty_rating": 1,
-    "primary_jlpt": "N5",
-    "jlpt_distribution": {
-      "N5": 55,
-      "N4": 17,
-      "N3": 13,
-      "N2": 1,
-      "N1": 14
-    },
-    "duration": 294,
-    "thumbnail_gradient": "from-sky-950 via-cyan-950 to-slate-900",
-    "scene_emoji": "🤒",
-    "description": "บทสนทนาภาษาญี่ปุ่นว่าด้วยการไปโรงพยาบาลและการเจ็บป่วยหรือบาดเจ็บ"
   },
   {
     "id": "vid-gaps-yeonjoung-cook-1",
@@ -7163,25 +6869,319 @@ export const MOCK_VIDEOS: VideoRecord[] = [
     "description": "คลิปฝึกฟังภาษาญี่ปุ่นระดับ N3-N2 ว่าด้วยการคิดเป็นภาษาญี่ปุ่น"
   },
   {
-    "id": "vid-gaps-uki-culture-1",
-    "youtube_id": "8-YJkv4Zrto",
-    "title": "วัฒนธรรมญี่ปุ่น: พอดแคสต์ภาษาญี่ปุ่น",
-    "japanese_title": "日本の文化🍵👘 Japanese Culture｜日本語ポッドキャスト",
-    "channel": "Japanese Radio with Uki",
+    "id": "vid-real-akane-travel-1",
+    "youtube_id": "7Algbn8JVXc",
+    "title": "เดินเล่นแนะนำ 5 ที่เที่ยวญี่ปุ่นน่าไป (Sanpo Vlog #15)",
+    "japanese_title": "【さんぽvlog ♯15】日本のおすすめの観光地を５つ紹介します",
+    "channel": "あかね的日本語教室",
     "category": "Vlogs",
     "difficulty_rating": 2,
     "primary_jlpt": "N4",
     "jlpt_distribution": {
-      "N5": 32,
-      "N4": 17,
-      "N3": 23,
-      "N2": 5,
-      "N1": 23
+      "N5": 52,
+      "N4": 16,
+      "N3": 13,
+      "N2": 2,
+      "N1": 17
     },
-    "duration": 893,
-    "thumbnail_gradient": "from-indigo-950 via-violet-950 to-slate-900",
+    "duration": 883,
+    "thumbnail_gradient": "from-emerald-950 via-teal-950 to-slate-900",
+    "scene_emoji": "🗾",
+    "description": "ครูอาคาเนะเดินเล่นเล่าแนะนำ 5 สถานที่ท่องเที่ยวในญี่ปุ่นพร้อมซับญี่ปุ่นและไทย"
+  },
+  {
+    "id": "vid-real-akane-habit-1",
+    "youtube_id": "QdugborrFlo",
+    "title": "เดินเล่นคุยเรื่องการฝึกนิสัยให้ทำได้ต่อเนื่อง (Sanpo Vlog #14)",
+    "japanese_title": "【JapaneseさんぽVlog ♯14】続けるのが苦手な人に知ってほしいこと",
+    "channel": "あかね的日本語教室",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 48,
+      "N4": 24,
+      "N3": 11,
+      "N2": 3,
+      "N1": 14
+    },
+    "duration": 854,
+    "thumbnail_gradient": "from-sky-950 via-blue-950 to-slate-900",
+    "scene_emoji": "🚶",
+    "description": "ครูอาคาเนะเดินเล่นแชร์เคล็ดลับสำหรับคนที่ทำอะไรไม่ค่อยต่อเนื่อง"
+  },
+  {
+    "id": "vid-real-akane-books-1",
+    "youtube_id": "xkPYLEZTfSA",
+    "title": "คำศัพท์และบทสนทนาภาษาญี่ปุ่นเกี่ยวกับหนังสือและการอ่าน",
+    "japanese_title": "【日本語単語】本に関する日本語の言葉",
+    "channel": "あかね的日本語教室",
+    "category": "Daily Conversation",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 59,
+      "N4": 13,
+      "N3": 11,
+      "N2": 3,
+      "N1": 14
+    },
+    "duration": 717,
+    "thumbnail_gradient": "from-amber-950 via-orange-950 to-slate-900",
+    "scene_emoji": "📚",
+    "description": "เรียนรู้คำศัพท์และสำนวนที่คนญี่ปุ่นใช้จริงเวลาพูดถึงหนังสือและการอ่าน"
+  },
+  {
+    "id": "vid-real-sayuri-nomi-1",
+    "youtube_id": "l0NnzxbjIug",
+    "title": "วัฒนธรรมการดื่มของคนญี่ปุ่น: บุเรโค ชิราฟุ และโนมินิเคชั่น",
+    "japanese_title": "Bureiko, Shirafu, and Nominication: How Japan Bonds Over Drinks #326",
+    "channel": "Sayuri Saying",
+    "category": "Podcasts",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 44,
+      "N4": 14,
+      "N3": 21,
+      "N2": 2,
+      "N1": 19
+    },
+    "duration": 756,
+    "thumbnail_gradient": "from-rose-950 via-red-950 to-slate-900",
+    "scene_emoji": "🍶",
+    "description": "พอดแคสต์ Sayuri Saying เล่าเรื่องวัฒนธรรมการสังสรรค์และคำศัพท์วงเหล้าญี่ปุ่น"
+  },
+  {
+    "id": "vid-real-sayuri-couple-1",
+    "youtube_id": "VvVOC4ACfuY",
+    "title": "บทสนทนา: คู่สามีภรรยาญี่ปุ่นจัดการเรื่องเงินในบ้านกันยังไง?",
+    "japanese_title": "【会話】How Do Japanese Couples Actually Manage Their Money? | 夫婦のお財布事情 #330",
+    "channel": "Sayuri Saying",
+    "category": "Podcasts",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 42,
+      "N4": 22,
+      "N3": 14,
+      "N2": 3,
+      "N1": 19
+    },
+    "duration": 599,
+    "thumbnail_gradient": "from-indigo-950 via-purple-950 to-slate-900",
+    "scene_emoji": "💴",
+    "description": "บทสนทนาจริงกับคู่รักชาวญี่ปุ่นเรื่องการบริหารค่าใช้จ่ายในครอบครัว"
+  },
+  {
+    "id": "vid-real-miku-hurt-1",
+    "youtube_id": "FerhHlgUn7U",
+    "title": "ว่าด้วยเรื่องความรู้สึกเจ็บปวดใจ (ฝึกฟังระดับ N3-N2)",
+    "japanese_title": "傷つくことについて Japanese Listening Practice N3・N2 level",
+    "channel": "Miku Real Japanese",
+    "category": "Podcasts",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 46,
+      "N4": 19,
+      "N3": 12,
+      "N2": 1,
+      "N1": 22
+    },
+    "duration": 889,
+    "thumbnail_gradient": "from-slate-900 via-indigo-950 to-zinc-900",
+    "scene_emoji": "💭",
+    "description": "Miku เล่ามุมมองเรื่องความรู้สึกเจ็บปวดและการรับมือด้วยภาษาญี่ปุ่นธรรมชาติ"
+  },
+  {
+    "id": "vid-real-miku-shrine-1",
+    "youtube_id": "ijh0hq5k2hs",
+    "title": "บทเรียนชีวิตแบบญี่ปุ่นที่ซ่อนอยู่ในศาลเจ้าทุกแห่ง",
+    "japanese_title": "The Japanese Life Lesson Hidden in Every Shrine Japanese Listening Practice N3・N2 level",
+    "channel": "Miku Real Japanese",
+    "category": "Podcasts",
+    "difficulty_rating": 3,
+    "primary_jlpt": "N3",
+    "jlpt_distribution": {
+      "N5": 39,
+      "N4": 19,
+      "N3": 18,
+      "N2": 3,
+      "N1": 21
+    },
+    "duration": 551,
+    "thumbnail_gradient": "from-red-950 via-rose-950 to-slate-900",
+    "scene_emoji": "⛩️",
+    "description": "Miku แชร์ข้อคิดและวัฒนธรรมญี่ปุ่นผ่านเรื่องราวของศาลเจ้า"
+  },
+  {
+    "id": "vid-real-sayaka-matcha-1",
+    "youtube_id": "UceTlQ4tNck",
+    "title": "ฝึกภาษาญี่ปุ่นจริงในโตเกียว: สั่งเมนูและคุยที่ร้านคาเฟ่มัทฉะ",
+    "japanese_title": "東京でリアル日本語🇯🇵 抹茶カフェで注文＆会話🍵日本語聴解",
+    "channel": "NihongoDekita with Sayaka",
+    "category": "Daily Conversation",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 42,
+      "N4": 19,
+      "N3": 12,
+      "N2": 3,
+      "N1": 24
+    },
+    "duration": 686,
+    "thumbnail_gradient": "from-emerald-950 via-green-950 to-slate-900",
     "scene_emoji": "🍵",
-    "description": "พอดแคสต์ภาษาญี่ปุ่นว่าด้วยวัฒนธรรมญี่ปุ่น"
+    "description": "ซายากะพาไปสั่งมัทฉะและสนทนาจริงกับพนักงานที่คาเฟ่ในโตเกียว"
+  },
+  {
+    "id": "vid-real-nihongolearn-red-1",
+    "youtube_id": "zcZIkpMBs14",
+    "title": "รู้จักของสีแดงที่เป็นเอกลักษณ์ของญี่ปุ่น (N5 ฟังง่าย)",
+    "japanese_title": "Discover Japan's Iconic Red Objects! - Comprehensible Japanese",
+    "channel": "Nihongo-Learning",
+    "category": "Daily Conversation",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 60,
+      "N4": 8,
+      "N3": 11,
+      "N2": 2,
+      "N1": 19
+    },
+    "duration": 280,
+    "thumbnail_gradient": "from-red-950 via-rose-950 to-slate-900",
+    "scene_emoji": "🔴",
+    "description": "เรียนรู้คำศัพท์และวัฒนธรรมญี่ปุ่นผ่านสิ่งของสีแดงที่เป็นเอกลักษณ์ของญี่ปุ่นด้วยภาษาฟังง่าย"
+  },
+  {
+    "id": "vid-real-nihongolearn-chat-1",
+    "youtube_id": "ooQNETO4dK0",
+    "title": "อัปสกิลการคุยภาษาญี่ปุ่นแบบเป็นกันเอง พูดตามไปพร้อมกัน",
+    "japanese_title": "Level Up Your Japanese Chat Skills! - Comprehensible Japanese",
+    "channel": "Nihongo-Learning",
+    "category": "Daily Conversation",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 53,
+      "N4": 20,
+      "N3": 8,
+      "N2": 3,
+      "N1": 16
+    },
+    "duration": 587,
+    "thumbnail_gradient": "from-violet-950 via-purple-950 to-slate-900",
+    "scene_emoji": "💬",
+    "description": "ฝึกโต้ตอบบทสนทนาภาษาญี่ปุ่นในชีวิตประจำวันแบบเป็นธรรมชาติ"
+  },
+  {
+    "id": "vid-real-nihongolearn-etiquette-1",
+    "youtube_id": "aczPsLhpDRE",
+    "title": "มารยาทและวิถีชีวิตพื้นฐาน 3 ข้อที่ควรรู้ในญี่ปุ่น",
+    "japanese_title": "3 Essential Japanese Etiquette Tips!  - Comprehensible Japanese",
+    "channel": "Nihongo-Learning",
+    "category": "Daily Conversation",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 61,
+      "N4": 15,
+      "N3": 8,
+      "N2": 4,
+      "N1": 12
+    },
+    "duration": 243,
+    "thumbnail_gradient": "from-pink-950 via-rose-950 to-slate-900",
+    "scene_emoji": "🙇",
+    "description": "เรียนรู้มารยาทและธรรมเนียมพื้นฐาน 3 ข้อของคนญี่ปุ่นด้วยภาษาเข้าใจง่าย"
+  },
+  {
+    "id": "vid-real-kensan-rain-1",
+    "youtube_id": "NkQXYEiAvwM",
+    "title": "เดินเล่นวันฝนตกในญี่ปุ่น: ฝึกฟังภาษาญี่ปุ่นเข้าใจง่าย (N4)",
+    "japanese_title": "A rainy day walk in Japan 🇯🇵 | Easy Japanese listening | N4",
+    "channel": "けんさんおかえり Japanese",
+    "category": "Podcasts",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 66,
+      "N4": 15,
+      "N3": 9,
+      "N2": 2,
+      "N1": 8
+    },
+    "duration": 735,
+    "thumbnail_gradient": "from-blue-950 via-slate-900 to-zinc-900",
+    "scene_emoji": "☔",
+    "description": "เคนซังพาเดินเล่นในญี่ปุ่นวันฝนตกพร้อมเล่าเรื่องด้วยภาษาญี่ปุ่นฟังง่ายระดับ N4"
+  },
+  {
+    "id": "vid-real-kensan-goat-1",
+    "youtube_id": "lZifLIXWOPU",
+    "title": "วันหยุดฤดูร้อนในญี่ปุ่นกับน้องแพะ: ฝึกฟังภาษาญี่ปุ่น (N4)",
+    "japanese_title": "A Summer Weekend in Japan 🐐 | Easy Japanese Listening | N4",
+    "channel": "けんさんおかえり Japanese",
+    "category": "Podcasts",
+    "difficulty_rating": 2,
+    "primary_jlpt": "N4",
+    "jlpt_distribution": {
+      "N5": 58,
+      "N4": 13,
+      "N3": 12,
+      "N2": 3,
+      "N1": 14
+    },
+    "duration": 690,
+    "thumbnail_gradient": "from-lime-950 via-emerald-950 to-slate-900",
+    "scene_emoji": "🐐",
+    "description": "เคนซังเล่าเรื่องเที่ยววันหยุดฤดูร้อนและไปเจอน้องแพะด้วยภาษาญี่ปุ่นระดับ N4"
+  },
+  {
+    "id": "vid-real-akiko-souvenir-1",
+    "youtube_id": "YdcvPdXxzik",
+    "title": "ฝึกฟังภาษาญี่ปุ่น N5: ของฝากญี่ปุ่นและรองเท้า Onitsuka Tiger",
+    "japanese_title": "JLPT N5 Listening Practice 🇯🇵 Japan Souvenirs | Onitsukatiger, snacks, skincare ! 💖",
+    "channel": "Akiko_Japanese_Conversations",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 54,
+      "N4": 9,
+      "N3": 20,
+      "N2": 1,
+      "N1": 16
+    },
+    "duration": 555,
+    "thumbnail_gradient": "from-amber-950 via-yellow-950 to-slate-900",
+    "scene_emoji": "👟",
+    "description": "อากิโกะเล่าเรื่องของฝากยอดฮิตจากญี่ปุ่นด้วยภาษาญี่ปุ่นระดับ N5"
+  },
+  {
+    "id": "vid-real-akiko-ryokan-1",
+    "youtube_id": "E0Dn4rITMRs",
+    "title": "ฝึกฟังภาษาญี่ปุ่น N5: เที่ยวญี่ปุ่นและพักเรียวกังออนเซ็น",
+    "japanese_title": "JLPT N5 Listening Practice🇯🇵 Japan Trip : I stayed at a Spirited Away Ryokan",
+    "channel": "Akiko_Japanese_Conversations",
+    "category": "Vlogs",
+    "difficulty_rating": 1,
+    "primary_jlpt": "N5",
+    "jlpt_distribution": {
+      "N5": 49,
+      "N4": 11,
+      "N3": 17,
+      "N2": 7,
+      "N1": 16
+    },
+    "duration": 664,
+    "thumbnail_gradient": "from-orange-950 via-red-950 to-slate-900",
+    "scene_emoji": "♨️",
+    "description": "อากิโกะเล่าประสบการณ์เที่ยวญี่ปุ่นและเข้าพักเรียวกังออนเซ็นระดับ N5"
   }
 ];
 
